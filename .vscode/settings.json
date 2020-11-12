@@ -8,5 +8,9 @@
     "files.eol": "\n",
     "workbench.colorTheme": "Material Theme Palenight High Contrast",
     "workbench.iconTheme": "material-icon-theme",
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "cSpell.words": [
+        "nestjs",
+        "typeorm"
+    ]
 }
