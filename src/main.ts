@@ -1,3 +1,3 @@
-import { AppModule } from './app.module';
+import { bootstrap } from './utils/bootstrap.util';
 
-AppModule.bootstrap();
+bootstrap();

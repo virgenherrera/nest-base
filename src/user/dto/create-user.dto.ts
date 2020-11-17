@@ -6,7 +6,7 @@ import {
   IsPhoneNumber,
   IsString,
   MaxLength,
-  MinLength,
+  MinLength
 } from 'class-validator';
 import { getEnumKeys } from 'src/utils';
 

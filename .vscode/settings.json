@@ -1,14 +1,16 @@
 {
-    "editor.codeActionsOnSave": {"source.fixAll": true,"source.fixAll.eslint":true,"source.organizeImports": true},
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.fixAll.eslint": true,
+        "source.organizeImports": true
+    },
     "editor.formatOnSave": true,
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.renderWhitespace": "selection",
     "editor.wordWrap": "on",
     "emmet.triggerExpansionOnTab": true,
     "files.eol": "\n",
-    "workbench.colorTheme": "Material Theme Palenight High Contrast",
     "workbench.iconTheme": "material-icon-theme",
-    "files.autoSave": "onFocusChange",
     "cSpell.words": [
         "nestjs",
         "typeorm"

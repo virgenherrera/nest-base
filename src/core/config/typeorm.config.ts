@@ -1,38 +1,40 @@
 import { Environment } from '@core/enums';
 import { TYPEORM_CONFIG } from '@core/tokens';
-import { ConfigService, registerAs } from '@nestjs/config';
-import {
-  TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions,
-} from '@nestjs/typeorm';
+import { registerAs } from '@nestjs/config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
 import { LoggerOptions } from 'typeorm';
 
-export function typeormConfigFactory(): TypeOrmModuleOptions {
+export const typeOrmConfig = registerAs(TYPEORM_CONFIG, () => {
+  const {
+    DATABASE_HOST,
+    DATABASE_PORT,
+    DATABASE_USERNAME,
+    DATABASE_PASSWORD,
+    DATABASE_NAME,
+  } = process.env;
+
   const logging: LoggerOptions = ['warn', 'error'];
 
   if (process.env.NODE_ENV !== Environment.production)
     logging.push('query', 'schema', 'info', 'log', 'migration');
 
-  return {
+  const options: TypeOrmModuleOptions = {
     type: 'mongodb',
-    useNewUrlParser: true,
-    host: 'localhost',
+    logging: ['warn', 'error'],
+    useUnifiedTopology: true,
     authSource: 'admin',
-    port: 27017,
-    username: 'root',
-    password: 'root',
-    database: 'test',
-    logging,
-    entities: [join(__dirname, '../../entities/*.entity{.ts,.js}')],
+    host: DATABASE_HOST,
+    port: parseInt(DATABASE_PORT, 10),
+    username: DATABASE_USERNAME,
+    password: DATABASE_PASSWORD,
+    database: DATABASE_NAME,
+    entities: [join(__dirname, '../../entities/*.entity.js')],
     autoLoadEntities: true,
   };
-}
 
-export const typeOrmConfig = registerAs(TYPEORM_CONFIG, typeormConfigFactory);
+  Object.seal(options);
+  Object.freeze(options);
 
-export const typeOrmModuleOptions: TypeOrmModuleAsyncOptions = {
-  inject: [ConfigService],
-  useFactory: (configService: ConfigService) =>
-    configService.get<TypeOrmModuleOptions>(TYPEORM_CONFIG),
-};
+  return options;
+});

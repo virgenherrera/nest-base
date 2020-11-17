@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"christian-kohler.path-intellisense",
+		"dbaeumer.vscode-eslint",
+		"msjsdiag.debugger-for-chrome",
+		"PKief.material-icon-theme",
+		"streetsidesoftware.code-spell-checker"
+	]
+}
