@@ -1,18 +1,33 @@
 {
-    "editor.codeActionsOnSave": {
-        "source.fixAll": true,
-        "source.fixAll.eslint": true,
-        "source.organizeImports": true
-    },
-    "editor.formatOnSave": true,
-    "editor.multiCursorModifier": "ctrlCmd",
-    "editor.renderWhitespace": "selection",
-    "editor.wordWrap": "on",
-    "emmet.triggerExpansionOnTab": true,
-    "files.eol": "\n",
-    "workbench.iconTheme": "material-icon-theme",
-    "cSpell.words": [
-        "nestjs",
-        "typeorm"
-    ]
+  "codemetrics.basics.CodeLensHiddenUnder": 11,
+  "codemetrics.basics.ComplexityLevelExtreme": 20,
+  "codemetrics.basics.ComplexityLevelHigh": 15,
+  "codemetrics.basics.ComplexityLevelNormal": 10,
+  "codemetrics.basics.EnabledForHTML": false,
+  "codemetrics.basics.MetricsForClassDeclarationsToggled": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.renderWhitespace": "selection",
+  "editor.wordWrap": "on",
+  "emmet.triggerExpansionOnTab": true,
+  "errorLens.addAnnotationTextPrefixes": true,
+  "errorLens.delay": 3000,
+  "files.autoSave": "onFocusChange",
+  "files.eol": "\n",
+  "git.autofetch": true,
+  "npm.exclude": "node_modules",
+  "prettier.configPath": "./.prettierrc",
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "workbench.colorTheme": "Material Theme Palenight High Contrast",
+  "workbench.iconTheme": "material-icon-theme",
+  "cSpell.words": [
+    "nestjs",
+    "typeorm"
+  ]
 }
