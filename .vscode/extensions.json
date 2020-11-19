@@ -1,12 +1,13 @@
 {
-	"recommendations": [
-		"christian-kohler.path-intellisense",
-		"dbaeumer.vscode-eslint",
-		"esbenp.prettier-vscode",
-		"kisstkondoros.vscode-codemetrics",
-		"msjsdiag.debugger-for-chrome",
-		"PKief.material-icon-theme",
-		"streetsidesoftware.code-spell-checker",
-		"usernamehw.errorlens",
-	]
+  "recommendations": [
+    "christian-kohler.path-intellisense",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "johnpapa.winteriscoming",
+    "kisstkondoros.vscode-codemetrics",
+    "msjsdiag.debugger-for-chrome",
+    "PKief.material-icon-theme",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens"
+  ]
 }

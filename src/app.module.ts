@@ -10,7 +10,7 @@ import { UserModule } from './user/user.module';
     ConfigModule.forRoot(rootConfigModule),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get(TYPEORM_CONFIG),
+      useFactory: config => config.get(TYPEORM_CONFIG),
     }),
     UserModule,
   ],

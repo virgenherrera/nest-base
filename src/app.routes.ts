@@ -1,3 +1,3 @@
 export const appRoutes = {
-  api: 'api',
+  api: 'api/v1',
 };

@@ -18,16 +18,12 @@
   "emmet.triggerExpansionOnTab": true,
   "errorLens.addAnnotationTextPrefixes": true,
   "errorLens.delay": 3000,
-  "files.autoSave": "onFocusChange",
   "files.eol": "\n",
   "git.autofetch": true,
   "npm.exclude": "node_modules",
   "prettier.configPath": "./.prettierrc",
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "workbench.colorTheme": "Material Theme Palenight High Contrast",
+  "workbench.colorTheme": "Winter is Coming (Dark Black)",
   "workbench.iconTheme": "material-icon-theme",
-  "cSpell.words": [
-    "nestjs",
-    "typeorm"
-  ]
+  "cSpell.words": ["nestjs", "typeorm"]
 }

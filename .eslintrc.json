@@ -4,9 +4,7 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": [
-    "@typescript-eslint/eslint-plugin"
-  ],
+  "plugins": ["@typescript-eslint/eslint-plugin"],
   "extends": [
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
@@ -23,36 +21,21 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "eol-last": [
-      "error",
-      "always"
-    ],
-    "max-len": [
-      "error",
-      160
-    ],
+    "eol-last": ["error", "always"],
+    "max-len": ["error", 160],
     "complexity": [
       "error",
       {
         "max": 17
       }
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
+    "linebreak-style": ["error", "unix"],
     "newline-before-return": "error",
-    "semicolon": [
-      true,
-      "always"
-    ],
     "space-before-function-paren": [
       "error",
       {
         "anonymous": "never",
         "asyncArrow": "always",
-        "constructor": "never",
-        "method": "never",
         "named": "never"
       }
     ]

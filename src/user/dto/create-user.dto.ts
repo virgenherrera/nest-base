@@ -1,4 +1,3 @@
-import { UserGender, UserRole } from '@user/enums';
 import {
   IsEmail,
   IsEnum,
@@ -6,9 +5,10 @@ import {
   IsPhoneNumber,
   IsString,
   MaxLength,
-  MinLength
+  MinLength,
 } from 'class-validator';
 import { getEnumKeys } from 'src/utils';
+import { UserGender, UserRole } from '../enums';
 
 export class CreateUserDto {
   @IsString()
