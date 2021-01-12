@@ -1,5 +1,5 @@
 import { UserGender, UserRole } from '@user/enums';
-import sha256 from 'crypto-js/sha256';
+import { hashPassword } from '@user/utils';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -28,9 +28,7 @@ export class User {
 
   @BeforeInsert()
   @BeforeUpdate()
-  async hashPassword() {
-    if (this.password) {
-      this.password = await sha256(this.password, 10);
-    }
+  hashPassword() {
+    if (this.password) this.password = hashPassword(this.password);
   }
 }
