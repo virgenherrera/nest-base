@@ -1,5 +1,5 @@
 import { UserGender, UserRole } from '@user/enums';
-import sha256 from 'crypto-js/sha256';
+import { hashPassword } from '@user/utils';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -14,7 +14,6 @@ import {
 @Entity(User.name)
 export class User {
   @ObjectIdColumn() id: ObjectID;
-
   @Column() name: string;
   @Column() lastName: string;
   @Column() email: string;
@@ -28,9 +27,7 @@ export class User {
 
   @BeforeInsert()
   @BeforeUpdate()
-  async hashPassword() {
-    if (this.password) {
-      this.password = await sha256(this.password, 10);
-    }
+  hashPassword() {
+    if (this.password) this.password = hashPassword(this.password, 10);
   }
 }

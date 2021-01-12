@@ -1,3 +1,6 @@
+import { PagingDto } from '@core/dto/incoming-paging.dto';
+import { Numerable } from '@core/dto/numerable.dto';
+import { Paging } from '@core/dto/paging.dto';
 import {
   Body,
   Controller,
@@ -6,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto, UpdateUserDto } from '../dto';
@@ -22,14 +26,18 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get(userRoutes.user)
-  findAll() {
-    return this.userService.findAll();
+  @Get(userRoutes.users)
+  async findAll(@Query() query: PagingDto) {
+    console.dir(query);
+    const paging = new Paging(query);
+    const data = await this.userService.findAll();
+
+    return new Numerable(data, paging);
   }
 
-  @Get(userRoutes.users)
+  @Get(userRoutes.user)
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+    return this.userService.getById(id);
   }
 
   @Put(userRoutes.user)
@@ -39,6 +47,6 @@ export class UserController {
 
   @Delete(userRoutes.user)
   remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+    return this.userService.delete(id);
   }
 }

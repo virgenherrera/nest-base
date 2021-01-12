@@ -1,3 +1,4 @@
+import { TransformApiResponse } from '@core/interceptors';
 import { APP_CONFIG } from '@core/tokens';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -18,6 +19,7 @@ export async function bootstrap() {
 
   app.use(helmet());
   app.use(compression());
+  app.useGlobalInterceptors(new TransformApiResponse());
   app.useGlobalPipes(
     new ValidationPipe({
       forbidNonWhitelisted: true,
@@ -36,7 +38,7 @@ export async function bootstrap() {
 
   const url = await app.getUrl();
 
-  Object.keys(afterListenLogs).forEach((logContext) => {
+  Object.keys(afterListenLogs).forEach(logContext => {
     logger.setContext(logContext);
     logger.log(afterListenLogs[logContext].replace(':url', url));
   });
