@@ -22,6 +22,7 @@
   "git.autofetch": true,
   "npm.exclude": "node_modules",
   "prettier.configPath": "./.prettierrc",
+  "typescript.referencesCodeLens.enabled": true,
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "workbench.colorTheme": "Winter is Coming (Dark Black)",
   "workbench.iconTheme": "material-icon-theme",
