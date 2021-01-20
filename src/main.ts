@@ -1,3 +1,3 @@
-import { bootstrap } from './utils/bootstrap.util';
+import { bootstrap } from './core/init/bootstrap';
 
 bootstrap();

@@ -8,7 +8,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { getEnumKeys } from 'src/utils';
-import { UserGender, UserRole } from '../enums';
+import { Gender, Role } from '../enums';
 
 export class CreateUserDto {
   @IsString()
@@ -30,15 +30,15 @@ export class CreateUserDto {
   @IsISO8601({ strict: true })
   dob: Date;
 
-  @IsEnum(UserGender, {
-    message: `gender: must be one of: '${getEnumKeys(UserGender)}' value.`,
+  @IsEnum(Gender, {
+    message: `gender: must be one of: '${getEnumKeys(Gender)}' value.`,
   })
-  gender: UserGender;
+  gender: Gender;
 
-  @IsEnum(UserRole, {
-    message: `role: must be a valid role value ${getEnumKeys(UserRole)}`,
+  @IsEnum(Role, {
+    message: `role: must be a valid role value ${getEnumKeys(Role)}`,
   })
-  role: UserRole;
+  role: Role;
 
   @IsPhoneNumber('MX')
   mobile: string;

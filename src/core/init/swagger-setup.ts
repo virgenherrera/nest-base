@@ -2,17 +2,18 @@ import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { appRoutes } from 'src/app.routes';
 
 export function swaggerSetup(app: INestApplication) {
-  const swaggerRoutePath = 'api-docs';
   const afterListenLog = {
-    swaggerSetup: `Swagger docs available on path: :url/${swaggerRoutePath}`,
+    swaggerSetup: `Swagger docs available on path: :url/${appRoutes.apiDocs}`,
   };
-  const fileContent = readFileSync(join(__dirname, '../../package.json'), {
-    encoding: 'utf8',
-    flag: 'r',
-  });
-  const packageJson = JSON.parse(fileContent);
+  const packageJson = JSON.parse(
+    readFileSync(join(__dirname, '../../../package.json'), {
+      encoding: 'utf8',
+      flag: 'r',
+    }),
+  );
   const swaggerConfig = new DocumentBuilder()
     .setTitle(packageJson.name)
     .setVersion(packageJson.version)
@@ -20,7 +21,7 @@ export function swaggerSetup(app: INestApplication) {
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup(swaggerRoutePath, app, swaggerDocument, {
+  SwaggerModule.setup(appRoutes.apiDocs, app, swaggerDocument, {
     explorer: true,
   });
 

@@ -2,6 +2,7 @@
   "recommendations": [
     "christian-kohler.path-intellisense",
     "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "johnpapa.winteriscoming",
     "kisstkondoros.vscode-codemetrics",

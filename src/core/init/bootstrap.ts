@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as compression from 'compression';
 import * as helmet from 'helmet';
 import { AppModule } from 'src/app.module';
+import { appRoutes } from 'src/app.routes';
 
 export async function bootstrap() {
   const logger = new Logger();
@@ -16,6 +17,7 @@ export async function bootstrap() {
     'App bootstrap': 'Server is running at :url',
   };
 
+  app.setGlobalPrefix(appRoutes.api);
   app.use(helmet());
   app.use(compression());
   app.useGlobalPipes(
@@ -26,7 +28,7 @@ export async function bootstrap() {
   );
 
   if (useDocs) {
-    const { swaggerSetup } = await import('./swagger-setup.util');
+    const { swaggerSetup } = await import('./swagger-setup');
     const afterMountLog = swaggerSetup(app);
 
     Object.assign(afterListenLogs, afterMountLog);
@@ -36,7 +38,7 @@ export async function bootstrap() {
 
   const url = await app.getUrl();
 
-  Object.keys(afterListenLogs).forEach((logContext) => {
+  Object.keys(afterListenLogs).forEach(logContext => {
     logger.setContext(logContext);
     logger.log(afterListenLogs[logContext].replace(':url', url));
   });

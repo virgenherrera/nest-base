@@ -1,5 +1,5 @@
-import { UserGender, UserRole } from '@user/enums';
-import { hashPassword } from '@user/utils';
+import { Gender, Role } from '@user/enums';
+import { hashPassword } from 'src/utils/password.util';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -14,13 +14,12 @@ import {
 @Entity(User.name)
 export class User {
   @ObjectIdColumn() id: ObjectID;
-
   @Column() name: string;
   @Column() lastName: string;
   @Column() email: string;
   @Column() dob: Date;
-  @Column() gender: UserGender;
-  @Column() role: UserRole;
+  @Column() gender: Gender;
+  @Column() role: Role;
   @Column() mobile: string;
   @Column({ length: 128, nullable: false, select: false }) password: string;
   @CreateDateColumn() createdAt: Date;

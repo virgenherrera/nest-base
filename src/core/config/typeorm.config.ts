@@ -16,7 +16,7 @@ export const typeOrmConfig = registerAs(TYPEORM_CONFIG, () => {
 
   const logging: LoggerOptions = ['warn', 'error'];
 
-  if (process.env.NODE_ENV !== Environment.production)
+  if (process.env.NODE_ENV !== Environment.Production)
     logging.push('query', 'schema', 'info', 'log', 'migration');
 
   const options: TypeOrmModuleOptions = {
