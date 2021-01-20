@@ -12,8 +12,7 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@core/*": ["src/core/*"],
-      "@user/*": ["src/user/*"]
+      "@core/*": ["src/core/*"]
     }
   }
 }

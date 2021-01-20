@@ -1,4 +1,3 @@
-import { Gender, Role } from '@user/enums';
 import { hashPassword } from 'src/utils/password.util';
 import {
   BeforeInsert,
@@ -10,6 +9,7 @@ import {
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Gender, Role } from '../enums';
 
 @Entity(User.name)
 export class User {

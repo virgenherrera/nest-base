@@ -6,8 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "run-p -l clean lint:fix",
-    "precommit": "run-p -l clean lint test",
+    "precommit": "run-s -l clean lint test build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
