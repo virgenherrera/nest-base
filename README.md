@@ -10,7 +10,7 @@ basic [Nest](https://github.com/nestjs/nest) framework TypeScript starter reposi
 $ npm install
 ```
 
-2. Create `.env` file.
+2. Create `.env` file using `.env.example`  a template, e.g.
 
 ```bash
 $ cp ./env.example ./env
@@ -19,25 +19,28 @@ $ cp ./env.example ./env
 ## Running the app
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
+# development with watch mode.
 $ npm run start:dev
 
-# production mode
+# production mode.
 $ npm run start:prod
 ```
 
-## Test
+## Testing the app
 
 ```bash
-# unit tests
+# run unit/integration tests.
 $ npm run test
 
-# e2e tests
-$ npm run test:e2e
+# detect current changes and execute just the involved Test Suites.
+$ npm run test:ut:develop
 
-# test coverage
+# run unit/integration tests with code coverage.
 $ npm run test:cov
+```
+
+## Local Full build 
+```bash
+# Analog CI pipeline local execution.
+$ npm run local:ci
 ```
