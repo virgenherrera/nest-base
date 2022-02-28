@@ -7,7 +7,8 @@ describe('UT:AppConfigService', () => {
   const enum should {
     createInstance = 'create instance Properly and set environment to Default.',
     getPort = `Should getPort provided in NODE_ENV.`,
-    getOpenApi = `Should getPort provided in NODE_ENV.`,
+    getOpenApi = `Should getOpenApi provided in NODE_ENV.`,
+    getDefaultOpenApi = `Should default value for getOpenApi when not provided in NODE_ENV.`,
   }
   const MockConfigModule = {
     get: jest.fn(),
@@ -54,5 +55,15 @@ describe('UT:AppConfigService', () => {
       .mockImplementation((key: keyof typeof mockEnv) => mockEnv[key]);
 
     expect(service.openApiPath).toBe(mockEnv.APP_OPEN_API_PATH);
+  });
+
+  it(should.getDefaultOpenApi, () => {
+    const mockEnv = {};
+
+    MockConfigModule.get = jest
+      .fn()
+      .mockImplementation((key: keyof typeof mockEnv) => mockEnv[key]);
+
+    expect(service.openApiPath).toBe('dist/openApi-docs/');
   });
 });

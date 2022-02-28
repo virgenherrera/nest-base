@@ -37,18 +37,16 @@ export class DtoValidation implements PipeTransform {
     const instance = plainToClass(metatype, value, this.classTransformOptions);
     const validationErrors = await validate(instance, this.validatorOptions);
 
-    if (validationErrors?.length) {
-      const details = this.parseErrors(validationErrors);
-      const errorResponse = {
-        code: 'bad-request-error',
-        message: 'Bad Request',
-        details,
-      };
+    if (!validationErrors.length) return instance;
 
-      throw new BadRequestException(errorResponse);
-    }
+    const details = this.parseErrors(validationErrors);
+    const errorResponse = {
+      code: 'bad-request-error',
+      message: 'Bad Request',
+      details,
+    };
 
-    return instance;
+    throw new BadRequestException(errorResponse);
   }
 
   private parseErrors(validationErrors: ValidationError[], parent?: string) {
