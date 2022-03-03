@@ -28,7 +28,7 @@ export default {
   ],
   coverageDirectory: `../reports/html/test-coverage`,
   coverageProvider: 'v8',
-  coverageReporters: ['html-spa', 'text', 'cobertura'],
+  coverageReporters: ['html-spa', 'text', 'json-summary'],
   coverageThreshold: {
     global: {
       branches: 85,

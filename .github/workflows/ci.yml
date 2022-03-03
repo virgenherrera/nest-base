@@ -34,19 +34,12 @@ jobs:
         run: npm run format:check
 
       - name: Test with Coverage
-        timeout-minutes: 10
-        run: npm run test:cov
+        uses: anuraag016/Jest-Coverage-Diff@master
+        runCommand: npm run test:cov
+        delta: 0.5
 
       - name: Build Docs
         run: npm run build:api-docs
 
       - name: Build Project
         run: npm run build
-
-      - name: Produce the coverage report
-        uses: insightsengineering/coverage-action@v2
-        with:
-          path: ./reports/html/test-coverage/cobertura-coverage.xml
-          threshold: 85
-          fail: true
-          publish: true
