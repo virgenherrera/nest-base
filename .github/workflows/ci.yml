@@ -42,3 +42,11 @@ jobs:
 
       - name: Build Project
         run: npm run build
+
+      - name: Produce the coverage report
+        uses: insightsengineering/coverage-action@v2
+        with:
+          path: ./reports/html/test-coverage/cobertura-coverage.xml
+          threshold: 85
+          fail: true
+          publish: true
