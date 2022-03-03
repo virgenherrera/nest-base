@@ -1,12 +1,12 @@
 import {
   ArgumentMetadata,
-  BadRequestException,
   Injectable,
   PipeTransform,
   Type,
 } from '@nestjs/common';
 import { ClassTransformOptions, plainToClass } from 'class-transformer';
 import { validate, ValidationError, ValidatorOptions } from 'class-validator';
+import { BadRequest } from '../exceptions';
 
 @Injectable()
 export class DtoValidation implements PipeTransform {
@@ -39,14 +39,7 @@ export class DtoValidation implements PipeTransform {
 
     if (!validationErrors.length) return instance;
 
-    const details = this.parseErrors(validationErrors);
-    const errorResponse = {
-      code: 'bad-request-error',
-      message: 'Bad Request',
-      details,
-    };
-
-    throw new BadRequestException(errorResponse);
+    throw new BadRequest(this.parseErrors(validationErrors));
   }
 
   private parseErrors(validationErrors: ValidationError[], parent?: string) {
