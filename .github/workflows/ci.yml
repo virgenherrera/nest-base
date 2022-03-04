@@ -33,10 +33,11 @@ jobs:
       - name: Check Code Format
         run: npm run format:check
 
-      - name: Test with Coverage
+      - name: run Test with Coverage
         uses: anuraag016/Jest-Coverage-Diff@master
-        runCommand: npm run test:cov
-        delta: 0.5
+        with:
+          runCommand: npm run test:cov
+          delta: 0.5
 
       - name: Build Docs
         run: npm run build:api-docs
