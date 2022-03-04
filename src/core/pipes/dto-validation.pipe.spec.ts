@@ -1,5 +1,7 @@
-import { ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { IsDefined, IsString } from 'class-validator';
+import { ArgumentMetadata } from '@nestjs/common';
+import { Type } from 'class-transformer';
+import { IsDefined, IsString, ValidateNested } from 'class-validator';
+import { BadRequest } from '../exceptions';
 import { DtoValidation } from './dto-validation.pipe';
 
 describe('UT:DtoValidationPipe', () => {
@@ -9,6 +11,13 @@ describe('UT:DtoValidationPipe', () => {
     primitiveMetatype = 'Should return raw value when metatype is a primitive type.',
     transformAndValidate = `Should transform and validate plain object and create instance of given DTO.`,
     throwBadRequest = `Should BadRequestException containing a list of validation errors.`,
+    throwNestedBadRequest = `Should BadRequestException containing a list of validation errors when validating nested Objects.`,
+  }
+
+  class ParentDto {
+    @ValidateNested({ each: true })
+    @Type(() => MockDto)
+    mockDtos: MockDto[];
   }
   class MockDto {
     @IsDefined()
@@ -78,7 +87,22 @@ describe('UT:DtoValidationPipe', () => {
     };
 
     await expect(pipe.transform(value, mockMetadata)).rejects.toBeInstanceOf(
-      BadRequestException,
+      BadRequest,
+    );
+  });
+
+  it(should.throwNestedBadRequest, async () => {
+    const value = {
+      mockDtos: [{ k1: 'v1', k2: 'v2' }],
+    };
+    const mockMetadata: ArgumentMetadata = {
+      type: 'body',
+      metatype: ParentDto,
+      data: '',
+    };
+
+    await expect(pipe.transform(value, mockMetadata)).rejects.toBeInstanceOf(
+      BadRequest,
     );
   });
 });
