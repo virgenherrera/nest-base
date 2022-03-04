@@ -33,7 +33,6 @@ jobs:
       - name: Check Code Format
         run: npm run format:check
 
-      - name: Test with Coverage
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           test-script: yarn jest
