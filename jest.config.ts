@@ -4,21 +4,6 @@
 
 */
 
-const reporters: any[] = ['default'];
-
-if (process.argv.includes('--coverage')) {
-  reporters.push([
-    'jest-stare',
-    {
-      resultDir: `reports/html/test-execution`,
-      resultJson: `test-execution.json`,
-      reportTitle: `Tests Report`,
-      reportHeadline: `Unit/Integration Test Report`,
-      coverageLink: `../test-coverage/index.html`,
-    },
-  ]);
-}
-
 export default {
   collectCoverageFrom: [
     '**/*.ts',
@@ -26,9 +11,9 @@ export default {
     '!**/*.(builder|constants|dto|enum|interface|model|mock|module).ts',
     '!**/*.(model|schema).ts',
   ],
-  coverageDirectory: `../reports/html/test-coverage`,
+  coverageDirectory: `../reports/test-coverage`,
   coverageProvider: 'v8',
-  coverageReporters: ['html-spa', 'text', 'json-summary'],
+  coverageReporters: ['html-spa', 'text', 'json'],
   coverageThreshold: {
     global: {
       branches: 85,
@@ -38,7 +23,6 @@ export default {
     },
   },
   maxWorkers: '95%',
-  reporters,
   rootDir: 'src',
   testEnvironment: 'node',
   testMatch: ['**/*spec.ts'],

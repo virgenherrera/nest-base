@@ -33,11 +33,12 @@ jobs:
       - name: Check Code Format
         run: npm run format:check
 
-      - name: run Test with Coverage
-        uses: anuraag016/Jest-Coverage-Diff@master
+      - name: Test with Coverage
+      - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          runCommand: npm run test:cov
-          delta: 0.5
+          test-script: yarn jest
+          test-script: npm run test:cov
+          coverage-file: reports/test-coverage/coverage-final.json
 
       - name: Build Docs
         run: npm run build:api-docs
