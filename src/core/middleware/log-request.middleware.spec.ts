@@ -1,22 +1,28 @@
 import { NextFunction, Request, Response } from 'express';
-import { LogRequest } from './log-request.middleware';
+import { LogRequestMiddleware } from './log-request.middleware';
 
-describe('UT:LogRequestMiddleware', () => {
+jest.mock('@nestjs/common/services/logger.service', () => ({
+  Logger: class {
+    log = jest.fn();
+  },
+}));
+
+describe(`UT:${LogRequestMiddleware.name}`, () => {
   const enum should {
     createInstance = 'should create instance Properly.',
     logRequest = 'Should log Request.',
     logRequestNoAgent = 'Should log Request without agent.',
   }
 
-  let middleware: LogRequest = null;
+  let middleware: LogRequestMiddleware = null;
 
-  beforeEach(() => {
-    middleware = new LogRequest();
+  beforeAll(() => {
+    middleware = new LogRequestMiddleware();
   });
 
   it(should.createInstance, () => {
     expect(middleware).not.toBeNull();
-    expect(middleware).toBeInstanceOf(LogRequest);
+    expect(middleware).toBeInstanceOf(LogRequestMiddleware);
   });
 
   it(should.logRequest, () => {

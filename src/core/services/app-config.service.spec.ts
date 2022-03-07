@@ -15,8 +15,8 @@ describe('UT:AppConfigService', () => {
   };
   let service: AppConfigService = null;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    const testingModule: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
         { provide: ConfigService, useValue: MockConfigModule },
@@ -24,7 +24,7 @@ describe('UT:AppConfigService', () => {
       ],
     }).compile();
 
-    service = module.get(AppConfigService);
+    service = testingModule.get(AppConfigService);
   });
 
   it(should.createInstance, () => {
