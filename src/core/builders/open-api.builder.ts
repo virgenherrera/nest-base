@@ -2,14 +2,12 @@ import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { getPackageMetadata } from '@utils';
-import { exec } from 'child_process';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
-import { promisify } from 'util';
 import { AppConfigService } from '../services';
 import { AppBuilder } from './app-bootstrap.builder';
 
-class OpenApiBuilder {
+export class OpenApiBuilder {
   static async exec() {
     return new OpenApiBuilder().exec();
   }
@@ -20,7 +18,6 @@ class OpenApiBuilder {
   private logger = new Logger(this.constructor.name);
   private rootPath: string;
   private openApiPath: string;
-  private openApiFilePath: string;
   private swaggerFilePath: string;
 
   async exec() {
@@ -29,7 +26,6 @@ class OpenApiBuilder {
     this.setServices();
     this.setFilePaths();
     await this.buildSwaggerJson();
-    await this.buildOpenApiHtml();
   }
 
   private setServices() {
@@ -48,7 +44,6 @@ class OpenApiBuilder {
     }
 
     this.swaggerFilePath = join(this.openApiPath, 'swagger.json');
-    this.openApiFilePath = join(this.openApiPath, 'openApi.html');
   }
 
   private async buildSwaggerJson() {
@@ -77,18 +72,6 @@ class OpenApiBuilder {
 
     this.logger.log(`closing NestJs application`);
     this.app.close();
-  }
-
-  private async buildOpenApiHtml() {
-    const execAsync = promisify(exec);
-    const command = `redoc-cli bundle --output ${this.openApiFilePath} ${this.swaggerFilePath}`;
-    const { stdout, stderr } = await execAsync(command);
-
-    if (stderr) {
-      this.logger.error(stderr);
-    } else {
-      this.logger.log(stdout);
-    }
   }
 }
 

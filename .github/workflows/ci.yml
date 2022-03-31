@@ -31,14 +31,14 @@ jobs:
         run: npm ci
 
       - name: Check Code Format
-        run: npm run format:check
+        run: npm run check:format
 
-      - name: Test with Coverage
-        timeout-minutes: 10
+      - name: Test Coverage
+        timeout-minutes: 15
         run: npm run test:cov
 
-      - name: Build Docs
-        run: npm run build:api-docs
+      # - name: Build Docs
+      #   run: npm run build:api-docs
 
       - name: Build Project
         run: npm run build
