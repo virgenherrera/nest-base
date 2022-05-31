@@ -1,12 +1,12 @@
 {
   "recommendations": [
+    "aaron-bond.better-comments",
+    "DavidAnson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
-    "eamodio.gitlens",
-    "ericliu.coldcode",
+    "EditorConfig.EditorConfig",
     "esbenp.prettier-vscode",
     "kisstkondoros.vscode-codemetrics",
-    "streetsidesoftware.code-spell-checker",
-    "techer.open-in-browser",
+    "redhat.vscode-yaml",
     "usernamehw.errorlens"
   ]
 }
