@@ -2,9 +2,7 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
-import { join } from 'path';
 import * as winston from 'winston';
-import * as DailyRotateFile from 'winston-daily-rotate-file';
 import { getPackageMetadata } from './get-package-metadata.util';
 
 export function CreateWinstonLogger() {
@@ -16,22 +14,8 @@ export function CreateWinstonLogger() {
           nestWinstonModuleUtilities.format.nestLike(name),
         ),
       }),
-      createDailyRotateFile(name),
     ],
   });
 
   return logger;
-}
-
-function createDailyRotateFile(name: string) {
-  const transport = new DailyRotateFile({
-    filename: `${name}-%DATE%.log`,
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '30m',
-    maxFiles: '30d',
-    dirname: join(process.cwd(), '/logs'),
-  });
-
-  return transport;
 }
