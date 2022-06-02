@@ -15,7 +15,11 @@
   "eslint.options": {
     "overrideConfigFile": ".eslintrc.yml"
   },
-  "eslint.validate": ["json", "javascript", "typescript"],
+  "eslint.validate": [
+    "json",
+    "javascript",
+    "typescript"
+  ],
   "git.autofetch": true,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enabled": true,
@@ -42,5 +46,6 @@
     "signin",
     "signup",
     "typeorm"
-  ]
+  ],
+  "editor.minimap.enabled": false
 }

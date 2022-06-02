@@ -8,7 +8,7 @@ export default {
   collectCoverageFrom: [
     '**/*.ts',
     '!**/(index|main).ts',
-    '!**/*.(builder|constants|dto|enum|interface|model|mock|module).ts',
+    '!**/*.(builder|dto|enum|interface|mock|module).ts',
     '!**/*.(model|schema).ts',
   ],
   coverageDirectory: `../reports/test-coverage`,
