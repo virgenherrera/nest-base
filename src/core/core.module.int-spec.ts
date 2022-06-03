@@ -1,23 +1,13 @@
-import { INestApplication, Provider } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { NestApplication } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supertest from 'supertest';
-import { MockLoggerProvider } from '../utils/testing';
 import { CoreModule } from './core.module';
-import { CoreRoute, Environment } from './enums';
-import { AppConfigService } from './services';
-
-const mockAppConfigService = {
-  environment: Environment.test,
-  port: 0,
-  openApiPath: 'dist/fake-path/',
-  get: jest.fn(),
-};
-
-export const MockAppConfigService: Provider = {
-  provide: AppConfigService,
-  useValue: mockAppConfigService,
-};
+import { CoreRoute } from './enums';
+import {
+  MockEnvConfigProvider,
+  MockLoggerProvider,
+} from './services/__mocks__';
 
 describe(`Integration ${CoreModule.name}`, () => {
   const enum should {
@@ -32,8 +22,8 @@ describe(`Integration ${CoreModule.name}`, () => {
       imports: [CoreModule],
       providers: [MockLoggerProvider],
     })
-      .overrideProvider(MockAppConfigService.provide)
-      .useValue(MockAppConfigService.useValue)
+      .overrideProvider(MockEnvConfigProvider.provide)
+      .useValue(MockEnvConfigProvider.useValue)
       .compile();
 
     app = testingModule.createNestApplication();
@@ -49,13 +39,14 @@ describe(`Integration ${CoreModule.name}`, () => {
     const { status, body } = await supertest(app.getHttpServer()).get(
       CoreRoute.health,
     );
-
-    expect(status).toBe(200);
-    expect(body).toMatchObject({
+    const bodyMatcher = {
       cpuUsage: expect.any(String),
       memoryUsage: expect.any(String),
       uptime: expect.any(String),
       uptimeSince: expect.any(String),
-    });
+    };
+
+    expect(status).toBe(200);
+    expect(body).toMatchObject(bodyMatcher);
   });
 });

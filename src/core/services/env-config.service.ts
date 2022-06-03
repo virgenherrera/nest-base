@@ -3,8 +3,9 @@ import { ConfigService, NoInferType } from '@nestjs/config';
 import { Environment } from '../enums/environment.enum';
 
 @Injectable()
-export class AppConfigService {
+export class EnvConfigService {
   environment: Environment;
+
   constructor(private configService: ConfigService) {
     this.ensureEnvironment();
   }

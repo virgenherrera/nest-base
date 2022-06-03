@@ -8,13 +8,13 @@ env:
 
 parser: "@typescript-eslint/parser"
 
+plugins:
+  - "@typescript-eslint/eslint-plugin"
+
 parserOptions:
   project: tsconfig.json
   tsconfigRootDir: "./"
   sourceType: module
-
-plugins:
-  - "@typescript-eslint/eslint-plugin"
 
 extends:
   - plugin:@typescript-eslint/recommended

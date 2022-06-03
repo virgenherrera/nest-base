@@ -8,6 +8,7 @@
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
   "emmet.triggerExpansionOnTab": true,
   "errorLens.delay": 3000,
   "errorLens.messageTemplate": "$severity: $message",
@@ -46,6 +47,5 @@
     "signin",
     "signup",
     "typeorm"
-  ],
-  "editor.minimap.enabled": false
+  ]
 }

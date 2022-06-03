@@ -1,35 +1,36 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Environment } from '../enums';
-import { AppConfigService } from './app-config.service';
+import { EnvConfigService } from './env-config.service';
 
-describe('UT:AppConfigService', () => {
+describe(`UT:${EnvConfigService.name}`, () => {
   const enum should {
     createInstance = 'create instance Properly and set environment to Default.',
     getPort = `Should getPort provided in NODE_ENV.`,
     getOpenApi = `Should getOpenApi provided in NODE_ENV.`,
     getDefaultOpenApi = `Should default value for getOpenApi when not provided in NODE_ENV.`,
   }
+
   const MockConfigModule = {
     get: jest.fn(),
   };
-  let service: AppConfigService = null;
+  const configServiceProvider = {
+    provide: ConfigService,
+    useValue: MockConfigModule,
+  };
+  let service: EnvConfigService = null;
 
-  beforeAll(async () => {
-    const testingModule: TestingModule = await Test.createTestingModule({
-      imports: [],
-      providers: [
-        { provide: ConfigService, useValue: MockConfigModule },
-        AppConfigService,
-      ],
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [configServiceProvider, EnvConfigService],
     }).compile();
 
-    service = testingModule.get(AppConfigService);
+    service = module.get(EnvConfigService);
   });
 
   it(should.createInstance, () => {
     expect(service).not.toBeNull();
-    expect(service).toBeInstanceOf(AppConfigService);
+    expect(service).toBeInstanceOf(EnvConfigService);
     expect(service.environment).toEqual(Environment.development);
   });
 

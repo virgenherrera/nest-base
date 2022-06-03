@@ -4,7 +4,7 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { getPackageMetadata } from '@utils';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
-import { AppConfigService } from '../services';
+import { EnvConfigService } from '../services';
 import { AppBuilder } from './app-bootstrap.builder';
 
 export class OpenApiBuilder {
@@ -14,7 +14,7 @@ export class OpenApiBuilder {
 
   private app: NestExpressApplication;
   private swaggerConfig: Omit<OpenAPIObject, 'paths'>;
-  private appConfigService: AppConfigService;
+  private appConfigService: EnvConfigService;
   private logger = new Logger(this.constructor.name);
   private rootPath: string;
   private openApiPath: string;
@@ -29,7 +29,7 @@ export class OpenApiBuilder {
   }
 
   private setServices() {
-    this.appConfigService = this.app.get(AppConfigService);
+    this.appConfigService = this.app.get(EnvConfigService);
   }
 
   private setFilePaths() {

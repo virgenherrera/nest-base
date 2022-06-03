@@ -5,7 +5,7 @@ import { CreateWinstonLogger } from '@utils';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from '../../app.module';
-import { AppConfigService } from '../services';
+import { EnvConfigService } from '../services';
 
 export class AppBuilder {
   static async bootstrap(buildDocs = false) {
@@ -32,7 +32,7 @@ export class AppBuilder {
   }
 
   private async setExecutionContext() {
-    const { port, environment } = this.app.get(AppConfigService);
+    const { port, environment } = this.app.get(EnvConfigService);
 
     this.app.use(helmet());
     this.app.use(compression());

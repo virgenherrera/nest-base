@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MockLoggerProvider } from '../../utils/testing';
 import { SystemHealth } from '../models';
 import { HealthService } from './health.service';
+import { MockLoggerProvider } from './__mocks__';
 
 describe('UT:HealthService', () => {
   const enum should {

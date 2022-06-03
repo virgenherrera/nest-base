@@ -1,2 +1,2 @@
-export * from './app-config.service';
+export * from './env-config.service';
 export * from './health.service';

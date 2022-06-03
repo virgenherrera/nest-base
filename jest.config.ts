@@ -10,6 +10,7 @@ export default {
     '!**/(index|main).ts',
     '!**/*.(builder|dto|enum|interface|mock|module).ts',
     '!**/*.(model|schema).ts',
+    '!**/__mocks__.ts',
   ],
   coverageDirectory: `../reports/test-coverage`,
   coverageProvider: 'v8',
