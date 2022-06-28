@@ -32,8 +32,16 @@ export class DtoValidation implements PipeTransform {
   ) {}
 
   async transform(value: any, { metatype }: ArgumentMetadata) {
-    if (!metatype || this.skipTypes.includes(metatype)) return value;
+    return this.isPrimitiveType(metatype)
+      ? value
+      : this.validate(value, metatype);
+  }
 
+  private isPrimitiveType(metatype: ArgumentMetadata['metatype']) {
+    return !metatype || this.skipTypes.includes(metatype);
+  }
+
+  private async validate(value: any, metatype: ArgumentMetadata['metatype']) {
     const instance = plainToClass(metatype, value, this.classTransformOptions);
     const validationErrors = await validate(instance, this.validatorOptions);
 

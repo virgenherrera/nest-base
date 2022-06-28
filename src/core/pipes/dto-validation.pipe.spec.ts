@@ -4,7 +4,7 @@ import { IsDefined, IsString, ValidateNested } from 'class-validator';
 import { BadRequest } from '../exceptions';
 import { DtoValidation } from './dto-validation.pipe';
 
-describe('UT:DtoValidationPipe', () => {
+describe(`UT:${DtoValidation.name}`, () => {
   const enum should {
     createInstance = 'Should create instance Properly.',
     staticGetter = 'Should get default instance by using static getter.',
@@ -19,6 +19,7 @@ describe('UT:DtoValidationPipe', () => {
     @Type(() => MockDto)
     mockDtos: MockDto[];
   }
+
   class MockDto {
     @IsDefined()
     @IsString()
@@ -28,6 +29,7 @@ describe('UT:DtoValidationPipe', () => {
     @IsString()
     password: string;
   }
+
   let pipe: DtoValidation = null;
 
   beforeAll(() => {

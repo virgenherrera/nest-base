@@ -3,11 +3,12 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
+import { LoggerOptions } from 'winston';
 import { getPackageMetadata } from './get-package-metadata.util';
 
 export function CreateWinstonLogger() {
   const { name } = getPackageMetadata();
-  const logger = WinstonModule.createLogger({
+  const options: LoggerOptions = {
     transports: [
       new winston.transports.Console({
         format: winston.format.combine(
@@ -15,7 +16,7 @@ export function CreateWinstonLogger() {
         ),
       }),
     ],
-  });
+  };
 
-  return logger;
+  return WinstonModule.createLogger(options);
 }
