@@ -50,7 +50,7 @@
     "winston": "^3.8.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.2.8",
+    "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^8.0.11",
     "@nestjs/testing": "^8.4.6",
     "@types/bcryptjs": "^2.4.2",
