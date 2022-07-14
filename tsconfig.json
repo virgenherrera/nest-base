@@ -16,10 +16,6 @@
     "noUnusedParameters": true,
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@core/*": ["src/core/*"],
-      "@utils": ["src/utils"]
-    }
+    "noFallthroughCasesInSwitch": true
   }
 }

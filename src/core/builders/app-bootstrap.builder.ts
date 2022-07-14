@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { CreateWinstonLogger } from '@utils';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from '../../app.module';
+import { CreateWinstonLogger } from '../../utils';
 import { EnvConfigService } from '../services';
 
 export class AppBuilder {

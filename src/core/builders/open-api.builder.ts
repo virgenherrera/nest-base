@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
-import { getPackageMetadata } from '@utils';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
+import { getPackageMetadata } from '../../utils';
 import { EnvConfigService } from '../services';
 import { AppBuilder } from './app-bootstrap.builder';
 
