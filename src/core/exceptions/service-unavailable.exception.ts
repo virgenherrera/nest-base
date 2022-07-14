@@ -1,15 +1,15 @@
-import { BadRequestException } from '@nestjs/common';
+import { ServiceUnavailableException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BadRequest extends BadRequestException {
+export class ServiceUnavailable extends ServiceUnavailableException {
   @ApiProperty() readonly code: string;
   @ApiProperty() readonly message: string;
   @ApiProperty() readonly details: string[];
 
   constructor(...details: string[]) {
     super({
-      code: 'bad-request-error',
-      message: 'Bad Request',
+      code: 'unavailable-service-error',
+      message: 'Unavailable service',
       details: [...details],
     });
   }

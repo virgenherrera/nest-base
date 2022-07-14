@@ -8,7 +8,7 @@ export default {
   collectCoverageFrom: [
     '**/*.ts',
     '!**/(index|main).ts',
-    '!**/*.(builder|dto|enum|interface|mock|module).ts',
+    '!**/*.(builder|dto|enum|exception|interface|mock|module).ts',
     '!**/*.(model|schema).ts',
     '!**/__mocks__.ts',
   ],
