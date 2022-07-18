@@ -32,10 +32,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@nestjs/common": "^9.0.3",
+    "@nestjs/common": "^9.0.4",
     "@nestjs/config": "^2.2.0",
-    "@nestjs/core": "^9.0.3",
-    "@nestjs/platform-express": "^9.0.3",
+    "@nestjs/core": "^9.0.4",
+    "@nestjs/platform-express": "^9.0.4",
     "@nestjs/swagger": "^6.0.4",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.1",
-    "@nestjs/testing": "^9.0.3",
+    "@nestjs/testing": "^9.0.4",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",
     "@types/jest": "^28.1.6",
