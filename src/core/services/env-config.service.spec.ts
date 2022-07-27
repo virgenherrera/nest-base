@@ -6,13 +6,18 @@ import { EnvConfigService } from './env-config.service';
 describe(`UT:${EnvConfigService.name}`, () => {
   const enum should {
     createInstance = 'create instance Properly and set environment to Default.',
-    getPort = `Should getPort provided in NODE_ENV.`,
     getOpenApi = `Should getOpenApi provided in NODE_ENV.`,
     getDefaultOpenApi = `Should default value for getOpenApi when not provided in NODE_ENV.`,
   }
 
+  const mockNodeEnv = {
+    NODE_ENV: Environment.test,
+    APP_PORT: '3333',
+  };
+  const mockGetImplementation = (envKey: string) => mockNodeEnv[envKey];
+
   const MockConfigModule = {
-    get: jest.fn(),
+    get: jest.fn().mockImplementation(mockGetImplementation),
   };
   const configServiceProvider = {
     provide: ConfigService,
@@ -31,19 +36,10 @@ describe(`UT:${EnvConfigService.name}`, () => {
   it(should.createInstance, () => {
     expect(service).not.toBeNull();
     expect(service).toBeInstanceOf(EnvConfigService);
-    expect(service.environment).toEqual(Environment.development);
-  });
-
-  it(should.getPort, () => {
-    const mockPORT = '3333';
-    let port: number = null;
-
-    MockConfigModule.get = jest.fn().mockReturnValue(mockPORT);
-
-    expect(() => (port = service.port)).not.toThrow();
-    expect(port).not.toBeNull();
-    expect(port).not.toBeNaN();
-    expect(port).toEqual(3333);
+    expect(service.environment).toEqual(mockNodeEnv.NODE_ENV);
+    expect(service.port).not.toBeNull();
+    expect(service.port).not.toBeNaN();
+    expect(service.port).toBe(Number(mockNodeEnv.APP_PORT));
   });
 
   it(should.getOpenApi, () => {

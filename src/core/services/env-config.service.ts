@@ -5,9 +5,14 @@ import { Environment } from '../enums/environment.enum';
 @Injectable()
 export class EnvConfigService {
   environment: Environment;
+  port = 3000;
 
   constructor(private configService: ConfigService) {
     this.ensureEnvironment();
+    this.ensurePort();
+
+    Object.freeze(this);
+    Object.seal(this);
   }
 
   private ensureEnvironment() {
@@ -17,10 +22,12 @@ export class EnvConfigService {
     this.environment = Environment[valueKey];
   }
 
-  get port() {
-    const APP_PORT = this.get<string>('APP_PORT', '0');
+  private ensurePort() {
+    const APP_PORT = this.get<string>('APP_PORT');
 
-    return Number(APP_PORT);
+    if (APP_PORT) {
+      this.port = Number(APP_PORT);
+    }
   }
 
   get openApiPath() {
