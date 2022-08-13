@@ -30,15 +30,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check Code Format
-        run: npm run check:format
+      - name: (Check:) eslint
+        run: npm run check:eslint
 
-      - name: Test Coverage
+      - name: (Check:)  prettier
+        run: npm run check:prettier
+
+      - name: (Test:) Unit
         timeout-minutes: 15
-        run: npm run test:cov
+        run: npm run test:unit
 
-      # - name: Build Docs
-      #   run: npm run build:api-docs
+      - name: (Test:) e2e
+        timeout-minutes: 15
+        run: npm run test:e2e
 
-      - name: Build Project
-        run: npm run build
+      - name: (Build:) Docs
+        run: npm run build:api-docs
+
+      - name: (Build:) Project
+        run: npm run build:app

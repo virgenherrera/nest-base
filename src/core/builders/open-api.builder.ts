@@ -1,7 +1,7 @@
-import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
+import { writeFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { getPackageMetadata } from '../../utils';
 import { EnvConfigService } from '../services';
@@ -15,7 +15,6 @@ export class OpenApiBuilder {
   private app: NestExpressApplication;
   private swaggerConfig: Omit<OpenAPIObject, 'paths'>;
   private appConfigService: EnvConfigService;
-  private logger = new Logger(this.constructor.name);
   private rootPath: string;
   private openApiPath: string;
   private swaggerFilePath: string;
@@ -28,12 +27,16 @@ export class OpenApiBuilder {
     await this.buildSwaggerJson();
   }
 
+  private logger(messages: any) {
+    process.stdout.write('> ' + messages + '\n');
+  }
+
   private setServices() {
     this.appConfigService = this.app.get(EnvConfigService);
   }
 
   private setFilePaths() {
-    this.logger.log(`Setting file paths`);
+    this.logger(`Setting file paths`);
 
     this.rootPath = resolve(process.cwd());
     const { openApiPath } = this.appConfigService;
@@ -47,7 +50,7 @@ export class OpenApiBuilder {
   }
 
   private async buildSwaggerJson() {
-    this.logger.log(`building Swagger.json file`);
+    this.logger(`building Swagger.json file`);
 
     const packageJson = getPackageMetadata();
     this.swaggerConfig = new DocumentBuilder()
@@ -62,15 +65,13 @@ export class OpenApiBuilder {
     );
     const swaggerFileContent = JSON.stringify(swaggerDocument, null, 2);
 
-    this.logger.log(
-      `Writing OpenAPI file in path: ${this.swaggerFilePath}`,
-      OpenApiBuilder.name,
-    );
-    writeFileSync(this.swaggerFilePath, swaggerFileContent, {
+    this.logger(`Writing OpenAPI file in path: ${this.swaggerFilePath}`);
+
+    await writeFile(this.swaggerFilePath, swaggerFileContent, {
       encoding: 'utf8',
     });
 
-    this.logger.log(`closing NestJs application`);
+    this.logger(`Closing NestJs application` + '\n');
     this.app.close();
   }
 }

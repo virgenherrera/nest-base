@@ -1,10 +1,9 @@
-import { Logger } from '@nestjs/common';
+import { Logger, NestApplicationOptions } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from '../../app.module';
-import { CreateWinstonLogger } from '../../utils';
 import { EnvConfigService } from '../services';
 
 export class AppBuilder {
@@ -17,18 +16,32 @@ export class AppBuilder {
   }
 
   private app: NestExpressApplication;
-  private prefix = 'api/v1';
   private logger = new Logger(this.constructor.name);
+  private options: NestApplicationOptions = { logger: [] };
+  private prefix = 'api/v1';
 
   async bootstrap(buildDocs: boolean) {
-    this.app = await NestFactory.create<NestExpressApplication>(AppModule, {
-      logger: !buildDocs ? CreateWinstonLogger() : undefined,
-    });
+    await this.setLogger(buildDocs);
+
+    this.app = await NestFactory.create<NestExpressApplication>(
+      AppModule,
+      this.options,
+    );
 
     this.logger.log(`setting app prefix: ${this.prefix}`, AppBuilder.name);
     this.app.setGlobalPrefix(this.prefix);
 
     if (!buildDocs) this.setExecutionContext();
+  }
+
+  private async setLogger(buildDocs: boolean) {
+    if (!buildDocs) {
+      const { CreateWinstonLogger } = await import('../../utils');
+
+      const logger = CreateWinstonLogger();
+
+      this.options = { logger };
+    }
   }
 
   private async setExecutionContext() {

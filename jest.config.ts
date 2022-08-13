@@ -3,8 +3,10 @@
  * https://jestjs.io/docs/en/configuration.html
 
 */
+import type { Config } from '@jest/types';
 
-export default {
+const options: Config.InitialOptions = {
+  collectCoverage: true,
   collectCoverageFrom: [
     '**/*.ts',
     '!**/(index|main).ts',
@@ -12,7 +14,7 @@ export default {
     '!**/*.(model|schema).ts',
     '!**/__mocks__.ts',
   ],
-  coverageDirectory: `../reports/test-coverage`,
+  coverageDirectory: `../coverage/unit-test`,
   coverageProvider: 'v8',
   coverageReporters: ['html-spa', 'text'],
   coverageThreshold: {
@@ -23,9 +25,12 @@ export default {
       statements: 85,
     },
   },
-  maxWorkers: '95%',
+  maxWorkers: '50%',
   rootDir: 'src',
   testEnvironment: 'node',
   testMatch: ['**/*spec.ts'],
   transform: { '^.+\\.(t)s$': 'ts-jest' },
+  verbose: true,
 };
+
+export default options;
