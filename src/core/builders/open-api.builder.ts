@@ -5,7 +5,7 @@ import { writeFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { getPackageMetadata } from '../../utils';
 import { EnvConfigService } from '../services';
-import { AppBuilder } from './app-bootstrap.builder';
+import { AppBuilder } from './app.builder';
 
 export class OpenApiBuilder {
   static async exec() {
