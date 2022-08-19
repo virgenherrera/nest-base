@@ -6,7 +6,7 @@ export class SystemHealth {
   @ApiProperty() uptime: string;
   @ApiProperty() uptimeSince: string;
 
-  constructor({ cpuUsage, memoryUsage, uptime, uptimeSince }: SystemHealth) {
-    Object.assign(this, { cpuUsage, memoryUsage, uptime, uptimeSince });
+  constructor(args: Partial<SystemHealth>) {
+    Object.assign(this, args);
   }
 }

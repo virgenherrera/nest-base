@@ -1,14 +1,25 @@
 import type { Config } from '@jest/types';
-import baseOptions from './jest.config';
+import { TestConfig } from './jest.config';
 
-const options: Config.InitialOptions = {
-  maxWorkers: baseOptions.maxWorkers,
-  reporters: ['default', 'summary', 'github-actions'],
-  rootDir: './test/groups',
-  testEnvironment: baseOptions.testEnvironment,
-  testRegex: '.e2e-spec.ts$',
-  transform: baseOptions.transform,
-  verbose: baseOptions.verbose,
-};
+class E2EConfig extends TestConfig implements Config.InitialOptions {
+  collectCoverageFrom = [
+    ...this.collectCoverageFrom,
+    '!**/env-config.service.ts',
+    '!**/*.(config|spec).ts',
+    '!(dist|test)/**',
+    '!src/utils/**',
+  ];
+  coverageDirectory = `coverage/e2e`;
+  reporters = ['default', 'summary', 'github-actions'];
+  rootDir = './';
+  testPathIgnorePatterns = [
+    '/coverage/',
+    '/dist/',
+    '/node_modules/',
+    '/public/',
+    '/src/',
+  ];
+  testRegex: '.e2e-spec.ts$';
+}
 
-export default options;
+export default new E2EConfig();

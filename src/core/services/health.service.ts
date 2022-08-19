@@ -2,20 +2,23 @@ import { Injectable, Logger } from '@nestjs/common';
 import { format, formatDistanceToNowStrict, subSeconds } from 'date-fns';
 import { cpus as getCpuInfo } from 'os';
 import { promisify } from 'util';
+import { byteLengthHumanize } from '../../utils';
+import { GetHealthQueryDto } from '../dto';
 import { SystemHealth } from '../models';
 
 @Injectable()
 export class HealthService {
   private logger = new Logger(this.constructor.name);
 
-  async getHealth() {
+  async getHealth(dto: GetHealthQueryDto) {
     this.logger.log(`getting service Health`);
 
-    const { uptime, uptimeSince } = this.getUptimes();
-    const memoryUsage = this.getMemoryUsage();
-    const cpuUsage = await this.getCpuUsage();
+    const args: Partial<SystemHealth> = { ...this.getUptimes() };
 
-    return new SystemHealth({ cpuUsage, memoryUsage, uptime, uptimeSince });
+    if (dto.cpuUsage) args.cpuUsage = await this.getCpuUsage();
+    if (dto.memoryUsage) args.memoryUsage = this.getMemoryUsage();
+
+    return new SystemHealth(args);
   }
 
   private getUptimes() {
@@ -28,11 +31,8 @@ export class HealthService {
 
   private getMemoryUsage() {
     const { heapUsed } = process.memoryUsage();
-    const usedInKB = heapUsed / 1024;
-    const usedInMB = usedInKB / 1024;
-    const rounded = Math.round(usedInMB * 100) / 100;
 
-    return `${rounded}MB`;
+    return byteLengthHumanize(heapUsed);
   }
 
   private async getCpuUsage() {

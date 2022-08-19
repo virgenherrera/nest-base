@@ -5,32 +5,30 @@
 */
 import type { Config } from '@jest/types';
 
-const options: Config.InitialOptions = {
-  collectCoverage: true,
-  collectCoverageFrom: [
+export class TestConfig implements Config.InitialOptions {
+  collectCoverage = true;
+  collectCoverageFrom = [
     '**/*.ts',
     '!**/(index|main).ts',
     '!**/*.(builder|dto|enum|exception|interface|mock|module).ts',
     '!**/*.(model|schema).ts',
     '!**/__mocks__.ts',
-  ],
-  coverageDirectory: `../coverage/unit-test`,
-  coverageProvider: 'v8',
-  coverageReporters: ['html-spa', 'text'],
-  coverageThreshold: {
-    global: {
-      branches: 85,
-      functions: 85,
-      lines: 85,
-      statements: 85,
-    },
-  },
-  maxWorkers: '50%',
-  rootDir: 'src',
-  testEnvironment: 'node',
-  testMatch: ['**/*spec.ts'],
-  transform: { '^.+\\.(t)s$': 'ts-jest' },
-  verbose: true,
-};
+  ];
+  coverageDirectory = `../coverage/unit`;
+  coverageProvider = 'v8' as Config.InitialOptions['coverageProvider'];
+  coverageReporters = [
+    'text',
+    'html-spa',
+  ] as Config.InitialOptions['coverageReporters'];
+  coverageThreshold = {
+    global: { branches: 85, functions: 85, lines: 85, statements: 85 },
+  };
+  maxWorkers = '50%';
+  rootDir = 'src';
+  testEnvironment = 'node';
+  testRegex = '.spec.ts$';
+  transform = { '^.+\\.(t)s$': 'ts-jest' };
+  verbose = false;
+}
 
-export default options;
+export default new TestConfig();

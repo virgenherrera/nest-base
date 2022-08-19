@@ -10,14 +10,14 @@
     "npm": "^8.3.x"
   },
   "scripts": {
-    "test": "npm run local:ci",
+    "test": "run-s -l test:*",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "UT:develop": "jest --watch --maxWorkers=1",
     "UT:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "IT:develop": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
-    "IT:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "e2e:develop": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
+    "e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "build:api-docs": "ts-node -r tsconfig-paths/register src/core/builders/open-api.builder.ts",
     "build:app": "nest build",
     "check:eslint": "eslint \"{src,apps,libs,test}/**/*.ts\"",

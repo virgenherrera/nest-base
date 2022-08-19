@@ -1,1 +1,1 @@
-export * from './get-test-context.util';
+export * from './test-context.util';

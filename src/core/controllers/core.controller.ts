@@ -1,7 +1,9 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { GetHealthDocs } from '../docs/get-health.docs';
+import { GetHealthQueryDto } from '../dto';
 import { CoreRoute } from '../enums';
 import { SystemHealth } from '../models';
+import { DtoValidation } from '../pipes';
 import { HealthService } from '../services';
 
 @Controller()
@@ -12,9 +14,11 @@ export class CoreController {
 
   @Get(CoreRoute.health)
   @GetHealthDocs()
-  async getHealth(): Promise<SystemHealth> {
+  async getHealth(
+    @Query(DtoValidation.pipe) query: GetHealthQueryDto,
+  ): Promise<SystemHealth> {
     this.logger.log(`Getting service Health.`);
 
-    return await this.healthService.getHealth();
+    return await this.healthService.getHealth(query);
   }
 }
