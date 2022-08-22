@@ -19,6 +19,7 @@ export class TestContext {
 
   app: INestApplication = null;
   request: supertest.SuperTest<supertest.Test> = null;
+
   private async initContext() {
     const testingModule = await Test.createTestingModule({
       imports: [AppModule],
