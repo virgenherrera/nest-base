@@ -1,4 +1,4 @@
-import { SystemHealth } from '../../../src/core/models';
+import { SystemHealth } from '../../../src/common/models';
 
 type BaseSystemHealth = Record<
   keyof Pick<SystemHealth, 'uptime' | 'uptimeSince'>,

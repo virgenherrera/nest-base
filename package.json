@@ -18,7 +18,7 @@
     "UT:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "e2e:develop": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
     "e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "build:api-docs": "ts-node -r tsconfig-paths/register src/core/builders/open-api.builder.ts",
+    "build:api-docs": "ts-node -r tsconfig-paths/register src/common/builders/open-api.builder.ts",
     "build:app": "nest build",
     "check:eslint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "check:prettier": "prettier --check \"src/**/*.ts\"",

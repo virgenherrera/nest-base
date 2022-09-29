@@ -1,5 +1,5 @@
 import { NestApplication } from '@nestjs/core';
-import { CoreRoute } from '../../../src/core/enums';
+import { CommonRoute } from '../../../src/common/enums';
 import {
   BaseGetHealthMatcher,
   GetHealthMatcher,
@@ -13,7 +13,7 @@ const enum should {
   getFullHealth = `Should GET basic appHealth including cpuUsage and memoryUsage params.`,
 }
 
-describe(`e2e: (GET)${CoreRoute.health}`, () => {
+describe(`e2e: (GET)${CommonRoute.health}`, () => {
   let testCtx: TestContext = null;
 
   beforeAll(async () => (testCtx = await TestContext.getInstance()));
@@ -27,7 +27,7 @@ describe(`e2e: (GET)${CoreRoute.health}`, () => {
   it(should.throw400, async () => {
     const queryParams = { foo: true, bar: { baz: 'buz' }, arr: [1, 2, 3] };
     const { status, body } = await testCtx.request
-      .get(CoreRoute.health)
+      .get(CommonRoute.health)
       .query(queryParams);
 
     expect(status).toBe(400);
@@ -45,7 +45,7 @@ describe(`e2e: (GET)${CoreRoute.health}`, () => {
   });
 
   it(should.getBaseHealth, async () => {
-    const { status, body } = await testCtx.request.get(CoreRoute.health);
+    const { status, body } = await testCtx.request.get(CommonRoute.health);
 
     expect(status).toBe(200);
     expect(body).toMatchObject(BaseGetHealthMatcher);
@@ -53,7 +53,7 @@ describe(`e2e: (GET)${CoreRoute.health}`, () => {
 
   it(should.getFullHealth, async () => {
     const { status, body } = await testCtx.request
-      .get(CoreRoute.health)
+      .get(CommonRoute.health)
       .query({ cpuUsage: true, memoryUsage: true });
 
     expect(status).toBe(200);

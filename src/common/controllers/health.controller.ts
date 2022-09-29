@@ -1,18 +1,18 @@
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import { GetHealthDocs } from '../docs/get-health.docs';
 import { GetHealthQueryDto } from '../dto';
-import { CoreRoute } from '../enums';
+import { CommonRoute } from '../enums';
 import { SystemHealth } from '../models';
 import { DtoValidation } from '../pipes';
 import { HealthService } from '../services';
 
 @Controller()
-export class CoreController {
+export class HealthController {
   private logger = new Logger(this.constructor.name);
 
   constructor(private healthService: HealthService) {}
 
-  @Get(CoreRoute.health)
+  @Get(CommonRoute.health)
   @GetHealthDocs()
   async getHealth(
     @Query(DtoValidation.pipe) query: GetHealthQueryDto,

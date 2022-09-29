@@ -3,28 +3,28 @@ import {
   mockHealthService,
   MockHealthServiceProvider,
 } from '../services/__mocks__';
-import { CoreController } from './core.controller';
+import { HealthController } from './health.controller';
 
-describe(`UT: ${CoreController.name}`, () => {
+describe(`UT:${HealthController.name}`, () => {
   const enum should {
     init = 'Should be initialized properly.',
     getHealth = 'Should getHealth from HealthService.',
   }
 
-  let controller: CoreController = null;
+  let controller: HealthController = null;
 
   beforeAll(async () => {
     const testingModule = await Test.createTestingModule({
-      controllers: [CoreController],
+      controllers: [HealthController],
       providers: [MockHealthServiceProvider],
     }).compile();
 
-    controller = testingModule.get(CoreController);
+    controller = testingModule.get(HealthController);
   });
 
   it(should.init, async () => {
     expect(controller).not.toBeNull();
-    expect(controller).toBeInstanceOf(CoreController);
+    expect(controller).toBeInstanceOf(HealthController);
   });
 
   it(should.getHealth, async () => {

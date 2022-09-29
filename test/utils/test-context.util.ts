@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as supertest from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { MockEnvConfigProvider } from '../../src/core/services/__mocks__';
+import { MockEnvConfigProvider } from '../../src/common/services/__mocks__';
 
 export class TestContext {
   private static instance: TestContext = null;

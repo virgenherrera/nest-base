@@ -1,7 +1,7 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CoreModule } from './core/core.module';
-import { LogRequestMiddleware } from './core/middleware';
+import { CommonModule } from './common/common.module';
+import { LogRequestMiddleware } from './common/middleware';
 
 @Module({
   imports: [
@@ -9,7 +9,7 @@ import { LogRequestMiddleware } from './core/middleware';
       cache: true,
       isGlobal: true,
     }),
-    CoreModule,
+    CommonModule,
   ],
   providers: [Logger],
 })
