@@ -31,7 +31,7 @@ export class EnvConfigService {
   }
 
   get openApiPath() {
-    const defaultValue = 'dist/openApi-docs/';
+    const defaultValue = 'api-docs/';
     const value = this.get<string>('APP_OPEN_API_PATH');
 
     return !value ? defaultValue : value;
