@@ -19,7 +19,7 @@
     "e2e:develop": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
     "e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "build:api-docs": "ts-node -r tsconfig-paths/register src/common/builders/open-api.builder.ts",
-    "build:api-docs-ui": "npx redoc-cli bundle -o api-docs/index.html api-docs/swagger.json",
+    "build:api-docs-ui": "npx redoc-cli build -o api-docs/index.html api-docs/swagger.json",
     "build:app": "nest build",
     "check:eslint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "check:prettier": "prettier --check \"src/**/*.ts\"",
