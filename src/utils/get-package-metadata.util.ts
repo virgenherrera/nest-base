@@ -1,13 +1,7 @@
-import { readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { readJsonFile } from './read-json-file';
 
 export function getPackageMetadata() {
-  const path = resolve(join(process.cwd(), './package.json'));
-  const stringFileContent = readFileSync(path, {
-    encoding: 'utf8',
-    flag: 'r',
-  });
-  const packageJson = JSON.parse(stringFileContent);
+  const packageJson = readJsonFile(process.cwd(), './package.json');
   const name: string = packageJson.name;
   const version: string = packageJson.version;
   const description: string = packageJson.description;

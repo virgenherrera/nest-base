@@ -3,6 +3,7 @@
     "aaron-bond.better-comments",
     "DavidAnson.vscode-markdownlint",
     "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
     "EditorConfig.EditorConfig",
     "esbenp.prettier-vscode",
     "kisstkondoros.vscode-codemetrics",

@@ -10,7 +10,7 @@ export const BaseConfig: Config.InitialOptions = {
   collectCoverageFrom: [
     '**/*.ts',
     '!**/(index|main).ts',
-    '!**/*.(builder|dto|enum|exception|interface|mock|module).ts',
+    '!**/*.(builder|dto|doc|enum|exception|import|interface|mock|module).ts',
     '!**/*.(model|schema).ts',
     '!**/__mocks__.ts',
   ],
@@ -25,7 +25,7 @@ export const BaseConfig: Config.InitialOptions = {
   rootDir: 'src',
   testEnvironment: 'node',
   testRegex: '.spec.ts$',
-  transform: { '^.+\\.(t)s$': 'ts-jest' },
+  transform: { '^.+\\.ts$': 'ts-jest' },
   verbose: false,
 };
 
