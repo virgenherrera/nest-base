@@ -1,3 +1,3 @@
-import { AppBuilder } from './common/builders/app.builder';
+import { HttpAppBuilder } from './common/builders';
 
-AppBuilder.bootstrap();
+HttpAppBuilder.build();

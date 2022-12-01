@@ -9,7 +9,7 @@ export const BaseConfig: Config.InitialOptions = {
   collectCoverage: true,
   collectCoverageFrom: [
     '**/*.ts',
-    '!**/(index|main).ts',
+    '!**/(index|main|openApi).ts',
     '!**/*.(builder|dto|doc|enum|exception|import|interface|mock|module).ts',
     '!**/*.(model|schema).ts',
     '!**/__mocks__.ts',

@@ -1,6 +1,6 @@
 {
   "name": "nest-base",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "",
   "license": "MIT",
   "keywords": [],
@@ -18,7 +18,7 @@
     "UT:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "e2e:develop": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
     "e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "build:api-docs": "ts-node -r tsconfig-paths/register src/common/builders/open-api.builder.ts",
+    "build:api-docs": "ts-node -r tsconfig-paths/register src/openApi.ts",
     "build:api-docs-ui": "npx redoc-cli build -o api-docs/index.html api-docs/swagger.json",
     "build:app": "nest build",
     "check:eslint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
@@ -55,7 +55,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.14",
     "@types/jest": "^29.2.3",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.10",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
@@ -67,9 +67,9 @@
     "prettier": "^2.8.0",
     "supertest": "^6.3.1",
     "ts-jest": "^29.0.3",
-    "ts-loader": "^9.4.1",
+    "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.1.0",
+    "tsconfig-paths": "^4.1.1",
     "typescript": "^4.9.3"
   }
 }
