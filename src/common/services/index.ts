@@ -1,2 +1,2 @@
-export * from './env-config.service';
+export * from './environment.service';
 export * from './health.service';

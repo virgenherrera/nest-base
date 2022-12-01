@@ -1,7 +1,8 @@
-import { Logger, NestApplicationOptions, VersioningType } from '@nestjs/common';
+import { NestApplicationOptions, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { EnvConfigService } from '../services';
+import { Logger } from '../decorators';
+import { EnvironmentService } from '../services';
 
 export class HttpAppBuilder {
   private static _app: NestExpressApplication = null;
@@ -18,7 +19,8 @@ export class HttpAppBuilder {
     return HttpAppBuilder.app;
   }
 
-  private logger = new Logger(this.constructor.name);
+  @Logger() private logger: Logger;
+
   private options: NestApplicationOptions = { logger: [] };
   private prefix = 'api';
 
@@ -78,7 +80,7 @@ export class HttpAppBuilder {
   private async setAppPort() {
     if (this.buildDocs) return;
 
-    const { port, environment } = HttpAppBuilder.app.get(EnvConfigService);
+    const { port, environment } = HttpAppBuilder.app.get(EnvironmentService);
 
     await HttpAppBuilder.app.listen(port);
 

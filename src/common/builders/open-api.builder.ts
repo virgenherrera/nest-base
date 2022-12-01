@@ -3,7 +3,7 @@ import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { getPackageMetadata } from '../../utils';
-import { EnvConfigService } from '../services';
+import { EnvironmentService } from '../services';
 import { HttpAppBuilder } from './http-app.builder';
 
 export class OpenApiBuilder {
@@ -12,7 +12,7 @@ export class OpenApiBuilder {
   }
 
   private swaggerConfig: Omit<OpenAPIObject, 'paths'>;
-  private appConfigService: EnvConfigService;
+  private appEnvironmentService: EnvironmentService;
   private rootPath: string;
   private openApiPath: string;
   private swaggerFilePath: string;
@@ -31,14 +31,14 @@ export class OpenApiBuilder {
   }
 
   private setServices() {
-    this.appConfigService = HttpAppBuilder.app.get(EnvConfigService);
+    this.appEnvironmentService = HttpAppBuilder.app.get(EnvironmentService);
   }
 
   private setFilePaths() {
     this.logger(`Setting file paths`);
 
     this.rootPath = resolve(process.cwd());
-    const { openApiPath } = this.appConfigService;
+    const { openApiPath } = this.appEnvironmentService;
     this.openApiPath = join(this.rootPath, openApiPath);
 
     if (!existsSync(this.openApiPath)) {

@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as supertest from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { MockEnvConfigProvider } from '../../src/common/services/__mocks__';
+import { MockEnvironmentProvider } from '../../src/common/services/__mocks__';
 
 export class TestContext {
   private static instance: TestContext = null;
@@ -24,8 +24,8 @@ export class TestContext {
     const testingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider(MockEnvConfigProvider.provide)
-      .useValue(MockEnvConfigProvider.useValue)
+      .overrideProvider(MockEnvironmentProvider.provide)
+      .useValue(MockEnvironmentProvider.useValue)
       .compile();
 
     this.app = testingModule.createNestApplication();

@@ -1,6 +1,6 @@
 import { Logger, ValueProvider } from '@nestjs/common';
 import { Environment } from '../enums';
-import { EnvConfigService } from './env-config.service';
+import { EnvironmentService } from './environment.service';
 import { HealthService } from './health.service';
 
 export const mockLogger: Record<keyof Logger, any> = {
@@ -17,16 +17,15 @@ export const MockLoggerProvider: ValueProvider = {
   useValue: mockLogger,
 };
 
-export const mockEnvConfigService: Record<keyof EnvConfigService, any> = {
+export const mockEnvironmentService: Record<keyof EnvironmentService, any> = {
   environment: Environment.test,
   port: 0,
   openApiPath: 'dist/fake-path/',
-  get: jest.fn(),
 };
 
-export const MockEnvConfigProvider: ValueProvider = {
-  provide: EnvConfigService,
-  useValue: mockEnvConfigService,
+export const MockEnvironmentProvider: ValueProvider = {
+  provide: EnvironmentService,
+  useValue: mockEnvironmentService,
 };
 
 export const mockHealthService: Record<keyof HealthService, any> = {

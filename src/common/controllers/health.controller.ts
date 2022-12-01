@@ -1,4 +1,5 @@
-import { Controller, Get, Logger, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+import { Logger } from '../decorators';
 import { GetHealthDocs } from '../docs/get-health.docs';
 import { GetHealthQueryDto } from '../dto';
 import { CommonRoute } from '../enums';
@@ -8,7 +9,7 @@ import { HealthService } from '../services';
 
 @Controller()
 export class HealthController {
-  private logger = new Logger(this.constructor.name);
+  @Logger() private logger: Logger;
 
   constructor(private healthService: HealthService) {}
 

@@ -1,14 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { format, formatDistanceToNowStrict, subSeconds } from 'date-fns';
 import { cpus as getCpuInfo } from 'os';
 import { promisify } from 'util';
 import { byteLengthHumanize } from '../../utils';
+import { Logger } from '../decorators';
 import { GetHealthQueryDto } from '../dto';
 import { SystemHealth } from '../models';
 
 @Injectable()
 export class HealthService {
-  private logger = new Logger(this.constructor.name);
+  @Logger() private logger: Logger;
 
   async getHealth(dto: GetHealthQueryDto) {
     this.logger.log(`getting service Health`);
