@@ -1,6 +1,6 @@
 {
   "name": "nest-base",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "",
   "license": "MIT",
   "keywords": [],
@@ -8,7 +8,7 @@
     "Hugo Virgen (https://github.com/virgenherrera)"
   ],
   "engines": {
-    "node": ">=16.10.0 <17",
+    "node": ">=16.10.0",
     "npm": ">=7.24.0"
   },
   "scripts": {
