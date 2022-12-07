@@ -1,13 +1,15 @@
 {
   "name": "nest-base",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "license": "MIT",
   "keywords": [],
-  "author": "",
+  "contributors": [
+    "Hugo Virgen (https://github.com/virgenherrera)"
+  ],
   "engines": {
-    "node": "^16.10.x",
-    "npm": "^8.3.x"
+    "node": ">=16.10.0 <17",
+    "npm": ">=7.24.0"
   },
   "scripts": {
     "test": "run-s -l test:*",
