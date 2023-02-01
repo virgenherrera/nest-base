@@ -2,6 +2,7 @@ import { NestApplicationOptions, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from '../decorators';
+import { Environment } from '../enums';
 import { EnvironmentService } from '../services';
 
 export class HttpAppBuilder {
@@ -21,21 +22,24 @@ export class HttpAppBuilder {
 
   @Logger() private logger: Logger;
 
+  private environmentService: EnvironmentService;
   private options: NestApplicationOptions = { logger: [] };
   private prefix = 'api';
 
   constructor(private buildDocs: boolean) {}
 
   async bootstrap() {
-    await this.setLogger();
+    await this.setNestAppOptions();
     await this.initApp();
+    await this.setEnvironment();
     await this.setGlobalPrefix();
     await this.setVersioning();
     await this.setAppMiddleware();
+    await this.setSwaggerDocs();
     await this.setAppPort();
   }
 
-  private async setLogger() {
+  private async setNestAppOptions() {
     if (this.buildDocs) return;
 
     const { CreateWinstonLogger } = await import('../../utils');
@@ -52,6 +56,11 @@ export class HttpAppBuilder {
       AppModule,
       this.options,
     );
+  }
+
+  private setEnvironment() {
+    this.logger.log(`getting Environment`);
+    this.environmentService = HttpAppBuilder.app.get(EnvironmentService);
   }
 
   private async setGlobalPrefix() {
@@ -77,10 +86,29 @@ export class HttpAppBuilder {
     HttpAppBuilder.app.use(compression());
   }
 
+  private async setSwaggerDocs() {
+    const { port, environment } = this.environmentService;
+    const skipSwagger = this.buildDocs || environment == Environment.production;
+
+    if (skipSwagger) return;
+
+    const { OpenApiBuilder } = await import('./open-api.builder');
+    const getSwaggerDocument = OpenApiBuilder.swaggerFactory(this.logger);
+    const swaggerDocument = getSwaggerDocument();
+    const { SwaggerModule } = await import('@nestjs/swagger');
+
+    this.logger.log(`Mounting SwaggerDocs in: ${this.prefix}/`);
+    SwaggerModule.setup(this.prefix, HttpAppBuilder.app, swaggerDocument);
+
+    this.logger.log(
+      `SwaggerDocs available in: http://localhost:${port}/${this.prefix}/`,
+    );
+  }
+
   private async setAppPort() {
     if (this.buildDocs) return;
 
-    const { port, environment } = HttpAppBuilder.app.get(EnvironmentService);
+    const { port, environment } = this.environmentService;
 
     await HttpAppBuilder.app.listen(port);
 
