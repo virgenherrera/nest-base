@@ -7,7 +7,7 @@
     "source.fixAll.eslint": true
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.minimap.enabled": false,
   "emmet.triggerExpansionOnTab": true,
   "errorLens.delay": 2e3,
