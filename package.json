@@ -47,7 +47,7 @@
     "class-validator": "^0.14.0",
     "compression": "^1.7.4",
     "date-fns": "^2.30.0",
-    "helmet": "^6.1.5",
+    "helmet": "^7.0.0",
     "nest-winston": "^1.9.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.0",
