@@ -43,7 +43,7 @@ export class OpenApiBuilder {
   } as Logger;
 
   async bootstrap() {
-    await HttpAppBuilder.build(true);
+    await HttpAppBuilder.buildWithDocs();
 
     this.ensureApiDocsPath();
 
