@@ -9,12 +9,10 @@ export class EnvironmentService {
 
   private _environment: Environment;
   private _port: number;
-  private _openApiPath: string;
 
   constructor(private configService: ConfigService) {
     this.setEnvironment();
     this.setPort();
-    this.setOpenApiPath();
   }
 
   get environment() {
@@ -23,10 +21,6 @@ export class EnvironmentService {
 
   get port() {
     return this._port;
-  }
-
-  get openApiPath() {
-    return this._openApiPath;
   }
 
   private setEnvironment() {
@@ -44,14 +38,5 @@ export class EnvironmentService {
     const APP_PORT = this.configService.get<string>('APP_PORT');
 
     this._port = APP_PORT ? Number(APP_PORT) : 3000;
-  }
-
-  private setOpenApiPath() {
-    this.logger.log('setting "openApiPath"');
-
-    const defaultValue = 'api-docs/';
-    const value = this.configService.get<string>('APP_OPEN_API_PATH');
-
-    this._openApiPath = value ?? defaultValue;
   }
 }

@@ -4,7 +4,6 @@ import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { getPackageMetadata } from '../../utils';
-import { EnvironmentService } from '../services';
 import { HttpAppBuilder } from './http-app.builder';
 
 export class OpenApiBuilder {
@@ -34,9 +33,7 @@ export class OpenApiBuilder {
     };
   }
 
-  private appEnvironmentService: EnvironmentService;
-  private rootPath: string;
-  private openApiPath: string;
+  private openApiPath = join(resolve(process.cwd()), 'api-docs/');
   private swaggerFilePath: string;
   private logger = {
     log: (message: any, context?: string) => {
@@ -48,21 +45,13 @@ export class OpenApiBuilder {
   async bootstrap() {
     await HttpAppBuilder.build(true);
 
-    this.setServices();
-    this.setFilePaths();
+    this.ensureApiDocsPath();
 
     await this.buildSwaggerJson();
   }
-  private setServices() {
-    this.appEnvironmentService = HttpAppBuilder.app.get(EnvironmentService);
-  }
 
-  private setFilePaths() {
+  private ensureApiDocsPath() {
     this.logger.log(`Setting file paths`);
-
-    this.rootPath = resolve(process.cwd());
-    const { openApiPath } = this.appEnvironmentService;
-    this.openApiPath = join(this.rootPath, openApiPath);
 
     if (!existsSync(this.openApiPath)) {
       mkdirSync(this.openApiPath, { recursive: true, mode: '0777' });
@@ -70,6 +59,7 @@ export class OpenApiBuilder {
 
     this.swaggerFilePath = join(this.openApiPath, 'swagger.json');
   }
+
   private async buildSwaggerJson() {
     this.logger.log(`building Swagger.json file`);
 

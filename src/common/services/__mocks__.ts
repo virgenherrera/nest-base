@@ -20,7 +20,6 @@ export const MockLoggerProvider: ValueProvider = {
 export const mockEnvironmentService: Record<keyof EnvironmentService, any> = {
   environment: Environment.test,
   port: 0,
-  openApiPath: 'dist/fake-path/',
 };
 
 export const MockEnvironmentProvider: ValueProvider = {
