@@ -12,8 +12,16 @@ export class HttpAppBuilder {
     return HttpAppBuilder._app;
   }
 
-  static async build(buildDocs = false) {
-    const httpAppBuilder = new HttpAppBuilder(buildDocs);
+  static async build() {
+    const httpAppBuilder = new HttpAppBuilder(false);
+
+    await httpAppBuilder.bootstrap();
+
+    return HttpAppBuilder.app;
+  }
+
+  static async buildWithDocs() {
+    const httpAppBuilder = new HttpAppBuilder(true);
 
     await httpAppBuilder.bootstrap();
 
@@ -26,7 +34,7 @@ export class HttpAppBuilder {
   private options: NestApplicationOptions = { logger: [] };
   private prefix = 'api';
 
-  constructor(private buildDocs: boolean) {}
+  private constructor(private buildDocs: boolean) {}
 
   async bootstrap() {
     await this.setNestAppOptions();
