@@ -1,24 +1,36 @@
-import { Controller, Query } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import {
+  HealthCheckResult,
+  HealthCheckService,
+  MemoryHealthIndicator,
+} from '@nestjs/terminus';
+
+import { ApiTags } from '@nestjs/swagger';
 
 import { Logger } from '../decorators';
 import { GetHealthDocs } from '../docs';
-import { GetHealthQueryDto } from '../dto';
-import { SystemHealth } from '../models';
-import { DtoValidation } from '../pipes';
-import { HealthService } from '../services';
+import { CpuHealthIndicator, UptimeHealthIndicator } from '../indicators';
 
-@Controller()
+@Controller('health')
+@ApiTags('health')
 export class HealthController {
   @Logger() private logger: Logger;
 
-  constructor(private healthService: HealthService) {}
+  constructor(
+    private readonly health: HealthCheckService,
+    private readonly memory: MemoryHealthIndicator,
+    private readonly cpuHealthIndicator: CpuHealthIndicator,
+    private readonly uptimeHealthIndicator: UptimeHealthIndicator,
+  ) {}
 
   @GetHealthDocs()
-  async getHealth(
-    @Query(DtoValidation.pipe) query: GetHealthQueryDto,
-  ): Promise<SystemHealth> {
+  async getHealth(): Promise<HealthCheckResult> {
     this.logger.log(`Getting service Health.`);
 
-    return await this.healthService.getHealth(query);
+    return await this.health.check([
+      () => this.uptimeHealthIndicator.check('uptime'),
+      () => this.cpuHealthIndicator.check('cpu'),
+      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    ]);
   }
 }
