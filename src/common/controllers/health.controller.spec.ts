@@ -30,7 +30,7 @@ describe(`UT:${HealthController.name}`, () => {
   it(should.getHealth, async () => {
     const queryArgs = { foo: 'bar', baz: 0 } as any;
     const expectedValue = { foo: 'bar', baz: 0 };
-    mockHealthService.getHealth = jest.fn().mockResolvedValue(expectedValue);
+    mockHealthService.getHealth.mockResolvedValue(expectedValue);
 
     const getHealthSpy = jest.spyOn(mockHealthService, 'getHealth');
 

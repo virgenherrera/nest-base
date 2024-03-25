@@ -1,7 +1,7 @@
 import { readJsonFile } from './read-json-file';
 
 export function getPackageMetadata() {
-  const packageJson = readJsonFile(process.cwd(), './package.json');
+  const packageJson = readJsonFile(__dirname, '../../', 'package.json');
   const name: string = packageJson.name;
   const version: string = packageJson.version;
   const description: string = packageJson.description;

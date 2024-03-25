@@ -1,7 +1,6 @@
-import type { Config } from '@jest/types';
 import { BaseConfig } from './jest.config';
 
-export const e2eConfig: Config.InitialOptions = {
+export const e2eConfig: typeof BaseConfig = {
   ...BaseConfig,
   collectCoverageFrom: [
     ...BaseConfig.collectCoverageFrom,

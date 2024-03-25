@@ -3,8 +3,8 @@
   "codemetrics.basics.EnabledForHTML": false,
   "codemetrics.basics.MetricsForClassDeclarationsToggled": false,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true,
-    "source.fixAll.eslint": true
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
@@ -15,19 +15,26 @@
   "eslint.format.enable": true,
   "eslint.options": {
     "overrideConfigFile": ".eslintrc.json",
-    "ignore":true
+    "ignore": true
   },
   "eslint.validate": [
     "javascript",
     "json",
     "typescript"
   ],
+  "files.eol": "\n",
   "git.autofetch": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enabled": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always",
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
@@ -43,11 +50,5 @@
     "metatype",
     "nestjs",
     "paren",
-    "postgres",
-    "prebuild",
-    "redoc",
-    "signin",
-    "signup",
-    "typeorm"
   ]
 }
