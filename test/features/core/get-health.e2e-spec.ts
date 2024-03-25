@@ -1,4 +1,5 @@
 import { NestApplication } from '@nestjs/core';
+
 import { CommonRoute } from '../../../src/common/enums';
 import {
   BaseGetHealthMatcher,
@@ -6,14 +7,14 @@ import {
 } from '../../matchers/core/get-health.matcher';
 import { TestContext } from '../../utils';
 
-const enum should {
-  initTestContext = 'Should test Context be properly initialized.',
-  throw400 = 'Should throw 400 when receiving invalid query-params.',
-  getBaseHealth = `Should GET basic appHealth params.`,
-  getFullHealth = `Should GET basic appHealth including cpuUsage and memoryUsage params.`,
-}
-
 describe(`e2e: (GET)${CommonRoute.health}`, () => {
+  const enum should {
+    initTestContext = 'Should test Context be properly initialized.',
+    throw400 = 'Should throw 400 when receiving invalid query-params.',
+    getBaseHealth = `Should GET basic appHealth params.`,
+    getFullHealth = `Should GET basic appHealth including cpuUsage and memoryUsage params.`,
+  }
+
   let testCtx: TestContext = null;
 
   beforeAll(async () => (testCtx = await TestContext.getInstance()));

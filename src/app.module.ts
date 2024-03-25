@@ -1,5 +1,7 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { join, resolve } from 'path';
+
 import { CommonModule } from './common/common.module';
 import { LogRequestMiddleware } from './common/middleware';
 
@@ -8,6 +10,7 @@ import { LogRequestMiddleware } from './common/middleware';
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
+      envFilePath: resolve(join(__dirname, '../.env')),
     }),
     CommonModule,
   ],

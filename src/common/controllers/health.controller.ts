@@ -1,6 +1,7 @@
 import { Controller, Query } from '@nestjs/common';
+
 import { Logger } from '../decorators';
-import { GetHealthDocs } from '../docs/get-health.docs';
+import { GetHealthDocs } from '../docs';
 import { GetHealthQueryDto } from '../dto';
 import { SystemHealth } from '../models';
 import { DtoValidation } from '../pipes';

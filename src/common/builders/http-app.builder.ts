@@ -1,6 +1,7 @@
 import { NestApplicationOptions, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { networkInterfaces } from 'os';
 import { Logger } from '../decorators';
 import { Environment } from '../enums';
 import { EnvironmentService } from '../services';
@@ -77,10 +78,10 @@ export class HttpAppBuilder {
   }
 
   private async setVersioning() {
-    this.logger.log(`setting app URI version to 1`);
+    this.logger.log(`setting app version "HEADER"`);
     HttpAppBuilder.app.enableVersioning({
-      type: VersioningType.URI,
-      defaultVersion: '1',
+      type: VersioningType.HEADER,
+      header: 'X-API-Version',
     });
   }
 
@@ -120,10 +121,27 @@ export class HttpAppBuilder {
 
     await HttpAppBuilder.app.listen(port);
 
-    this.logger.log(`Server is listening on port: ${port}`);
     this.logger.log(
       `Server is running in "${environment}" environment`,
       HttpAppBuilder.name,
     );
+
+    this.networkAddresses.forEach(address => {
+      this.logger.log(`Server is listening at: ${address}`);
+    });
+  }
+
+  private get networkAddresses() {
+    const { port } = this.environmentService;
+    const url = new URL('', `http://localhost:${port}`);
+
+    return Object.values(networkInterfaces())
+      .flat()
+      .filter(net => net.family === 'IPv4' && !net.internal)
+      .map(net => {
+        url.host = net.address;
+
+        return url.href;
+      });
   }
 }
