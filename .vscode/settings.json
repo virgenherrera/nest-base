@@ -25,6 +25,7 @@
   "files.eol": "\n",
   "git.autofetch": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "npm.packageManager": "pnpm",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.referencesCodeLens.enabled": true,
   "typescript.tsdk": "node_modules/typescript/lib",

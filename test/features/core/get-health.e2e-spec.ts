@@ -1,18 +1,12 @@
 import { NestApplication } from '@nestjs/core';
 
 import { CommonRoute } from '../../../src/common/enums';
-import {
-  BaseGetHealthMatcher,
-  GetHealthMatcher,
-} from '../../matchers/core/get-health.matcher';
 import { TestContext } from '../../utils';
 
 describe(`e2e: (GET)${CommonRoute.health}`, () => {
   const enum should {
     initTestContext = 'Should test Context be properly initialized.',
-    throw400 = 'Should throw 400 when receiving invalid query-params.',
-    getBaseHealth = `Should GET basic appHealth params.`,
-    getFullHealth = `Should GET basic appHealth including cpuUsage and memoryUsage params.`,
+    getHealth = `Should GET appHealth params.`,
   }
 
   let testCtx: TestContext = null;
@@ -25,39 +19,12 @@ describe(`e2e: (GET)${CommonRoute.health}`, () => {
     expect(testCtx.app).toBeInstanceOf(NestApplication);
   });
 
-  it(should.throw400, async () => {
-    const queryParams = { foo: true, bar: { baz: 'buz' }, arr: [1, 2, 3] };
-    const { status, body } = await testCtx.request
-      .get(CommonRoute.health)
-      .query(queryParams);
+  it(should.getHealth, async () => {
+    const { body } = await testCtx.request.get(CommonRoute.health);
 
-    expect(status).toBe(400);
-    expect(body).toMatchObject({
-      code: 'bad-request-error',
-      message: 'Bad Request',
-      details: [
-        [
-          'property foo should not exist',
-          'property bar should not exist',
-          'property arr should not exist',
-        ],
-      ],
-    });
-  });
-
-  it(should.getBaseHealth, async () => {
-    const { status, body } = await testCtx.request.get(CommonRoute.health);
-
-    expect(status).toBe(200);
-    expect(body).toMatchObject(BaseGetHealthMatcher);
-  });
-
-  it(should.getFullHealth, async () => {
-    const { status, body } = await testCtx.request
-      .get(CommonRoute.health)
-      .query({ cpuUsage: true, memoryUsage: true });
-
-    expect(status).toBe(200);
-    expect(body).toMatchObject(GetHealthMatcher);
+    expect(body).toHaveProperty('status');
+    expect(body).toHaveProperty('info');
+    expect(body).toHaveProperty('error');
+    expect(body).toHaveProperty('details');
   });
 });

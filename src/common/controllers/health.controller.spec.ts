@@ -1,22 +1,39 @@
-import { Test } from '@nestjs/testing';
-import {
-  mockHealthService,
-  MockHealthServiceProvider,
-} from '../services/__mocks__';
+import { HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
+import { Test, TestingModule } from '@nestjs/testing';
+import { CpuHealthIndicator, UptimeHealthIndicator } from '../indicators';
+import {} from '../services/__mocks__';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
   const enum should {
     init = 'Should be initialized properly.',
-    getHealth = 'Should getHealth from HealthService.',
+    getHealth = 'Should check health.',
   }
 
+  let testingModule: TestingModule = null;
   let controller: HealthController = null;
 
   beforeAll(async () => {
-    const testingModule = await Test.createTestingModule({
+    testingModule = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [MockHealthServiceProvider],
+      providers: [
+        {
+          provide: HealthCheckService,
+          useValue: { check: jest.fn() },
+        },
+        {
+          provide: MemoryHealthIndicator,
+          useValue: { checkHeap: jest.fn() },
+        },
+        {
+          provide: CpuHealthIndicator,
+          useValue: { check: jest.fn() },
+        },
+        {
+          provide: UptimeHealthIndicator,
+          useValue: { check: jest.fn() },
+        },
+      ],
     }).compile();
 
     controller = testingModule.get(HealthController);
@@ -28,13 +45,14 @@ describe(`UT:${HealthController.name}`, () => {
   });
 
   it(should.getHealth, async () => {
-    const queryArgs = { foo: 'bar', baz: 0 } as any;
-    const expectedValue = { foo: 'bar', baz: 0 };
-    mockHealthService.getHealth.mockResolvedValue(expectedValue);
+    const expectedValue = { status: 'ok' } as any;
 
-    const getHealthSpy = jest.spyOn(mockHealthService, 'getHealth');
+    const healthCheckService = testingModule.get(HealthCheckService);
 
-    await expect(controller.getHealth(queryArgs)).resolves.toBe(expectedValue);
-    expect(getHealthSpy).toHaveBeenCalledWith(queryArgs);
+    jest.spyOn(healthCheckService, 'check').mockResolvedValue(expectedValue);
+
+    await expect(controller.getHealth()).resolves.toEqual(expectedValue);
+
+    expect(healthCheckService.check).toHaveBeenCalledTimes(1);
   });
 });

@@ -2,7 +2,6 @@ import { Logger, ValueProvider } from '@nestjs/common';
 
 import { Environment } from '../enums';
 import { EnvironmentService } from './environment.service';
-import { HealthService } from './health.service';
 
 export const mockLogger = {
   log: jest.fn(),
@@ -27,13 +26,4 @@ export const mockEnvironmentService = {
 export const MockEnvironmentProvider: ValueProvider = {
   provide: EnvironmentService,
   useValue: mockEnvironmentService,
-};
-
-export const mockHealthService = {
-  getHealth: jest.fn(),
-} as const;
-
-export const MockHealthServiceProvider: ValueProvider = {
-  provide: HealthService,
-  useValue: mockHealthService,
 };
