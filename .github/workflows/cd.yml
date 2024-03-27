@@ -1,0 +1,40 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Continuous Deployment
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  auto-versioning:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+
+      - name: Auto Versioning
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Branch Name: $BRANCH_NAME"
+          if [[ "$BRANCH_NAME" == task/* ]] || [[ "$BRANCH_NAME" == bugfix/* ]]; then
+            echo "Bumping patch version..."
+            pnpm version patch -m "chore(release): patch version bump [skip ci]"
+          elif [[ "$BRANCH_NAME" == feat/* ]]; then
+            echo "Bumping minor version..."
+            pnpm version minor -m "feat(release): minor version bump [skip ci]"
+          fi
+
+      - name: Push Changes
+        run: |
+          git push origin master --follow-tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
