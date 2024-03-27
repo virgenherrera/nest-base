@@ -6,31 +6,19 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      - develop
-      - stage
       - master
 
 jobs:
   code-quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ["20.11.1"]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: "8.15.4"
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

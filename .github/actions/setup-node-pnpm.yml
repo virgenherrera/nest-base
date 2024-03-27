@@ -1,0 +1,23 @@
+# This composite action sets up your GitHub Actions environment by
+# installing specific versions of Node.js and pnpm for CI and CD pipelines.
+# utilizing cache for faster dependency installation. This approach ensures consistency in the development and deployment environments.
+#
+# For more information on composite actions, visit:
+# https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+
+name: "Setup Node.js and pnpm"
+description: "Installs Node.js and pnpm"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: "8.15.4"
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "20.11.1"
+        cache: "pnpm"
