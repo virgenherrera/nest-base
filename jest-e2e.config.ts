@@ -12,6 +12,7 @@ export const e2eConfig: typeof BaseConfig = {
   ],
   coverageDirectory: 'coverage/e2e',
   rootDir: './',
+  setupFiles: ['<rootDir>/test/setup.ts'],
   testPathIgnorePatterns: [
     '/coverage/',
     '/dist/',

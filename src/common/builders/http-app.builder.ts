@@ -1,10 +1,10 @@
 import { NestApplicationOptions, VersioningType } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { networkInterfaces } from 'os';
+
+import { AppConfig } from '../../config';
 import { Logger } from '../decorators';
-import { Environment } from '../enums';
-import { EnvironmentService } from '../services';
 
 export class HttpAppBuilder {
   private static _app: NestExpressApplication = null;
@@ -31,7 +31,7 @@ export class HttpAppBuilder {
 
   @Logger() private logger: Logger;
 
-  private environmentService: EnvironmentService;
+  private appConfig: AppConfig = null;
   private options: NestApplicationOptions = { logger: [] };
   private prefix = 'api';
 
@@ -40,7 +40,10 @@ export class HttpAppBuilder {
   async bootstrap() {
     await this.setNestAppOptions();
     await this.initApp();
-    await this.setEnvironment();
+    await ConfigModule.envVariablesLoaded;
+
+    this.appConfig = HttpAppBuilder.app.get(ConfigService).get(AppConfig.name);
+
     await this.setGlobalPrefix();
     await this.setVersioning();
     await this.setAppMiddleware();
@@ -67,11 +70,6 @@ export class HttpAppBuilder {
     );
   }
 
-  private setEnvironment() {
-    this.logger.log(`getting Environment`);
-    this.environmentService = HttpAppBuilder.app.get(EnvironmentService);
-  }
-
   private async setGlobalPrefix() {
     this.logger.log(`setting app prefix: ${this.prefix}`);
     HttpAppBuilder.app.setGlobalPrefix(this.prefix);
@@ -96,8 +94,8 @@ export class HttpAppBuilder {
   }
 
   private async setSwaggerDocs() {
-    const { port, environment } = this.environmentService;
-    const skipSwagger = this.buildDocs || environment == Environment.production;
+    const { port, environment } = this.appConfig;
+    const skipSwagger = this.buildDocs || environment === 'PROD';
 
     if (skipSwagger) return;
 
@@ -117,31 +115,13 @@ export class HttpAppBuilder {
   private async setAppPort() {
     if (this.buildDocs) return;
 
-    const { port, environment } = this.environmentService;
+    const { port, environment } = this.appConfig;
 
     await HttpAppBuilder.app.listen(port);
 
     this.logger.log(
-      `Server is running in "${environment}" environment`,
+      `HTTP service is running in "${environment}" environment`,
       HttpAppBuilder.name,
     );
-
-    this.networkAddresses.forEach(address => {
-      this.logger.log(`Server is listening at: ${address}`);
-    });
-  }
-
-  private get networkAddresses() {
-    const { port } = this.environmentService;
-    const url = new URL('', `http://localhost:${port}`);
-
-    return Object.values(networkInterfaces())
-      .flat()
-      .filter(net => net.family === 'IPv4' && !net.internal)
-      .map(net => {
-        url.host = net.address;
-
-        return url.href;
-      });
   }
 }
