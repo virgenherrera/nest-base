@@ -28,7 +28,7 @@
     "UT:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "e2e:develop": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
     "e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "build:api-docs": "ts-node -r tsconfig-paths/register src/openApi.ts",
+    "build:api-docs": "ts-node --logError -r tsconfig-paths/register src/openApi.ts",
     "build:api-docs-ui": "openapi build-docs -o api-docs/index.html api-docs/swagger.json",
     "build:app": "nest build",
     "test:static": "eslint \"{src,apps,libs,test}/**/*.ts\"",
