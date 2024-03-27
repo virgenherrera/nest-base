@@ -4,12 +4,10 @@ import { TerminusModule } from '@nestjs/terminus';
 
 import { HealthController } from './controllers';
 import { CpuHealthIndicator, UptimeHealthIndicator } from './indicators';
-import { EnvironmentService } from './services';
 
 @Module({
   imports: [ConfigModule, TerminusModule],
   controllers: [HealthController],
-  providers: [EnvironmentService, CpuHealthIndicator, UptimeHealthIndicator],
-  exports: [EnvironmentService],
+  providers: [CpuHealthIndicator, UptimeHealthIndicator],
 })
 export class CommonModule {}

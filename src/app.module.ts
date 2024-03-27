@@ -1,20 +1,11 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { join, resolve } from 'path';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { CommonModule } from './common/common.module';
 import { LogRequestMiddleware } from './common/middleware';
+import { AppConfigModule } from './imports';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      cache: true,
-      isGlobal: true,
-      envFilePath: resolve(join(__dirname, '../.env')),
-    }),
-    CommonModule,
-  ],
-  providers: [Logger],
+  imports: [AppConfigModule.forRoot(), CommonModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   HealthCheckError,
   HealthIndicator,
   HealthIndicatorResult,
 } from '@nestjs/terminus';
 import { cpus as getCpuInfo } from 'os';
+
 import { promisify } from 'util';
+import { AppConfig } from '../../config';
 
 @Injectable()
 export class CpuHealthIndicator extends HealthIndicator {
+  constructor(private readonly configService: ConfigService) {
+    super();
+  }
+
   async check(key: 'cpu'): Promise<HealthIndicatorResult> {
-    // TODO: make come this from config service;
-    const { CPU_THRESHOLD = '80' } = process.env;
+    const appConfig = this.configService.get<AppConfig>(AppConfig.name);
     const cpuUsage = await this.getCpuUsage();
-    const isHealthy = cpuUsage < Number(CPU_THRESHOLD);
+    const isHealthy = cpuUsage < appConfig.cpuThreshold;
     const result = this.getStatus(key, isHealthy, {
       [key]: `${cpuUsage.toFixed(2)}%`,
     });

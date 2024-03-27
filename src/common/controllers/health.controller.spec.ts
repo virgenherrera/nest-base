@@ -1,7 +1,6 @@
 import { HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CpuHealthIndicator, UptimeHealthIndicator } from '../indicators';
-import {} from '../services/__mocks__';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
