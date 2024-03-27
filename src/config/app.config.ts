@@ -12,7 +12,7 @@ export class AppConfig {
 
   @IsIn(AppConfig.AvailableEnvironments)
   readonly environment: (typeof AppConfig.AvailableEnvironments)[number] =
-    (process.env.NODE_ENV.toUpperCase() as any) || 'DEVELOPMENT';
+    (process.env.NODE_ENV?.toUpperCase() as any) || 'DEVELOPMENT';
 
   @IsInt()
   @Min(0)
