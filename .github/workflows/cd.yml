@@ -18,8 +18,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js and pnpm
-        uses: ./.github/actions/setup-node-pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: "8.15.4"
 
       # Setup Git identity for committing changes. This is for demonstration purposes only.
       # In a production environment, use GitHub Secrets to securely store and manage credentials.
