@@ -21,6 +21,14 @@ jobs:
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
 
+      # Setup Git identity for committing changes. This is for demonstration purposes only.
+      # In a production environment, use GitHub Secrets to securely store and manage credentials.
+      # Learn more about GitHub Secrets at: https://docs.github.com/en/actions/security-guides/encrypted-secrets
+      - name: Setup Git Identity
+        run: |
+          git config --global user.name "CI virgenherrera[Bot]"
+          git config --global user.email "virgenherrera@gmail.com"
+
       - name: Auto Versioning
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
