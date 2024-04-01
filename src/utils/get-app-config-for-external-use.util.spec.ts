@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-  jest.clearAllMocks();
+  jest.restoreAllMocks();
 });
 
 describe(`UT:${getAppConfigForExternalUse.name}`, () => {
