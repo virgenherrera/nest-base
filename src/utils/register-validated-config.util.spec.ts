@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty, IsString, Max, Min } from 'class-validator';
 
-import { registerValidatedConfig } from './registerValidatedConfig.util';
+import { registerValidatedConfig } from './register-validated-config.util';
 
 describe(`UT:${registerValidatedConfig.name}`, () => {
   it('should register a valid configuration without throwing an error', () => {
