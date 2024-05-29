@@ -4,13 +4,12 @@
   "codemetrics.basics.MetricsForClassDeclarationsToggled": false,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit",
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "always"
   },
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.formatOnSave": true,
   "editor.minimap.enabled": false,
   "emmet.triggerExpansionOnTab": true,
-  "errorLens.delay": 2e3,
+  "errorLens.delay": 3e3,
   "errorLens.messageTemplate": "$severity: $message",
   "eslint.format.enable": true,
   "eslint.options": {

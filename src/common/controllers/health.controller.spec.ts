@@ -1,41 +1,35 @@
-import { HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
+import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CpuHealthIndicator, UptimeHealthIndicator } from '../indicators';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
   const enum should {
     init = 'Should be initialized properly.',
-    getHealth = 'Should check health.',
+    getHealth = 'Should return "up" status.',
   }
 
   let testingModule: TestingModule = null;
   let controller: HealthController = null;
+  let mockHealthCheckService: jest.Mocked<HealthCheckService>;
 
   beforeAll(async () => {
+    mockHealthCheckService = {
+      check: jest.fn(),
+    } as any;
+
     testingModule = await Test.createTestingModule({
       controllers: [HealthController],
       providers: [
-        {
-          provide: HealthCheckService,
-          useValue: { check: jest.fn() },
-        },
-        {
-          provide: MemoryHealthIndicator,
-          useValue: { checkHeap: jest.fn() },
-        },
-        {
-          provide: CpuHealthIndicator,
-          useValue: { check: jest.fn() },
-        },
-        {
-          provide: UptimeHealthIndicator,
-          useValue: { check: jest.fn() },
-        },
+        { provide: HealthCheckService, useValue: mockHealthCheckService },
       ],
     }).compile();
 
     controller = testingModule.get(HealthController);
+    controller.onModuleInit();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it(should.init, async () => {
@@ -44,14 +38,20 @@ describe(`UT:${HealthController.name}`, () => {
   });
 
   it(should.getHealth, async () => {
-    const expectedValue = { status: 'ok' } as any;
+    const mockResult: HealthCheckResult = {
+      status: 'ok',
+      details: {
+        uptime: {
+          status: 'up',
+          duration: 'unknown',
+        },
+      },
+    };
+    mockHealthCheckService.check.mockResolvedValue(mockResult);
 
-    const healthCheckService = testingModule.get(HealthCheckService);
+    const result = await controller.getHealth();
 
-    jest.spyOn(healthCheckService, 'check').mockResolvedValue(expectedValue);
-
-    await expect(controller.getHealth()).resolves.toEqual(expectedValue);
-
-    expect(healthCheckService.check).toHaveBeenCalledTimes(1);
+    expect(result.details.uptime.status).toEqual('up');
+    expect(mockHealthCheckService.check).toHaveBeenCalledTimes(1);
   });
 });
