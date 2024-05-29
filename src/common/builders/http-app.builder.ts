@@ -1,4 +1,4 @@
-import { NestApplicationOptions, VersioningType } from '@nestjs/common';
+import { VersioningType } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -32,13 +32,11 @@ export class HttpAppBuilder {
   @Logger() private logger: Logger;
 
   private appConfig: AppConfig = null;
-  private options: NestApplicationOptions = { logger: [] };
   private prefix = 'api';
 
   private constructor(private buildDocs: boolean) {}
 
   async bootstrap() {
-    await this.setNestAppOptions();
     await this.initApp();
     await ConfigModule.envVariablesLoaded;
 
@@ -51,23 +49,11 @@ export class HttpAppBuilder {
     await this.setAppPort();
   }
 
-  private async setNestAppOptions() {
-    if (this.buildDocs) return;
-
-    const { CreateWinstonLogger } = await import('../../utils');
-
-    const logger = CreateWinstonLogger();
-
-    this.options = { logger };
-  }
-
   private async initApp() {
     const { AppModule } = await import('../../app.module');
 
-    HttpAppBuilder._app = await NestFactory.create<NestExpressApplication>(
-      AppModule,
-      this.options,
-    );
+    HttpAppBuilder._app =
+      await NestFactory.create<NestExpressApplication>(AppModule);
   }
 
   private async setGlobalPrefix() {
@@ -76,7 +62,7 @@ export class HttpAppBuilder {
   }
 
   private async setVersioning() {
-    this.logger.log(`setting app version "HEADER"`);
+    this.logger.log(`setting API versioning to "HEADER"`);
     HttpAppBuilder.app.enableVersioning({
       type: VersioningType.HEADER,
       header: 'X-API-Version',

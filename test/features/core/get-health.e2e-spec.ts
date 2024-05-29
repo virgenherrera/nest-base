@@ -1,9 +1,8 @@
 import { NestApplication } from '@nestjs/core';
 
-import { CommonRoute } from '../../../src/common/enums';
 import { TestContext } from '../../utils';
 
-describe(`e2e: (GET)${CommonRoute.health}`, () => {
+describe(`e2e: (GET) /health`, () => {
   const enum should {
     initTestContext = 'Should test Context be properly initialized.',
     getHealth = `Should GET appHealth params.`,
@@ -20,7 +19,7 @@ describe(`e2e: (GET)${CommonRoute.health}`, () => {
   });
 
   it(should.getHealth, async () => {
-    const { body } = await testCtx.request.get(CommonRoute.health);
+    const { body } = await testCtx.request.get('/health');
 
     expect(body).toHaveProperty('status');
     expect(body).toHaveProperty('info');

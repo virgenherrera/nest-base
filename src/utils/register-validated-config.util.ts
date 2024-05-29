@@ -2,6 +2,10 @@ import { registerAs } from '@nestjs/config';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
+export type RegisterValidatedConfigArgs = Parameters<
+  typeof registerValidatedConfig
+>[0][];
+
 export function registerValidatedConfig<T>(
   cfgDecoratedCls: ClassConstructor<T>,
 ): ReturnType<typeof registerAs> {

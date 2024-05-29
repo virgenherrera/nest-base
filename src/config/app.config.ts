@@ -1,4 +1,4 @@
-import { IsIn, IsInt, IsNumber, Max, Min } from 'class-validator';
+import { IsIn, IsInt, Max, Min } from 'class-validator';
 
 export class AppConfig {
   static readonly AvailableEnvironments = [
@@ -20,11 +20,4 @@ export class AppConfig {
   readonly port: number = process.env.APP_PORT
     ? Number(process.env.APP_PORT)
     : 3000;
-
-  @IsNumber()
-  @Min(0)
-  @Max(100)
-  readonly cpuThreshold: number = process.env.APP_CPU_THRESHOLD
-    ? Number(process.env.APP_CPU_THRESHOLD)
-    : 80;
 }

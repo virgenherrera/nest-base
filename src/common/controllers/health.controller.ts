@@ -1,36 +1,37 @@
-import { Controller } from '@nestjs/common';
-import {
-  HealthCheckResult,
-  HealthCheckService,
-  MemoryHealthIndicator,
-} from '@nestjs/terminus';
+import { Controller, OnModuleInit } from '@nestjs/common';
+import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 
 import { ApiTags } from '@nestjs/swagger';
 
+import { formatDistanceToNow } from 'date-fns';
 import { Logger } from '../decorators';
 import { GetHealthDocs } from '../docs';
-import { CpuHealthIndicator, UptimeHealthIndicator } from '../indicators';
 
 @Controller('health')
 @ApiTags('health')
-export class HealthController {
+export class HealthController implements OnModuleInit {
   @Logger() private logger: Logger;
+  private startTime: Date;
 
-  constructor(
-    private readonly health: HealthCheckService,
-    private readonly memory: MemoryHealthIndicator,
-    private readonly cpuHealthIndicator: CpuHealthIndicator,
-    private readonly uptimeHealthIndicator: UptimeHealthIndicator,
-  ) {}
+  constructor(private readonly health: HealthCheckService) {}
+
+  onModuleInit() {
+    this.startTime = new Date();
+  }
 
   @GetHealthDocs()
   async getHealth(): Promise<HealthCheckResult> {
     this.logger.log(`Getting service Health.`);
 
-    return await this.health.check([
-      () => this.uptimeHealthIndicator.check('uptime'),
-      () => this.cpuHealthIndicator.check('cpu'),
-      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    const uptime = formatDistanceToNow(this.startTime, { addSuffix: false });
+
+    return this.health.check([
+      async () => ({
+        uptime: {
+          status: 'up',
+          duration: uptime,
+        },
+      }),
     ]);
   }
 }
