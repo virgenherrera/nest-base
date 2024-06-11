@@ -49,6 +49,8 @@
     "linebreak",
     "metatype",
     "nestjs",
+    "openapi",
     "paren",
+    "redocly"
   ]
 }

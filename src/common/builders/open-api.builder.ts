@@ -57,7 +57,7 @@ export class OpenApiBuilder {
       mkdirSync(this.openApiPath, { recursive: true, mode: '0777' });
     }
 
-    this.swaggerFilePath = join(this.openApiPath, 'swagger.json');
+    this.swaggerFilePath = join(this.openApiPath, 'openapi.json');
   }
 
   private async buildSwaggerJson() {
