@@ -7,7 +7,7 @@ import { AppConfigModule } from './imports';
 
 @Module({
   imports: [AppConfigModule.forRoot(), CommonModule],
-  providers: [GlobalValidationPipe.Provider],
+  providers: [GlobalValidationPipe.provider],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
