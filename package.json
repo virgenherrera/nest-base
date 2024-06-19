@@ -1,6 +1,6 @@
 {
   "name": "nest-base",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "description": "",
   "license": "MIT",
   "keywords": [],
@@ -61,7 +61,7 @@
     "@redocly/cli": "^1.16.0",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.5",
+    "@types/node": "^20.14.6",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
