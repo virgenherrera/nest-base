@@ -17,23 +17,38 @@ export class TestContext {
     return TestContext.instance;
   }
 
-  app: INestApplication = null;
-  request: ReturnType<typeof supertest> = null;
+  static async destroyInstance() {
+    if (TestContext.instance)
+      return await TestContext.instance.destroyContext();
+  }
+
+  private _app: INestApplication = null;
+  private _request: ReturnType<typeof supertest> = null;
+
+  get app() {
+    return this._app;
+  }
+
+  get request() {
+    return this._request;
+  }
 
   private async initContext() {
     const testingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    this.app = testingModule.createNestApplication();
+    this._app = testingModule.createNestApplication();
 
-    await this.app.init();
+    await this._app.init();
 
-    this.request = supertest(this.app.getHttpServer());
-
-    Object.freeze(this);
-    Object.seal(this);
+    this._request = supertest(this.app.getHttpServer());
 
     return this;
+  }
+
+  private async destroyContext() {
+    await this._app.close();
+    this._request = null;
   }
 }
