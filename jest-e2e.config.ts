@@ -4,15 +4,15 @@ export const e2eConfig: typeof BaseConfig = {
   ...BaseConfig,
   collectCoverageFrom: [
     ...BaseConfig.collectCoverageFrom,
-    '!**/environment.service.ts',
-    '!**/dto-validation.pipe.ts',
+    '!**/log-request.interceptor.ts',
     '!**/*.(config|spec).ts',
     '!(dist|test)/**',
     '!src/utils/**',
   ],
   coverageDirectory: 'coverage/e2e',
   rootDir: './',
-  setupFiles: ['<rootDir>/test/setup.ts'],
+  globalSetup: '<rootDir>/test/setup.ts',
+  globalTeardown: '<rootDir>/test/teardown.ts',
   testPathIgnorePatterns: [
     '/coverage/',
     '/dist/',
