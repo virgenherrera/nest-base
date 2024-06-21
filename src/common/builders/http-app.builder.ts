@@ -1,16 +1,17 @@
-import { VersioningType } from '@nestjs/common';
+import { INestApplication, VersioningType } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AppConfig } from '../../config';
+import { swaggerFactory } from '../../utils';
 import { Logger } from '../decorators';
 
 export class HttpAppBuilder {
-  private static _app: NestExpressApplication = null;
+  private static _app: INestApplication = null;
 
   static get app() {
-    return HttpAppBuilder._app;
+    return this._app;
   }
 
   static async build() {
@@ -18,7 +19,7 @@ export class HttpAppBuilder {
 
     await httpAppBuilder.bootstrap();
 
-    return HttpAppBuilder.app;
+    return this._app;
   }
 
   static async buildWithDocs() {
@@ -26,7 +27,7 @@ export class HttpAppBuilder {
 
     await httpAppBuilder.bootstrap();
 
-    return HttpAppBuilder.app;
+    return this._app;
   }
 
   @Logger() private logger: Logger;
@@ -40,7 +41,7 @@ export class HttpAppBuilder {
     await this.initApp();
     await ConfigModule.envVariablesLoaded;
 
-    this.appConfig = HttpAppBuilder.app.get(ConfigService).get(AppConfig.name);
+    this.appConfig = HttpAppBuilder._app.get(ConfigService).get(AppConfig.name);
 
     await this.setGlobalPrefix();
     await this.setVersioning();
@@ -58,12 +59,12 @@ export class HttpAppBuilder {
 
   private async setGlobalPrefix() {
     this.logger.log(`setting app prefix: ${this.prefix}`);
-    HttpAppBuilder.app.setGlobalPrefix(this.prefix);
+    HttpAppBuilder._app.setGlobalPrefix(this.prefix);
   }
 
   private async setVersioning() {
     this.logger.log(`setting API versioning to "HEADER"`);
-    HttpAppBuilder.app.enableVersioning({
+    HttpAppBuilder._app.enableVersioning({
       type: VersioningType.HEADER,
       header: 'X-API-Version',
     });
@@ -75,8 +76,8 @@ export class HttpAppBuilder {
     const { default: helmet } = await import('helmet');
     const compression = await import('compression');
 
-    HttpAppBuilder.app.use(helmet());
-    HttpAppBuilder.app.use(compression());
+    HttpAppBuilder._app.use(helmet());
+    HttpAppBuilder._app.use(compression());
   }
 
   private async setSwaggerDocs() {
@@ -85,13 +86,12 @@ export class HttpAppBuilder {
 
     if (skipSwagger) return;
 
-    const { OpenApiBuilder } = await import('./open-api.builder');
-    const getSwaggerDocument = OpenApiBuilder.swaggerFactory(this.logger);
+    const getSwaggerDocument = swaggerFactory(HttpAppBuilder._app, this.logger);
     const swaggerDocument = getSwaggerDocument();
     const { SwaggerModule } = await import('@nestjs/swagger');
 
     this.logger.log(`Mounting SwaggerDocs in: ${this.prefix}/`);
-    SwaggerModule.setup(this.prefix, HttpAppBuilder.app, swaggerDocument);
+    SwaggerModule.setup(this.prefix, HttpAppBuilder._app, swaggerDocument);
 
     this.logger.log(
       `SwaggerDocs available in: http://localhost:${port}/${this.prefix}/`,
@@ -103,7 +103,7 @@ export class HttpAppBuilder {
 
     const { port, environment } = this.appConfig;
 
-    await HttpAppBuilder.app.listen(port);
+    await HttpAppBuilder._app.listen(port);
 
     this.logger.log(
       `HTTP service is running in "${environment}" environment`,

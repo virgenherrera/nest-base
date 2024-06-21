@@ -9,8 +9,8 @@ export const BaseConfig: Config = {
   collectCoverage: true,
   collectCoverageFrom: [
     '**/*.ts',
-    '!**/(index|main|openApi).ts',
-    '!**/*.(builder|config|constant|dto|doc|enum|exception|import|indicator|interface|model|module|provider|schema).ts',
+    '!**/(index|main).ts',
+    '!**/*.(builder|config|constant|dto|doc|enum|exception|import|indicator|interface|model|module|provider).ts',
     '!**/__mocks__.ts',
   ],
   coverageDirectory: '../coverage/unit',
