@@ -1,6 +1,7 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
+import { cwd, stdout } from 'node:process';
 import { join, resolve } from 'path';
 
 import { swaggerFactory } from '../../utils';
@@ -11,12 +12,11 @@ export class OpenApiBuilder {
   }
 
   private app: INestApplication = null;
-  private openApiPath = join(resolve(process.cwd()), 'api-docs/');
+  private openApiPath = join(resolve(cwd()), 'api-docs/');
   private swaggerFilePath: string;
   private logger = {
-    log: (message: any, context?: string) => {
-      process.stdout.write('> ' + message + '\n');
-      if (context) process.stdout.write(context + '\n');
+    log: (message: any) => {
+      stdout.write('> ' + message + '\n');
     },
   } as Logger;
 

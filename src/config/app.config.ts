@@ -1,4 +1,7 @@
-import { IsIn, IsInt, Max, Min } from 'class-validator';
+import { IsIn, IsPort } from 'class-validator';
+import { env } from 'node:process';
+
+export type Environment = (typeof AppConfig.AvailableEnvironments)[number];
 
 export class AppConfig {
   static readonly AvailableEnvironments = [
@@ -11,13 +14,9 @@ export class AppConfig {
   ] as const;
 
   @IsIn(AppConfig.AvailableEnvironments)
-  readonly environment: (typeof AppConfig.AvailableEnvironments)[number] =
-    (process.env.NODE_ENV?.toUpperCase() as any) || 'DEVELOPMENT';
+  readonly environment: Environment =
+    (env.NODE_ENV?.toUpperCase() as any) || 'DEVELOPMENT';
 
-  @IsInt()
-  @Min(0)
-  @Max(65535)
-  readonly port: number = process.env.APP_PORT
-    ? Number(process.env.APP_PORT)
-    : 3000;
+  @IsPort()
+  readonly port: `${number}` = (env.APP_PORT as `${number}`) || '3000';
 }
