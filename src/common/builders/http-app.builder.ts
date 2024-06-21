@@ -11,7 +11,7 @@ export class HttpAppBuilder {
   private static _app: INestApplication = null;
 
   static get app() {
-    return this._app;
+    return HttpAppBuilder._app;
   }
 
   static async build() {
@@ -19,7 +19,7 @@ export class HttpAppBuilder {
 
     await httpAppBuilder.bootstrap();
 
-    return this._app;
+    return HttpAppBuilder._app;
   }
 
   static async buildWithDocs() {
@@ -27,7 +27,7 @@ export class HttpAppBuilder {
 
     await httpAppBuilder.bootstrap();
 
-    return this._app;
+    return HttpAppBuilder._app;
   }
 
   @Logger() private logger: Logger;
