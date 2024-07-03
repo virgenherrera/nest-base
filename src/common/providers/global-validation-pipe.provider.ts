@@ -5,8 +5,11 @@ export const GlobalValidationPipeProvider: Provider = {
   provide: APP_PIPE,
   useFactory: () =>
     new ValidationPipe({
-      transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      transformOptions: {
+        excludeExtraneousValues: false,
+      },
     }),
 };
