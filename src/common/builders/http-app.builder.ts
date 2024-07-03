@@ -1,8 +1,9 @@
 import { INestApplication, VersioningType } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { NestExpressApplication as NestApp } from '@nestjs/platform-express';
 
+import { AppModule } from '../../app.module';
 import { AppConfig } from '../../config';
 import { swaggerFactory } from '../../utils';
 import { Logger } from '../decorators';
@@ -38,8 +39,11 @@ export class HttpAppBuilder {
   private constructor(private buildDocs: boolean) {}
 
   async bootstrap() {
-    await this.initApp();
+    HttpAppBuilder._app = await NestFactory.create<NestApp>(AppModule);
+    this.logger.log('NestApplication created');
+
     await ConfigModule.envVariablesLoaded;
+    this.logger.log('Environment Variables Loaded');
 
     this.appConfig = HttpAppBuilder._app.get(ConfigService).get(AppConfig.name);
 
@@ -48,13 +52,6 @@ export class HttpAppBuilder {
     await this.setAppMiddleware();
     await this.setSwaggerDocs();
     await this.setAppPort();
-  }
-
-  private async initApp() {
-    const { AppModule } = await import('../../app.module');
-
-    HttpAppBuilder._app =
-      await NestFactory.create<NestExpressApplication>(AppModule);
   }
 
   private async setGlobalPrefix() {

@@ -1,5 +1,6 @@
 import { IsIn, IsPort } from 'class-validator';
 import { env } from 'node:process';
+import { ValidConfig } from '../utils';
 
 export type Environment = (typeof AppConfig.AvailableEnvironments)[number];
 
@@ -20,3 +21,5 @@ export class AppConfig {
   @IsPort()
   readonly port: `${number}` = (env.APP_PORT as `${number}`) || '3000';
 }
+
+export const appConfig = ValidConfig.registerAs(AppConfig);

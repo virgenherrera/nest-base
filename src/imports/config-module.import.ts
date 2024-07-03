@@ -1,17 +1,13 @@
 import { ConfigModule } from '@nestjs/config';
 
-import { AppConfig } from '../config';
-import {
-  registerValidatedConfig,
-  RegisterValidatedConfigArgs,
-} from '../utils/register-validated-config.util';
+import { appConfig } from '../config';
 
 export class AppConfigModule {
   static forRoot() {
     return ConfigModule.forRoot({
+      cache: true,
       isGlobal: true,
-      load: AppConfigModule.EnvNamespaces.map(registerValidatedConfig),
+      load: [appConfig],
     });
   }
-  static readonly EnvNamespaces: RegisterValidatedConfigArgs = [AppConfig];
 }

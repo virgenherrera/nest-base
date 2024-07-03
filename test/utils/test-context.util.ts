@@ -12,14 +12,24 @@ export class TestContext {
 
     const instance = new TestContext();
 
-    TestContext.instance = await instance.initContext();
+    try {
+      TestContext.instance = await instance.initContext();
+    } catch (error) {
+      console.error('Failed to initialize test context:', error);
+      throw error;
+    }
 
     return TestContext.instance;
   }
 
   static async destroyInstance() {
-    if (TestContext.instance)
-      return await TestContext.instance.destroyContext();
+    if (TestContext.instance) {
+      try {
+        await TestContext.instance.destroyContext();
+      } catch (error) {
+        console.error('Failed to destroy test context:', error);
+      }
+    }
   }
 
   private _app: INestApplication = null;
@@ -48,7 +58,8 @@ export class TestContext {
   }
 
   private async destroyContext() {
-    await this._app.close();
+    if (this._app) await this._app.close();
+
     this._request = null;
   }
 }
