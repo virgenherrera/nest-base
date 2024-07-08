@@ -4,7 +4,7 @@ export const e2eConfig: typeof BaseConfig = {
   ...BaseConfig,
   collectCoverageFrom: [
     ...BaseConfig.collectCoverageFrom,
-    '!**/log-request.interceptor.ts',
+    '!**/common/interceptors/*.interceptor.ts',
     '!**/*.(config|spec).ts',
     '!(dist|test|scripts)/**',
     '!src/utils/**',
