@@ -1,5 +1,5 @@
-import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HealthCheckService } from '@nestjs/terminus';
+import { Test } from '@nestjs/testing';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
@@ -8,50 +8,57 @@ describe(`UT:${HealthController.name}`, () => {
     getHealth = 'Should return "up" status.',
   }
 
-  let testingModule: TestingModule = null;
+  let mockHealthCheckService: HealthCheckService = null;
   let controller: HealthController = null;
-  let mockHealthCheckService: jest.Mocked<HealthCheckService>;
 
   beforeAll(async () => {
-    mockHealthCheckService = {
-      check: jest.fn(),
-    } as any;
-
-    testingModule = await Test.createTestingModule({
+    const testingModule = await Test.createTestingModule({
       controllers: [HealthController],
       providers: [
-        { provide: HealthCheckService, useValue: mockHealthCheckService },
+        {
+          provide: HealthCheckService,
+          useValue: {
+            check: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     controller = testingModule.get(HealthController);
     controller.onModuleInit();
+
+    mockHealthCheckService = testingModule.get(HealthCheckService);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it(should.init, async () => {
     expect(controller).not.toBeNull();
+    expect(mockHealthCheckService).not.toBeNull();
     expect(controller).toBeInstanceOf(HealthController);
   });
 
   it(should.getHealth, async () => {
-    const mockResult: HealthCheckResult = {
-      status: 'ok',
-      details: {
-        uptime: {
-          status: 'up',
-          duration: 'unknown',
-        },
-      },
-    };
-    mockHealthCheckService.check.mockResolvedValue(mockResult);
+    const checkSpy = jest
+      .spyOn(mockHealthCheckService, 'check')
+      .mockImplementation(checkArgs => checkArgs as any);
 
     const result = await controller.getHealth();
 
-    expect(result.details.uptime.status).toEqual('up');
-    expect(mockHealthCheckService.check).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject(
+      expect.arrayContaining([expect.any(Function)]),
+    );
+
+    await expect(result[0]()).resolves.toMatchObject({
+      uptime: {
+        status: 'up',
+        duration: expect.stringContaining('less than a minute'),
+      },
+    });
+
+    expect(checkSpy).toHaveBeenCalledTimes(1);
   });
 });

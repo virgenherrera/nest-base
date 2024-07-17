@@ -2,16 +2,16 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
+  Logger,
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, of, switchMap } from 'rxjs';
 
-import { Logger } from '../decorators';
 import { PagedResults } from '../dto';
 
 @Injectable()
 export class PagedResultsInterceptor implements NestInterceptor {
-  @Logger() private readonly logger: Logger;
+  private readonly logger = new Logger(this.constructor.name);
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const { method, path } = context.switchToHttp().getRequest();

@@ -1,16 +1,14 @@
-import { Controller, OnModuleInit } from '@nestjs/common';
-import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
-
+import { Controller, Logger, OnModuleInit } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
+import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 import { formatDistanceToNow } from 'date-fns';
-import { Logger } from '../decorators';
+
 import { GetHealthDocs } from '../docs';
 
 @Controller('health')
 @ApiTags('health')
 export class HealthController implements OnModuleInit {
-  @Logger() private logger: Logger;
+  private readonly logger = new Logger(this.constructor.name);
   private startTime: Date;
 
   constructor(private readonly health: HealthCheckService) {}
