@@ -3,17 +3,16 @@ import {
   ExecutionContext,
   HttpException,
   Injectable,
+  Logger,
   NestInterceptor,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { hrtime } from 'node:process';
 import { Observable, catchError, tap } from 'rxjs';
 
-import { Logger } from '../decorators';
-
 @Injectable()
 export class LogRequestInterceptor implements NestInterceptor {
-  @Logger() private readonly logger: Logger;
+  private readonly logger = new Logger(this.constructor.name);
 
   private get timeStamp(): bigint {
     return hrtime.bigint();
@@ -44,7 +43,7 @@ export class LogRequestInterceptor implements NestInterceptor {
 
         const statusCode = error.getStatus();
         const response = error.getResponse();
-        const bar =
+        const responseStr =
           typeof response === 'string'
             ? response
             : 'response:\n' + JSON.stringify(response, null, 2);
@@ -54,7 +53,7 @@ export class LogRequestInterceptor implements NestInterceptor {
         const diff = this.timeStamp - startAt;
         const responseTime = Number(diff / BigInt(1e6));
         const { method, originalUrl } = request;
-        const message = `${method} ${originalUrl}; HTTP Status ${statusCode}; ${bar};${responseTime}ms`;
+        const message = `${method} ${originalUrl}; HTTP Status ${statusCode}; ${responseStr};${responseTime}ms`;
 
         this.logger[methodName](message);
 

@@ -1,4 +1,4 @@
-import { INestApplication, VersioningType } from '@nestjs/common';
+import { INestApplication, Logger, VersioningType } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication as NestApp } from '@nestjs/platform-express';
@@ -6,7 +6,6 @@ import { NestExpressApplication as NestApp } from '@nestjs/platform-express';
 import { AppModule } from '../../app.module';
 import { AppConfig } from '../../config';
 import { swaggerFactory } from '../../utils';
-import { Logger } from '../decorators';
 
 export class HttpAppBuilder {
   private static _app: INestApplication = null;
@@ -31,7 +30,7 @@ export class HttpAppBuilder {
     return HttpAppBuilder._app;
   }
 
-  @Logger() private logger: Logger;
+  private readonly logger = new Logger(this.constructor.name);
 
   private appConfig: AppConfig = null;
   private prefix = 'api';
@@ -71,7 +70,7 @@ export class HttpAppBuilder {
     if (this.buildDocs) return;
 
     const { default: helmet } = await import('helmet');
-    const compression = await import('compression');
+    const { default: compression } = await import('compression');
 
     HttpAppBuilder._app.use(helmet());
     HttpAppBuilder._app.use(compression());
