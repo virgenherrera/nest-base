@@ -50,7 +50,7 @@ importers:
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.4.2
-        version: 10.4.2(@swc/cli@0.4.0(@swc/core@1.6.13)(chokidar@3.6.0))(@swc/core@1.6.13)
+        version: 10.4.2(@swc/cli@0.4.0(@swc/core@1.7.0-nightly-20240717.3)(chokidar@3.6.0))(@swc/core@1.7.0-nightly-20240717.3)
       '@nestjs/schematics':
         specifier: ^10.1.2
         version: 10.1.2(chokidar@3.6.0)(typescript@5.5.3)
@@ -60,6 +60,12 @@ importers:
       '@redocly/cli':
         specifier: ^1.18.0
         version: 1.18.0(enzyme@3.11.0)
+      '@swc/cli':
+        specifier: ^0.4.0
+        version: 0.4.0(@swc/core@1.7.0-nightly-20240717.3)(chokidar@3.6.0)
+      '@swc/core':
+        specifier: 1.7.0-nightly-20240717.3
+        version: 1.7.0-nightly-20240717.3
       '@types/express':
         specifier: ^4.17.21
         version: 4.17.21
@@ -86,7 +92,7 @@ importers:
         version: 5.2.1(@types/eslint@8.56.6)(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.2.5)
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+        version: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -98,10 +104,10 @@ importers:
         version: 7.0.0
       ts-jest:
         specifier: ^29.2.2
-        version: 29.2.2(@babel/core@7.24.9)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.9))(jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)))(typescript@5.5.3)
+        version: 29.2.2(@babel/core@7.24.9)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.9))(jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)))(typescript@5.5.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)
+        version: 10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -708,68 +714,68 @@ packages:
       chokidar:
         optional: true
 
-  '@swc/core-darwin-arm64@1.6.13':
-    resolution: {integrity: sha512-SOF4buAis72K22BGJ3N8y88mLNfxLNprTuJUpzikyMGrvkuBFNcxYtMhmomO0XHsgLDzOJ+hWzcgjRNzjMsUcQ==}
+  '@swc/core-darwin-arm64@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-SwOEsZWDo8JANVh96dD1kbRAsLsfTJ3OItw1ntFG2wCTjnlwhw/WBtKB0OEI8hp2SsRf2YlwSS8zoeEE7tbhaw==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@swc/core-darwin-x64@1.6.13':
-    resolution: {integrity: sha512-AW8akFSC+tmPE6YQQvK9S2A1B8pjnXEINg+gGgw0KRUUXunvu1/OEOeC5L2Co1wAwhD7bhnaefi06Qi9AiwOag==}
+  '@swc/core-darwin-x64@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-HAa0mDmLl6BPtkYX3zUhY5+qGRiUujozpLLbXlCbCxWUGwZ8m1clfHynYCX1hrJMOUeCoSIoG5zTUUuN6NA79A==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [darwin]
 
-  '@swc/core-linux-arm-gnueabihf@1.6.13':
-    resolution: {integrity: sha512-f4gxxvDXVUm2HLYXRd311mSrmbpQF2MZ4Ja6XCQz1hWAxXdhRl1gpnZ+LH/xIfGSwQChrtLLVrkxdYUCVuIjFg==}
+  '@swc/core-linux-arm-gnueabihf@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-eWZBd5ZQakzTTl+6c5ZBMnqJt7qwtxKOZysqrFeG6gu/6BMnwaQsQpLPnZZ5eYH0s8bVdCHu2mUbyxosRKpcqw==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux]
 
-  '@swc/core-linux-arm64-gnu@1.6.13':
-    resolution: {integrity: sha512-Nf/eoW2CbG8s+9JoLtjl9FByBXyQ5cjdBsA4efO7Zw4p+YSuXDgc8HRPC+E2+ns0praDpKNZtLvDtmF2lL+2Gg==}
+  '@swc/core-linux-arm64-gnu@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-nDcSzr5dTgMJMXDh99MtV/DNjAR3rJofUWGmH0P9j9UhqVpXSZXeAQChBER5GAtPVzRfy/pOLk+1Cd9Ud2/zuQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
 
-  '@swc/core-linux-arm64-musl@1.6.13':
-    resolution: {integrity: sha512-2OysYSYtdw79prJYuKIiux/Gj0iaGEbpS2QZWCIY4X9sGoETJ5iMg+lY+YCrIxdkkNYd7OhIbXdYFyGs/w5LDg==}
+  '@swc/core-linux-arm64-musl@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-t/M2flKdUe5yeYyNJuiwdfbSoka1kYEQ4EBjMdmHhYm6cbqQjlxhU+bAoPmq/s29nY7FLdzQbgT7rt02NsqISg==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
 
-  '@swc/core-linux-x64-gnu@1.6.13':
-    resolution: {integrity: sha512-PkR4CZYJNk5hcd2+tMWBpnisnmYsUzazI1O5X7VkIGFcGePTqJ/bWlfUIVVExWxvAI33PQFzLbzmN5scyIUyGQ==}
+  '@swc/core-linux-x64-gnu@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-a02sOMtsh6ZvMFIynbXklMp2GAl2a/mEDcoOe1V4yBkgrWZkFFcTSnOxqT/GDwfl28kXUUd0Lq74ib3RgXW/Sw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
 
-  '@swc/core-linux-x64-musl@1.6.13':
-    resolution: {integrity: sha512-OdsY7wryTxCKwGQcwW9jwWg3cxaHBkTTHi91+5nm7hFPpmZMz1HivJrWAMwVE7iXFw+M4l6ugB/wCvpYrUAAjA==}
+  '@swc/core-linux-x64-musl@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-Oh3nu0rUflOBnp7snxJ10onPr7Mp5ArTBRwNtoSGjB4z3fKrdMbH4zCZD5pcnlWEFRLsb4VeR0ohCu0zikLJ1A==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
 
-  '@swc/core-win32-arm64-msvc@1.6.13':
-    resolution: {integrity: sha512-ap6uNmYjwk9M/+bFEuWRNl3hq4VqgQ/Lk+ID/F5WGqczNr0L7vEf+pOsRAn0F6EV+o/nyb3ePt8rLhE/wjHpPg==}
+  '@swc/core-win32-arm64-msvc@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-fF+uQIy4220rePJmiNPnnvfeozVwSrMFz/VP371Se7A3hH4nhiFduIbwy3ZNKYs7eToc6oTBDT51iOuuYrH8oA==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [win32]
 
-  '@swc/core-win32-ia32-msvc@1.6.13':
-    resolution: {integrity: sha512-IJ8KH4yIUHTnS/U1jwQmtbfQals7zWPG0a9hbEfIr4zI0yKzjd83lmtS09lm2Q24QBWOCFGEEbuZxR4tIlvfzA==}
+  '@swc/core-win32-ia32-msvc@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-IHVHtQwdFDsv64gqo1mhYzTT0+z6mNJ9lpyazkOjkgeEADwdelB6YY4ADudkZ+XC6+0tUvrRjXOESy6YNi6BzQ==}
     engines: {node: '>=10'}
     cpu: [ia32]
     os: [win32]
 
-  '@swc/core-win32-x64-msvc@1.6.13':
-    resolution: {integrity: sha512-f6/sx6LMuEnbuxtiSL/EkR0Y6qUHFw1XVrh6rwzKXptTipUdOY+nXpKoh+1UsBm/r7H0/5DtOdrn3q5ZHbFZjQ==}
+  '@swc/core-win32-x64-msvc@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-Wo1MEp3N711zT1u3T6xSRyyxpWRP2UtWni3nH7XIqFupnHgNBol80bGGOV1fVU1DsTZW56Kua9VNIeYdbyC19g==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
 
-  '@swc/core@1.6.13':
-    resolution: {integrity: sha512-eailUYex6fkfaQTev4Oa3mwn0/e3mQU4H8y1WPuImYQESOQDtVrowwUGDSc19evpBbHpKtwM+hw8nLlhIsF+Tw==}
+  '@swc/core@1.7.0-nightly-20240717.3':
+    resolution: {integrity: sha512-1SUcJcNa7GiYc0Z4LiyVQUj7nQPHn3df74wxmtIFzVqObKILAXnVBplZgUD8m7AHbOyP0S5BZM6QGMUunQ2ivw==}
     engines: {node: '>=10'}
     peerDependencies:
       '@swc/helpers': '*'
@@ -4460,7 +4466,7 @@ snapshots:
       jest-util: 29.7.0
       slash: 3.0.0
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
@@ -4474,7 +4480,7 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      jest-config: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -4658,9 +4664,8 @@ snapshots:
       filenamify: 5.1.1
       got: 11.8.6
       os-filter-obj: 2.0.0
-    optional: true
 
-  '@nestjs/cli@10.4.2(@swc/cli@0.4.0(@swc/core@1.6.13)(chokidar@3.6.0))(@swc/core@1.6.13)':
+  '@nestjs/cli@10.4.2(@swc/cli@0.4.0(@swc/core@1.7.0-nightly-20240717.3)(chokidar@3.6.0))(@swc/core@1.7.0-nightly-20240717.3)':
     dependencies:
       '@angular-devkit/core': 17.3.8(chokidar@3.6.0)
       '@angular-devkit/schematics': 17.3.8(chokidar@3.6.0)
@@ -4670,7 +4675,7 @@ snapshots:
       chokidar: 3.6.0
       cli-table3: 0.6.5
       commander: 4.1.1
-      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.3.3)(webpack@5.92.1(@swc/core@1.6.13))
+      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.3.3)(webpack@5.92.1(@swc/core@1.7.0-nightly-20240717.3))
       glob: 10.4.2
       inquirer: 8.2.6
       node-emoji: 1.11.0
@@ -4679,11 +4684,11 @@ snapshots:
       tsconfig-paths: 4.2.0
       tsconfig-paths-webpack-plugin: 4.1.0
       typescript: 5.3.3
-      webpack: 5.92.1(@swc/core@1.6.13)
+      webpack: 5.92.1(@swc/core@1.7.0-nightly-20240717.3)
       webpack-node-externals: 3.0.0
     optionalDependencies:
-      '@swc/cli': 0.4.0(@swc/core@1.6.13)(chokidar@3.6.0)
-      '@swc/core': 1.6.13
+      '@swc/cli': 0.4.0(@swc/core@1.7.0-nightly-20240717.3)(chokidar@3.6.0)
+      '@swc/core': 1.7.0-nightly-20240717.3
     transitivePeerDependencies:
       - esbuild
       - uglify-js
@@ -4879,8 +4884,7 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@sindresorhus/is@4.6.0':
-    optional: true
+  '@sindresorhus/is@4.6.0': {}
 
   '@sinonjs/commons@3.0.1':
     dependencies:
@@ -4890,10 +4894,10 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@swc/cli@0.4.0(@swc/core@1.6.13)(chokidar@3.6.0)':
+  '@swc/cli@0.4.0(@swc/core@1.7.0-nightly-20240717.3)(chokidar@3.6.0)':
     dependencies:
       '@mole-inc/bin-wrapper': 8.0.1
-      '@swc/core': 1.6.13
+      '@swc/core': 1.7.0-nightly-20240717.3
       '@swc/counter': 0.1.3
       commander: 8.3.0
       fast-glob: 3.3.2
@@ -4904,70 +4908,64 @@ snapshots:
       source-map: 0.7.4
     optionalDependencies:
       chokidar: 3.6.0
+
+  '@swc/core-darwin-arm64@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-darwin-arm64@1.6.13':
+  '@swc/core-darwin-x64@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-darwin-x64@1.6.13':
+  '@swc/core-linux-arm-gnueabihf@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-linux-arm-gnueabihf@1.6.13':
+  '@swc/core-linux-arm64-gnu@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-linux-arm64-gnu@1.6.13':
+  '@swc/core-linux-arm64-musl@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-linux-arm64-musl@1.6.13':
+  '@swc/core-linux-x64-gnu@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-linux-x64-gnu@1.6.13':
+  '@swc/core-linux-x64-musl@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-linux-x64-musl@1.6.13':
+  '@swc/core-win32-arm64-msvc@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-win32-arm64-msvc@1.6.13':
+  '@swc/core-win32-ia32-msvc@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-win32-ia32-msvc@1.6.13':
+  '@swc/core-win32-x64-msvc@1.7.0-nightly-20240717.3':
     optional: true
 
-  '@swc/core-win32-x64-msvc@1.6.13':
-    optional: true
-
-  '@swc/core@1.6.13':
+  '@swc/core@1.7.0-nightly-20240717.3':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.9
     optionalDependencies:
-      '@swc/core-darwin-arm64': 1.6.13
-      '@swc/core-darwin-x64': 1.6.13
-      '@swc/core-linux-arm-gnueabihf': 1.6.13
-      '@swc/core-linux-arm64-gnu': 1.6.13
-      '@swc/core-linux-arm64-musl': 1.6.13
-      '@swc/core-linux-x64-gnu': 1.6.13
-      '@swc/core-linux-x64-musl': 1.6.13
-      '@swc/core-win32-arm64-msvc': 1.6.13
-      '@swc/core-win32-ia32-msvc': 1.6.13
-      '@swc/core-win32-x64-msvc': 1.6.13
-    optional: true
+      '@swc/core-darwin-arm64': 1.7.0-nightly-20240717.3
+      '@swc/core-darwin-x64': 1.7.0-nightly-20240717.3
+      '@swc/core-linux-arm-gnueabihf': 1.7.0-nightly-20240717.3
+      '@swc/core-linux-arm64-gnu': 1.7.0-nightly-20240717.3
+      '@swc/core-linux-arm64-musl': 1.7.0-nightly-20240717.3
+      '@swc/core-linux-x64-gnu': 1.7.0-nightly-20240717.3
+      '@swc/core-linux-x64-musl': 1.7.0-nightly-20240717.3
+      '@swc/core-win32-arm64-msvc': 1.7.0-nightly-20240717.3
+      '@swc/core-win32-ia32-msvc': 1.7.0-nightly-20240717.3
+      '@swc/core-win32-x64-msvc': 1.7.0-nightly-20240717.3
 
-  '@swc/counter@0.1.3':
-    optional: true
+  '@swc/counter@0.1.3': {}
 
   '@swc/types@0.1.9':
     dependencies:
       '@swc/counter': 0.1.3
-    optional: true
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
       defer-to-connect: 2.0.1
-    optional: true
 
-  '@tokenizer/token@0.3.0':
-    optional: true
+  '@tokenizer/token@0.3.0': {}
 
   '@tsconfig/node10@1.0.9': {}
 
@@ -5009,7 +5007,6 @@ snapshots:
       '@types/keyv': 3.1.4
       '@types/node': 20.14.11
       '@types/responselike': 1.0.3
-    optional: true
 
   '@types/connect@3.4.38':
     dependencies:
@@ -5047,8 +5044,7 @@ snapshots:
     dependencies:
       '@types/node': 20.14.11
 
-  '@types/http-cache-semantics@4.0.4':
-    optional: true
+  '@types/http-cache-semantics@4.0.4': {}
 
   '@types/http-errors@2.0.4': {}
 
@@ -5072,7 +5068,6 @@ snapshots:
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 20.14.11
-    optional: true
 
   '@types/methods@1.1.4': {}
 
@@ -5091,7 +5086,6 @@ snapshots:
   '@types/responselike@1.0.3':
     dependencies:
       '@types/node': 20.14.11
-    optional: true
 
   '@types/send@0.17.4':
     dependencies:
@@ -5372,8 +5366,7 @@ snapshots:
 
   append-field@1.0.0: {}
 
-  arch@2.2.0:
-    optional: true
+  arch@2.2.0: {}
 
   arg@4.1.3: {}
 
@@ -5491,20 +5484,17 @@ snapshots:
     dependencies:
       execa: 0.7.0
       executable: 4.1.1
-    optional: true
 
   bin-version-check@5.1.0:
     dependencies:
       bin-version: 6.0.0
       semver: 7.6.0
       semver-truncate: 3.0.0
-    optional: true
 
   bin-version@6.0.0:
     dependencies:
       execa: 5.1.1
       find-versions: 5.1.0
-    optional: true
 
   binary-extensions@2.3.0: {}
 
@@ -5594,8 +5584,7 @@ snapshots:
 
   bytes@3.1.2: {}
 
-  cacheable-lookup@5.0.4:
-    optional: true
+  cacheable-lookup@5.0.4: {}
 
   cacheable-request@7.0.4:
     dependencies:
@@ -5606,7 +5595,6 @@ snapshots:
       lowercase-keys: 2.0.0
       normalize-url: 6.1.0
       responselike: 2.0.1
-    optional: true
 
   call-bind@1.0.7:
     dependencies:
@@ -5729,7 +5717,6 @@ snapshots:
   clone-response@1.0.3:
     dependencies:
       mimic-response: 1.0.1
-    optional: true
 
   clone@1.0.4: {}
 
@@ -5761,8 +5748,7 @@ snapshots:
 
   commander@4.1.1: {}
 
-  commander@8.3.0:
-    optional: true
+  commander@8.3.0: {}
 
   comment-json@4.2.3:
     dependencies:
@@ -5833,13 +5819,13 @@ snapshots:
     optionalDependencies:
       typescript: 5.3.3
 
-  create-jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)):
+  create-jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      jest-config: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -5855,7 +5841,6 @@ snapshots:
       lru-cache: 4.1.5
       shebang-command: 1.2.0
       which: 1.3.1
-    optional: true
 
   cross-spawn@6.0.5:
     dependencies:
@@ -5924,7 +5909,6 @@ snapshots:
   decompress-response@6.0.0:
     dependencies:
       mimic-response: 3.1.0
-    optional: true
 
   dedent@1.5.3: {}
 
@@ -5936,8 +5920,7 @@ snapshots:
     dependencies:
       clone: 1.0.4
 
-  defer-to-connect@2.0.1:
-    optional: true
+  defer-to-connect@2.0.1: {}
 
   define-data-property@1.1.4:
     dependencies:
@@ -6025,7 +6008,6 @@ snapshots:
   end-of-stream@1.4.4:
     dependencies:
       once: 1.4.0
-    optional: true
 
   enhanced-resolve@5.17.0:
     dependencies:
@@ -6159,8 +6141,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  escape-string-regexp@5.0.0:
-    optional: true
+  escape-string-regexp@5.0.0: {}
 
   eslint-config-prettier@9.1.0(eslint@8.57.0):
     dependencies:
@@ -6271,7 +6252,6 @@ snapshots:
       p-finally: 1.0.0
       signal-exit: 3.0.7
       strip-eof: 1.0.0
-    optional: true
 
   execa@5.1.1:
     dependencies:
@@ -6288,7 +6268,6 @@ snapshots:
   executable@4.1.1:
     dependencies:
       pify: 2.3.0
-    optional: true
 
   exit@0.1.2: {}
 
@@ -6339,13 +6318,11 @@ snapshots:
   ext-list@2.2.2:
     dependencies:
       mime-db: 1.52.0
-    optional: true
 
   ext-name@5.0.0:
     dependencies:
       ext-list: 2.2.2
       sort-keys-length: 1.0.1
-    optional: true
 
   external-editor@3.1.0:
     dependencies:
@@ -6392,21 +6369,18 @@ snapshots:
       readable-web-to-node-stream: 3.0.2
       strtok3: 7.1.1
       token-types: 5.0.1
-    optional: true
 
   filelist@1.0.4:
     dependencies:
       minimatch: 5.1.6
 
-  filename-reserved-regex@3.0.0:
-    optional: true
+  filename-reserved-regex@3.0.0: {}
 
   filenamify@5.1.1:
     dependencies:
       filename-reserved-regex: 3.0.0
       strip-outer: 2.0.0
       trim-repeated: 2.0.0
-    optional: true
 
   fill-range@7.0.1:
     dependencies:
@@ -6437,7 +6411,6 @@ snapshots:
   find-versions@5.1.0:
     dependencies:
       semver-regex: 4.0.5
-    optional: true
 
   flat-cache@3.2.0:
     dependencies:
@@ -6458,7 +6431,7 @@ snapshots:
       cross-spawn: 7.0.3
       signal-exit: 4.1.0
 
-  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.3.3)(webpack@5.92.1(@swc/core@1.6.13)):
+  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.3.3)(webpack@5.92.1(@swc/core@1.7.0-nightly-20240717.3)):
     dependencies:
       '@babel/code-frame': 7.24.2
       chalk: 4.1.2
@@ -6473,7 +6446,7 @@ snapshots:
       semver: 7.6.0
       tapable: 2.2.1
       typescript: 5.3.3
-      webpack: 5.92.1(@swc/core@1.6.13)
+      webpack: 5.92.1(@swc/core@1.7.0-nightly-20240717.3)
 
   form-data@4.0.0:
     dependencies:
@@ -6531,13 +6504,11 @@ snapshots:
 
   get-port-please@3.1.2: {}
 
-  get-stream@3.0.0:
-    optional: true
+  get-stream@3.0.0: {}
 
   get-stream@5.2.0:
     dependencies:
       pump: 3.0.0
-    optional: true
 
   get-stream@6.0.1: {}
 
@@ -6620,7 +6591,6 @@ snapshots:
       lowercase-keys: 2.0.0
       p-cancelable: 2.1.1
       responselike: 2.0.1
-    optional: true
 
   graceful-fs@4.2.11: {}
 
@@ -6681,8 +6651,7 @@ snapshots:
       domutils: 3.1.0
       entities: 4.5.0
 
-  http-cache-semantics@4.1.1:
-    optional: true
+  http-cache-semantics@4.1.1: {}
 
   http-errors@2.0.0:
     dependencies:
@@ -6698,7 +6667,6 @@ snapshots:
     dependencies:
       quick-lru: 5.1.1
       resolve-alpn: 1.2.1
-    optional: true
 
   https-proxy-agent@7.0.4:
     dependencies:
@@ -6836,8 +6804,7 @@ snapshots:
 
   is-path-inside@3.0.3: {}
 
-  is-plain-obj@1.1.0:
-    optional: true
+  is-plain-obj@1.1.0: {}
 
   is-regex@1.1.4:
     dependencies:
@@ -6848,8 +6815,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.7
 
-  is-stream@1.1.0:
-    optional: true
+  is-stream@1.1.0: {}
 
   is-stream@2.0.1: {}
 
@@ -6973,16 +6939,16 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)):
+  jest-cli@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      create-jest: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      jest-config: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -6992,7 +6958,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-config@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)):
+  jest-config@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)):
     dependencies:
       '@babel/core': 7.24.9
       '@jest/test-sequencer': 29.7.0
@@ -7018,7 +6984,7 @@ snapshots:
       strip-json-comments: 3.1.1
     optionalDependencies:
       '@types/node': 20.14.11
-      ts-node: 10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)
+      ts-node: 10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -7244,12 +7210,12 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)):
+  jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      jest-cli: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -7354,8 +7320,7 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lowercase-keys@2.0.0:
-    optional: true
+  lowercase-keys@2.0.0: {}
 
   lru-cache@10.2.0: {}
 
@@ -7365,7 +7330,6 @@ snapshots:
     dependencies:
       pseudomap: 1.0.2
       yallist: 2.1.2
-    optional: true
 
   lru-cache@5.1.1:
     dependencies:
@@ -7428,11 +7392,9 @@ snapshots:
 
   mimic-fn@2.1.0: {}
 
-  mimic-response@1.0.1:
-    optional: true
+  mimic-response@1.0.1: {}
 
-  mimic-response@3.1.0:
-    optional: true
+  mimic-response@3.1.0: {}
 
   minimatch@10.0.1:
     dependencies:
@@ -7558,8 +7520,7 @@ snapshots:
 
   normalize-path@3.0.0: {}
 
-  normalize-url@6.1.0:
-    optional: true
+  normalize-url@6.1.0: {}
 
   npm-run-all@4.1.5:
     dependencies:
@@ -7576,7 +7537,6 @@ snapshots:
   npm-run-path@2.0.2:
     dependencies:
       path-key: 2.0.1
-    optional: true
 
   npm-run-path@4.0.1:
     dependencies:
@@ -7690,15 +7650,12 @@ snapshots:
   os-filter-obj@2.0.0:
     dependencies:
       arch: 2.2.0
-    optional: true
 
   os-tmpdir@1.0.2: {}
 
-  p-cancelable@2.1.1:
-    optional: true
+  p-cancelable@2.1.1: {}
 
-  p-finally@1.0.0:
-    optional: true
+  p-finally@1.0.0: {}
 
   p-limit@2.3.0:
     dependencies:
@@ -7779,8 +7736,7 @@ snapshots:
 
   path-type@4.0.0: {}
 
-  peek-readable@5.1.3:
-    optional: true
+  peek-readable@5.1.3: {}
 
   perfect-scrollbar@1.5.5: {}
 
@@ -7796,8 +7752,7 @@ snapshots:
 
   pidtree@0.3.1: {}
 
-  pify@2.3.0:
-    optional: true
+  pify@2.3.0: {}
 
   pify@3.0.0: {}
 
@@ -7806,7 +7761,6 @@ snapshots:
   piscina@4.6.1:
     optionalDependencies:
       nice-napi: 1.0.2
-    optional: true
 
   pkg-dir@4.2.0:
     dependencies:
@@ -7862,14 +7816,12 @@ snapshots:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
 
-  pseudomap@1.0.2:
-    optional: true
+  pseudomap@1.0.2: {}
 
   pump@3.0.0:
     dependencies:
       end-of-stream: 1.4.4
       once: 1.4.0
-    optional: true
 
   punycode@2.3.1: {}
 
@@ -7885,8 +7837,7 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  quick-lru@5.1.1:
-    optional: true
+  quick-lru@5.1.1: {}
 
   raf@3.4.1:
     dependencies:
@@ -7963,7 +7914,6 @@ snapshots:
   readable-web-to-node-stream@3.0.2:
     dependencies:
       readable-stream: 3.6.2
-    optional: true
 
   readdirp@3.6.0:
     dependencies:
@@ -8023,8 +7973,7 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
-  resolve-alpn@1.2.1:
-    optional: true
+  resolve-alpn@1.2.1: {}
 
   resolve-cwd@3.0.0:
     dependencies:
@@ -8045,7 +7994,6 @@ snapshots:
   responselike@2.0.1:
     dependencies:
       lowercase-keys: 2.0.0
-    optional: true
 
   restore-cursor@3.1.0:
     dependencies:
@@ -8111,13 +8059,11 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
-  semver-regex@4.0.5:
-    optional: true
+  semver-regex@4.0.5: {}
 
   semver-truncate@3.0.0:
     dependencies:
       semver: 7.6.0
-    optional: true
 
   semver@5.7.2: {}
 
@@ -8250,12 +8196,10 @@ snapshots:
   sort-keys-length@1.0.1:
     dependencies:
       sort-keys: 1.1.2
-    optional: true
 
   sort-keys@1.1.2:
     dependencies:
       is-plain-obj: 1.1.0
-    optional: true
 
   source-map-js@1.2.0: {}
 
@@ -8362,21 +8306,18 @@ snapshots:
 
   strip-bom@4.0.0: {}
 
-  strip-eof@1.0.0:
-    optional: true
+  strip-eof@1.0.0: {}
 
   strip-final-newline@2.0.0: {}
 
   strip-json-comments@3.1.1: {}
 
-  strip-outer@2.0.0:
-    optional: true
+  strip-outer@2.0.0: {}
 
   strtok3@7.1.1:
     dependencies:
       '@tokenizer/token': 0.3.0
       peek-readable: 5.1.3
-    optional: true
 
   styled-components@6.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
@@ -8457,16 +8398,16 @@ snapshots:
 
   tapable@2.2.1: {}
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.6.13)(webpack@5.92.1(@swc/core@1.6.13)):
+  terser-webpack-plugin@5.3.10(@swc/core@1.7.0-nightly-20240717.3)(webpack@5.92.1(@swc/core@1.7.0-nightly-20240717.3)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.29.2
-      webpack: 5.92.1(@swc/core@1.6.13)
+      webpack: 5.92.1(@swc/core@1.7.0-nightly-20240717.3)
     optionalDependencies:
-      '@swc/core': 1.6.13
+      '@swc/core': 1.7.0-nightly-20240717.3
 
   terser@5.29.2:
     dependencies:
@@ -8503,7 +8444,6 @@ snapshots:
     dependencies:
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
-    optional: true
 
   tr46@0.0.3: {}
 
@@ -8512,18 +8452,17 @@ snapshots:
   trim-repeated@2.0.0:
     dependencies:
       escape-string-regexp: 5.0.0
-    optional: true
 
   ts-api-utils@1.3.0(typescript@5.5.3):
     dependencies:
       typescript: 5.5.3
 
-  ts-jest@29.2.2(@babel/core@7.24.9)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.9))(jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3)))(typescript@5.5.3):
+  ts-jest@29.2.2(@babel/core@7.24.9)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.9))(jest@29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3)))(typescript@5.5.3):
     dependencies:
       bs-logger: 0.2.6
       ejs: 3.1.10
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3))
+      jest: 29.7.0(@types/node@20.14.11)(ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -8537,7 +8476,7 @@ snapshots:
       '@jest/types': 29.6.3
       babel-jest: 29.7.0(@babel/core@7.24.9)
 
-  ts-node@10.9.2(@swc/core@1.6.13)(@types/node@20.14.11)(typescript@5.5.3):
+  ts-node@10.9.2(@swc/core@1.7.0-nightly-20240717.3)(@types/node@20.14.11)(typescript@5.5.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.9
@@ -8555,7 +8494,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.6.13
+      '@swc/core': 1.7.0-nightly-20240717.3
 
   tsconfig-paths-webpack-plugin@4.1.0:
     dependencies:
@@ -8710,7 +8649,7 @@ snapshots:
 
   webpack-sources@3.2.3: {}
 
-  webpack@5.92.1(@swc/core@1.6.13):
+  webpack@5.92.1(@swc/core@1.7.0-nightly-20240717.3):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.5
@@ -8733,7 +8672,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.6.13)(webpack@5.92.1(@swc/core@1.6.13))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.7.0-nightly-20240717.3)(webpack@5.92.1(@swc/core@1.7.0-nightly-20240717.3))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -8807,8 +8746,7 @@ snapshots:
 
   y18n@5.0.8: {}
 
-  yallist@2.1.2:
-    optional: true
+  yallist@2.1.2: {}
 
   yallist@3.1.1: {}
 

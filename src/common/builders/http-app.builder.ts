@@ -70,7 +70,7 @@ export class HttpAppBuilder {
     if (this.buildDocs) return;
 
     const { default: helmet } = await import('helmet');
-    const compression = await import('compression');
+    const { default: compression } = await import('compression');
 
     HttpAppBuilder._app.use(helmet());
     HttpAppBuilder._app.use(compression());
