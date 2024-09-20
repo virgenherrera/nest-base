@@ -1,6 +1,7 @@
-import { IsIn, IsPort } from 'class-validator';
-import { env } from 'node:process';
-import { ValidConfig } from '../utils';
+import { Expose, Transform } from 'class-transformer';
+import { IsIn, IsNotEmpty, IsPort } from 'class-validator';
+
+import { EnvSchemaLoader } from '../utils/env-schema-loader.util';
 
 export type Environment = (typeof AppConfig.AvailableEnvironments)[number];
 
@@ -14,12 +15,16 @@ export class AppConfig {
     'PROD',
   ] as const;
 
+  @Expose({ name: 'NODE_ENV' })
+  @Transform(({ value }) => value.toUpperCase())
   @IsIn(AppConfig.AvailableEnvironments)
-  readonly environment: Environment =
-    (env.NODE_ENV?.toUpperCase() as any) || 'DEVELOPMENT';
+  readonly environment: Environment;
 
+  @Expose({ name: 'APP_PORT' })
+  @Transform(({ value }) => value || '3000')
+  @IsNotEmpty()
   @IsPort()
-  readonly port: `${number}` = (env.APP_PORT as `${number}`) || '3000';
+  readonly port: `${number}`;
 }
 
-export const appConfig = ValidConfig.registerAs(AppConfig);
+export const appConfig = EnvSchemaLoader.validate(AppConfig);

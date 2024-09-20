@@ -9,6 +9,8 @@ import { of, take, throwError } from 'rxjs';
 
 import { LogRequestInterceptor } from './log-request.interceptor';
 
+jest.mock('@nestjs/common/services/');
+
 describe(`UT:${LogRequestInterceptor.name}`, () => {
   let interceptor: LogRequestInterceptor = null;
 

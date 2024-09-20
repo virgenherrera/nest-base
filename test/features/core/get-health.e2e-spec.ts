@@ -5,7 +5,7 @@ import { TestContext } from '../../utils';
 describe(`e2e: (GET) /health`, () => {
   const enum should {
     initTestContext = 'Should test Context be properly initialized.',
-    getHealth = `Should GET appHealth params.`,
+    getHealth = `Should GET appUptime.`,
   }
 
   let testCtx: TestContext = null;
@@ -19,11 +19,9 @@ describe(`e2e: (GET) /health`, () => {
   });
 
   it(should.getHealth, async () => {
-    const { body } = await testCtx.request.get('/health');
+    const { status, body } = await testCtx.request.get('/health');
 
-    expect(body).toHaveProperty('status');
-    expect(body).toHaveProperty('info');
-    expect(body).toHaveProperty('error');
-    expect(body).toHaveProperty('details');
+    expect(status).toBe(200);
+    expect(body).toHaveProperty('uptime');
   });
 });

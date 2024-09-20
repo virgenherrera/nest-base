@@ -36,6 +36,7 @@ describe(`UT:${swaggerFactory.name}`, () => {
     app = {} as INestApplication;
     logger = {
       log: jest.fn(),
+      verbose: jest.fn(),
     } as unknown as Logger;
   });
 
@@ -55,6 +56,7 @@ describe(`UT:${swaggerFactory.name}`, () => {
       app,
       'swaggerConfig',
     );
-    expect(logger.log).toHaveBeenCalledTimes(2);
+    expect(logger.log).toHaveBeenCalledTimes(1);
+    expect(logger.verbose).toHaveBeenCalledTimes(1);
   });
 });
