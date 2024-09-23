@@ -1,23 +1,21 @@
 import { Expose, Transform } from 'class-transformer';
 import { IsIn, IsNotEmpty, IsPort } from 'class-validator';
 
+import { Environments } from '../common/constants';
+import { Environment } from '../common/types';
 import { EnvSchemaLoader } from '../utils/env-schema-loader.util';
 
-export type Environment = (typeof AppConfig.AvailableEnvironments)[number];
+function setEnvironment(envVar: string): Environment {
+  const regex = new RegExp(`^${envVar}$`, 'i');
+  const matchedEnv = Environments.find(env => regex.test(env));
+
+  return matchedEnv || 'DEVELOPMENT';
+}
 
 export class AppConfig {
-  static readonly AvailableEnvironments = [
-    'DEVELOPMENT',
-    'TEST',
-    'E2E',
-    'QA',
-    'UAT',
-    'PROD',
-  ] as const;
-
   @Expose({ name: 'NODE_ENV' })
-  @Transform(({ value }) => value.toUpperCase())
-  @IsIn(AppConfig.AvailableEnvironments)
+  @Transform(({ value }) => setEnvironment(value))
+  @IsIn(Environments)
   readonly environment: Environment;
 
   @Expose({ name: 'APP_PORT' })

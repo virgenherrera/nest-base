@@ -4,6 +4,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 
 import { swaggerFactory } from '../../utils';
+import { UpperEnvironments } from '../constants';
 import { CommonAppFactory } from './common-app-factory.builder';
 
 export async function HttpAppBuilder(): Promise<void> {
@@ -15,7 +16,7 @@ export async function HttpAppBuilder(): Promise<void> {
   app.use(compression());
   logger.verbose('Middlewares mounted successfully');
 
-  if (appConfig.environment !== 'PROD') {
+  if (!UpperEnvironments.includes(appConfig.environment)) {
     const getSwaggerDocument = swaggerFactory(app, logger);
     const swaggerDocument = getSwaggerDocument();
 
