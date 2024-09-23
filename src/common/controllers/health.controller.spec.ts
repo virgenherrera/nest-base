@@ -1,5 +1,5 @@
-import { HealthCheckService } from '@nestjs/terminus';
 import { Test } from '@nestjs/testing';
+import { GetHealthResponseDto } from '../dto';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
@@ -8,26 +8,15 @@ describe(`UT:${HealthController.name}`, () => {
     getHealth = 'Should return "up" status.',
   }
 
-  let mockHealthCheckService: HealthCheckService = null;
   let controller: HealthController = null;
 
   beforeAll(async () => {
     const testingModule = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [
-        {
-          provide: HealthCheckService,
-          useValue: {
-            check: jest.fn(),
-          },
-        },
-      ],
+      providers: [],
     }).compile();
 
     controller = testingModule.get(HealthController);
-    controller.onModuleInit();
-
-    mockHealthCheckService = testingModule.get(HealthCheckService);
   });
 
   afterEach(() => {
@@ -37,28 +26,12 @@ describe(`UT:${HealthController.name}`, () => {
 
   it(should.init, async () => {
     expect(controller).not.toBeNull();
-    expect(mockHealthCheckService).not.toBeNull();
     expect(controller).toBeInstanceOf(HealthController);
   });
 
   it(should.getHealth, async () => {
-    const checkSpy = jest
-      .spyOn(mockHealthCheckService, 'check')
-      .mockImplementation(checkArgs => checkArgs as any);
-
-    const result = await controller.getHealth();
-
-    expect(result).toMatchObject(
-      expect.arrayContaining([expect.any(Function)]),
+    await expect(controller.getHealth()).resolves.toBeInstanceOf(
+      GetHealthResponseDto,
     );
-
-    await expect(result[0]()).resolves.toMatchObject({
-      uptime: {
-        status: 'up',
-        duration: expect.stringContaining('less than a minute'),
-      },
-    });
-
-    expect(checkSpy).toHaveBeenCalledTimes(1);
   });
 });

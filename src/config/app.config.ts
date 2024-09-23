@@ -1,25 +1,28 @@
-import { IsIn, IsPort } from 'class-validator';
-import { env } from 'node:process';
-import { ValidConfig } from '../utils';
+import { Expose, Transform } from 'class-transformer';
+import { IsIn, IsNotEmpty, IsPort } from 'class-validator';
 
-export type Environment = (typeof AppConfig.AvailableEnvironments)[number];
+import { Environments } from '../common/constants';
+import { Environment } from '../common/types';
+import { EnvSchemaLoader } from '../utils/env-schema-loader.util';
 
-export class AppConfig {
-  static readonly AvailableEnvironments = [
-    'DEVELOPMENT',
-    'TEST',
-    'E2E',
-    'QA',
-    'UAT',
-    'PROD',
-  ] as const;
+function setEnvironment(envVar: string): Environment {
+  const regex = new RegExp(`^${envVar}$`, 'i');
+  const matchedEnv = Environments.find(env => regex.test(env));
 
-  @IsIn(AppConfig.AvailableEnvironments)
-  readonly environment: Environment =
-    (env.NODE_ENV?.toUpperCase() as any) || 'DEVELOPMENT';
-
-  @IsPort()
-  readonly port: `${number}` = (env.APP_PORT as `${number}`) || '3000';
+  return matchedEnv || 'DEVELOPMENT';
 }
 
-export const appConfig = ValidConfig.registerAs(AppConfig);
+export class AppConfig {
+  @Expose({ name: 'NODE_ENV' })
+  @Transform(({ value }) => setEnvironment(value))
+  @IsIn(Environments)
+  readonly environment: Environment;
+
+  @Expose({ name: 'APP_PORT' })
+  @Transform(({ value }) => value || '3000')
+  @IsNotEmpty()
+  @IsPort()
+  readonly port: `${number}`;
+}
+
+export const appConfig = EnvSchemaLoader.validate(AppConfig);

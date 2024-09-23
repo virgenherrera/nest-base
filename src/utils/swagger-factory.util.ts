@@ -19,7 +19,9 @@ export function swaggerFactory(
       .build();
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 
-    logger.log(`successfully created OpenAPI ${swaggerDocument.info.title}`);
+    logger.verbose(
+      `successfully created OpenAPI ${swaggerDocument.info.title}`,
+    );
 
     return swaggerDocument;
   };

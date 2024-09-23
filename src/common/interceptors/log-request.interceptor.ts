@@ -30,33 +30,43 @@ export class LogRequestInterceptor implements NestInterceptor {
         const { statusCode } = response;
         const diff = this.timeStamp - startAt;
         const responseTime = Number(diff / BigInt(1e6));
-        const message = `${method} ${originalUrl}; HTTP Status ${statusCode}; ${responseTime}ms`;
+        const logMessage = [
+          method,
+          originalUrl,
+          statusCode,
+          `${responseTime}ms`,
+        ].join(' | ');
 
-        this.logger.log(message);
+        this.logger.log(logMessage);
       }),
       catchError(error => {
-        if (!(error instanceof HttpException)) {
-          this.logger.error(error);
-
-          throw error;
-        }
-
-        const statusCode = error.getStatus();
-        const response = error.getResponse();
-        const responseStr =
-          typeof response === 'string'
-            ? response
-            : 'response:\n' + JSON.stringify(response, null, 2);
-
-        const methodName: 'error' | 'warn' =
-          statusCode >= 500 ? 'error' : 'warn';
         const diff = this.timeStamp - startAt;
         const responseTime = Number(diff / BigInt(1e6));
-        const { method, originalUrl } = request;
-        const message = `${method} ${originalUrl}; HTTP Status ${statusCode}; ${responseStr};${responseTime}ms`;
+        const { method, originalUrl, headers, body } = request;
+        const isHttpException = error instanceof HttpException;
+        const statusCode = isHttpException ? error.getStatus() : 500;
+        const isInternalError = statusCode >= 500;
+        const response = isHttpException ? error.getResponse() : error.message;
+        const methodName = isInternalError ? 'error' : 'warn';
+        const msgSegments = [
+          methodName,
+          method,
+          originalUrl,
+          statusCode,
+          `${responseTime}ms`,
+        ];
 
-        this.logger[methodName](message);
+        if (isInternalError)
+          msgSegments.push(
+            response,
+            error.stack,
+            JSON.stringify(headers),
+            JSON.stringify(body),
+          );
 
+        const logMessage = msgSegments.join(' | ');
+
+        this.logger[methodName](logMessage);
         throw error;
       }),
     );

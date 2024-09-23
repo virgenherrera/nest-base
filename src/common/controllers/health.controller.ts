@@ -1,35 +1,23 @@
-import { Controller, Logger, OnModuleInit } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 import { formatDistanceToNow } from 'date-fns';
 
+import { plainToInstance } from 'class-transformer';
 import { GetHealthDocs } from '../docs';
+import { GetHealthResponseDto } from '../dto';
 
 @Controller('health')
 @ApiTags('health')
-export class HealthController implements OnModuleInit {
+export class HealthController {
   private readonly logger = new Logger(this.constructor.name);
-  private startTime: Date;
-
-  constructor(private readonly health: HealthCheckService) {}
-
-  onModuleInit() {
-    this.startTime = new Date();
-  }
+  private readonly startTime = new Date();
 
   @GetHealthDocs()
-  async getHealth(): Promise<HealthCheckResult> {
+  async getHealth(): Promise<GetHealthResponseDto> {
     this.logger.log(`Getting service Health.`);
 
-    const uptime = formatDistanceToNow(this.startTime, { addSuffix: false });
-
-    return this.health.check([
-      async () => ({
-        uptime: {
-          status: 'up',
-          duration: uptime,
-        },
-      }),
-    ]);
+    return plainToInstance(GetHealthResponseDto, {
+      uptime: formatDistanceToNow(this.startTime, { addSuffix: false }),
+    });
   }
 }
