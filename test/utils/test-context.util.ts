@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as supertest from 'supertest';
+import supertest from 'supertest';
 
 import { AppModule } from '../../src/app.module';
 
@@ -23,13 +23,7 @@ export class TestContext {
   }
 
   static async destroyInstance() {
-    if (TestContext.instance) {
-      try {
-        await TestContext.instance.destroyContext();
-      } catch (error) {
-        console.error('Failed to destroy test context:', error);
-      }
-    }
+    if (TestContext.instance) await TestContext.instance.destroyContext();
   }
 
   private _app: INestApplication = null;
@@ -52,7 +46,7 @@ export class TestContext {
 
     await this._app.init();
 
-    this._request = supertest(this.app.getHttpServer());
+    this._request = supertest(this._app.getHttpServer());
 
     return this;
   }

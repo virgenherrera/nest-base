@@ -6,6 +6,7 @@
 import type { Config } from 'jest';
 
 export const BaseConfig: Config = {
+  cache: false,
   collectCoverage: true,
   collectCoverageFrom: [
     '**/*.ts',
@@ -24,7 +25,7 @@ export const BaseConfig: Config = {
   rootDir: 'src',
   testEnvironment: 'node',
   testRegex: '.spec.ts$',
-  transform: { '^.+\\.ts$': 'ts-jest' },
+  transform: { '^.+\\.ts$': '@swc/jest' },
   verbose: false,
 };
 
