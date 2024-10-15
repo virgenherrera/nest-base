@@ -22,6 +22,6 @@ describe(`e2e: (GET) /health`, () => {
     const { status, body } = await testCtx.request.get('/health');
 
     expect(status).toBe(200);
-    expect(body).toHaveProperty('uptime');
+    expect(body).toMatchObject({ uptime: expect.any(String) });
   });
 });

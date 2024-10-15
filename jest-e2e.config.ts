@@ -2,24 +2,21 @@ import { BaseConfig } from './jest.config';
 
 export const e2eConfig: typeof BaseConfig = {
   ...BaseConfig,
-  collectCoverageFrom: [
-    ...BaseConfig.collectCoverageFrom,
-    '!**/common/interceptors/*.interceptor.ts',
-    '!**/*.(config|spec).ts',
-    '!(dist|test|scripts)/**',
-    '!src/utils/**',
-  ],
-  coverageDirectory: 'coverage/e2e',
-  rootDir: './',
-  globalSetup: '<rootDir>/test/setup.ts',
-  globalTeardown: '<rootDir>/test/teardown.ts',
-  testPathIgnorePatterns: [
-    '/coverage/',
-    '/dist/',
-    '/node_modules/',
-    '/public/',
-    '/public/',
-    '/src/',
+  collectCoverage: false,
+  rootDir: './test/',
+  globalSetup: '<rootDir>/setup.ts',
+  globalTeardown: '<rootDir>/teardown.ts',
+  reporters: [
+    'default',
+    [
+      'jest-html-reporter',
+      {
+        pageTitle: 'E2E Test Report',
+        outputPath: './coverage/e2e-report.html',
+        includeFailureMsg: true,
+        includeConsoleLog: true,
+      },
+    ],
   ],
   testRegex: '.e2e-spec.ts$',
 };
