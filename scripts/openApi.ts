@@ -1,3 +1,3 @@
-import { OpenApiBuilder } from '../src/common/builders/';
+import { OpenApiBuilder } from '../src/application/builders';
 
 OpenApiBuilder();

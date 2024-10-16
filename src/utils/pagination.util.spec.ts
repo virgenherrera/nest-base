@@ -1,6 +1,10 @@
 import { plainToInstance } from 'class-transformer';
 
-import { BasePagedParamsDto, PagedResults, Pagination } from '../common/dto';
+import {
+  BasePagedParamsDto,
+  PagedResults,
+  Pagination,
+} from '../application/dto';
 import { PaginationUtil } from './pagination.util';
 
 describe(`UT:${PaginationUtil.name}`, () => {

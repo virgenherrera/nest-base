@@ -1,8 +1,8 @@
 import { Expose, Transform } from 'class-transformer';
 import { IsIn, IsNotEmpty, IsPort } from 'class-validator';
 
-import { Environments } from '../common/constants';
-import { Environment } from '../common/types';
+import { Environments } from '../application/constants';
+import { Environment } from '../application/types';
 import { EnvSchemaLoader } from '../utils/env-schema-loader.util';
 
 function setEnvironment(envVar: string): Environment {
