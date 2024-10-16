@@ -1,6 +1,10 @@
 import { plainToInstance } from 'class-transformer';
 
-import { BasePagedParamsDto, PagedResults, Pagination } from '../common/dto';
+import {
+  BasePagedParamsDto,
+  PagedResults,
+  Pagination,
+} from '../application/dto';
 
 export class PaginationUtil<T extends BasePagedParamsDto, U extends any[]> {
   static getResults<T extends BasePagedParamsDto, U extends any[]>(

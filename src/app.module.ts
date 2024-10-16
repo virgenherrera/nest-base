@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
 
-import { CommonModule } from './common/common.module';
+import { HealthController } from './application/controllers';
+import { AppConfigModule } from './application/imports';
 import {
   GlobalValidationPipeProvider,
   LogRequestInterceptorProvider,
   PagedResultsInterceptorProvider,
-} from './common/providers';
+} from './application/providers';
 
 @Module({
-  imports: [CommonModule],
+  imports: [AppConfigModule.forRoot()],
   providers: [
     GlobalValidationPipeProvider,
     LogRequestInterceptorProvider,
     PagedResultsInterceptorProvider,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}

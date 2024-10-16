@@ -1,3 +1,3 @@
-import { HttpAppBuilder } from './common/builders';
+import { HttpAppBuilder } from './application/builders';
 
 HttpAppBuilder();
