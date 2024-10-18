@@ -4,7 +4,7 @@ import { writeFile } from 'fs/promises';
 import { join, resolve } from 'path/posix';
 import { cwd } from 'process';
 
-import { swaggerFactory } from '../../utils';
+import { getSwaggerDocument } from '../../utils';
 import { CommonAppFactory } from './common-app-factory.builder';
 
 export async function OpenApiBuilder(fileName = 'openapi.json'): Promise<void> {
@@ -23,8 +23,7 @@ export async function OpenApiBuilder(fileName = 'openapi.json'): Promise<void> {
 
   logger.log(`building Swagger.json file`);
 
-  const factory = swaggerFactory(app, logger);
-  const swaggerDocument = factory();
+  const swaggerDocument = getSwaggerDocument(app, logger);
   const swaggerFileContent = JSON.stringify(swaggerDocument, null, 2);
 
   logger.log(`Writing openOpenAPI file`);
