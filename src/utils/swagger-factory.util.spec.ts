@@ -2,7 +2,7 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 
 import { getPackageMetadata } from './get-package-metadata.util';
-import { swaggerFactory } from './swagger-factory.util';
+import { getSwaggerDocument, setupSwaggerModule } from './swagger-factory.util';
 
 jest.mock('@nestjs/swagger', () => ({
   DocumentBuilder: jest.fn().mockReturnValue({
@@ -16,6 +16,7 @@ jest.mock('@nestjs/swagger', () => ({
     createDocument: jest.fn().mockReturnValue({
       info: { title: 'mock-title' },
     }),
+    setup: jest.fn(),
   },
 }));
 
@@ -28,7 +29,7 @@ jest.mock('./get-package-metadata.util', () => ({
   }),
 }));
 
-describe(`UT:${swaggerFactory.name}`, () => {
+describe(`UT:${getSwaggerDocument.name}`, () => {
   let app: INestApplication;
   let logger: Logger;
 
@@ -41,14 +42,9 @@ describe(`UT:${swaggerFactory.name}`, () => {
   });
 
   it('should create Swagger document', () => {
-    let factory: () => OpenAPIObject = null;
     let result: OpenAPIObject = null;
 
-    expect(() => (factory = swaggerFactory(app, logger))).not.toThrow();
-    expect(factory).not.toBeNull();
-    expect(factory).toBeInstanceOf(Function);
-
-    expect(() => (result = factory())).not.toThrow();
+    expect(() => (result = getSwaggerDocument(app, logger))).not.toThrow();
     expect(result).not.toBeNull();
 
     expect(getPackageMetadata).toHaveBeenCalledTimes(1);
@@ -58,5 +54,37 @@ describe(`UT:${swaggerFactory.name}`, () => {
     );
     expect(logger.log).toHaveBeenCalledTimes(1);
     expect(logger.verbose).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe(`UT:${setupSwaggerModule.name}`, () => {
+  let logger: Logger;
+  let app: INestApplication;
+  let swaggerDocument: any;
+
+  beforeEach(() => {
+    app = {} as INestApplication;
+    swaggerDocument = {};
+    logger = {
+      log: jest.fn(),
+    } as unknown as Logger;
+  });
+
+  it('should set up Swagger module', () => {
+    const apiPrefix = 'api';
+
+    expect(() =>
+      setupSwaggerModule(logger, apiPrefix, app, swaggerDocument),
+    ).not.toThrow();
+
+    expect(SwaggerModule.setup).toHaveBeenCalledWith(
+      apiPrefix,
+      app,
+      swaggerDocument,
+    );
+    expect(logger.log).toHaveBeenCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledWith(
+      'Mounting SwaggerDocs in: api/ path',
+    );
   });
 });

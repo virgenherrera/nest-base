@@ -1,9 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
 import helmet from 'helmet';
 
-import { swaggerFactory } from '../../utils';
+import { getSwaggerDocument, setupSwaggerModule } from '../../utils';
 import { UpperEnvironments } from '../constants';
 import { CommonAppFactory } from './common-app-factory.builder';
 
@@ -17,11 +16,9 @@ export async function HttpAppBuilder(): Promise<void> {
   logger.verbose('Middlewares mounted successfully');
 
   if (!UpperEnvironments.includes(appConfig.environment)) {
-    const getSwaggerDocument = swaggerFactory(app, logger);
-    const swaggerDocument = getSwaggerDocument();
+    const swaggerDocument = getSwaggerDocument(app, logger);
 
-    logger.log(`Mounting SwaggerDocs in: ${apiPrefix}/`);
-    SwaggerModule.setup(apiPrefix, app, swaggerDocument);
+    setupSwaggerModule(logger, apiPrefix, app, swaggerDocument);
 
     logger.verbose(
       `SwaggerDocs available in: http://localhost:${appConfig.port}/${apiPrefix}/`,
