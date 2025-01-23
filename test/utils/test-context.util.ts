@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import supertest from 'supertest';
+import * as supertest from 'supertest';
 
 import { AppModule } from '../../src/app.module';
 
 export class TestContext {
-  private static instance: TestContext = null;
+  private static instance: TestContext;
 
   static async getInstance() {
     if (TestContext.instance) return TestContext.instance;
@@ -22,12 +22,12 @@ export class TestContext {
     return TestContext.instance;
   }
 
-  static async destroyInstance() {
+  static async destruct() {
     if (TestContext.instance) await TestContext.instance.destroyContext();
   }
 
-  private _app: INestApplication = null;
-  private _request: ReturnType<typeof supertest> = null;
+  private _app: INestApplication;
+  private _request: ReturnType<typeof supertest>;
 
   get app() {
     return this._app;
@@ -38,6 +38,8 @@ export class TestContext {
   }
 
   private async initContext() {
+    console.log(`${'\n'}Initializing E2E ${this.constructor.name}`);
+
     const testingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -52,8 +54,10 @@ export class TestContext {
   }
 
   private async destroyContext() {
+    console.log(`${'\n'}destroying E2E ${this.constructor.name}`);
+
     if (this._app) await this._app.close();
 
-    this._request = null;
+    Object.assign(this, { _app: null, _request: null });
   }
 }

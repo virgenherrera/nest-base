@@ -11,7 +11,7 @@ describe(`UT:${PagedResultsInterceptor.name}`, () => {
     addPathPrefix = 'Should add req.path when HTTP Verb is GET and response is instance of PagedResults',
     doNothingOnDefault = 'Should do nothing on otherwise.',
   }
-  let interceptor: PagedResultsInterceptor = null;
+
   const getMockExecutionContext = (
     method: keyof typeof RequestMethod,
     path: string,
@@ -27,6 +27,8 @@ describe(`UT:${PagedResultsInterceptor.name}`, () => {
     handle: jest.fn().mockReturnValue(of(expectedValue)),
   });
 
+  let interceptor: PagedResultsInterceptor;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [PagedResultsInterceptor],
@@ -37,15 +39,14 @@ describe(`UT:${PagedResultsInterceptor.name}`, () => {
 
   afterEach(() => {
     jest.resetAllMocks();
-    jest.resetAllMocks;
   });
 
-  it(should.init, async () => {
+  it(should.init, () => {
     expect(interceptor).not.toBeNull();
     expect(interceptor).toBeInstanceOf(PagedResultsInterceptor);
   });
 
-  it(should.addPathPrefix, done => {
+  it(should.addPathPrefix, (done) => {
     const pagedResults = new PagedResults();
 
     pagedResults.rows = [];
@@ -66,11 +67,11 @@ describe(`UT:${PagedResultsInterceptor.name}`, () => {
           expect(interceptSpy).toHaveBeenCalledTimes(1);
           done();
         },
-        error: error => done(error),
+        error: (error) => done(error),
       });
   });
 
-  it(should.doNothingOnDefault, done => {
+  it(should.doNothingOnDefault, (done) => {
     const expectedData = { foo: '?foo=bar', bar: '?foo=bar' } as any;
 
     const mockExecutionContext = getMockExecutionContext(
@@ -84,12 +85,12 @@ describe(`UT:${PagedResultsInterceptor.name}`, () => {
       .intercept(mockExecutionContext, mockCallHandler)
       .pipe(take(1))
       .subscribe({
-        next: data => {
+        next: (data) => {
           expect(data).toBe(expectedData);
           expect(interceptSpy).toHaveBeenCalledTimes(1);
           done();
         },
-        error: error => done(error),
+        error: (error) => done(error),
       });
   });
 });

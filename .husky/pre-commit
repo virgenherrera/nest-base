@@ -1,0 +1,11 @@
+echo '
+INFO: This project has a pre-commit hook to execute linting, automatically fixing issues when possible.
+If necessary, you can disable this with the "--no-verify" flag during the commit.
+Example:
+    "git commit -m <message> --no-verify"
+'
+
+pnpm run format || {
+  echo "ERROR: Linting issues were found in the committed files. Please address them before proceeding."
+  exit 1
+}

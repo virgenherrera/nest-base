@@ -5,28 +5,25 @@
 */
 import type { Config } from 'jest';
 
-export const BaseConfig: Config = {
+export const JestConfig: Config = {
   cache: false,
   collectCoverage: true,
   collectCoverageFrom: [
-    '**/*.ts',
-    '!**/(index|main).ts',
-    '!**/*.(builder|config|constant|doc|dto|enum|exception|import|indicator|interceptor|interface|model|module|provider).ts',
-    '!**/__mocks__.ts',
+    '**/*.(controller|filter|interceptor|pipe|service|util).ts',
+    '!**/application/utils/*.ts',
   ],
   coverageDirectory: '../coverage/unit',
-  coverageProvider: 'v8',
-  coverageReporters: ['clover', 'json', 'text', 'html-spa'],
+  coverageReporters: ['json', 'html-spa'],
   coverageThreshold: {
     global: { branches: 80, functions: 80, lines: 80, statements: 80 },
   },
+  detectOpenHandles: true,
   maxWorkers: '100%',
-  reporters: ['default', 'summary'],
+  moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: 'src',
   testEnvironment: 'node',
-  testRegex: '.spec.ts$',
-  transform: { '^.+\\.ts$': '@swc/jest' },
-  verbose: false,
+  testRegex: '.*\\.spec\\.ts$',
+  transform: { '^.+\\.ts$': 'ts-jest' },
 };
 
-export default BaseConfig;
+export default JestConfig;

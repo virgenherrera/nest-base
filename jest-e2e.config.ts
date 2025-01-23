@@ -1,24 +1,13 @@
-import { BaseConfig } from './jest.config';
+import { JestConfig } from './jest.config';
 
-export const e2eConfig: typeof BaseConfig = {
-  ...BaseConfig,
-  collectCoverage: false,
-  rootDir: './test/',
-  globalSetup: '<rootDir>/setup.ts',
-  globalTeardown: '<rootDir>/teardown.ts',
-  reporters: [
-    'default',
-    [
-      'jest-html-reporter',
-      {
-        pageTitle: 'E2E Test Report',
-        outputPath: './coverage/e2e-report.html',
-        includeFailureMsg: true,
-        includeConsoleLog: true,
-      },
-    ],
-  ],
-  testRegex: '.e2e-spec.ts$',
+export const E2EConfig: typeof JestConfig = {
+  ...JestConfig,
+  collectCoverageFrom: ['**/*.(controller|service).ts'],
+  coverageDirectory: 'coverage/e2e',
+  globalSetup: '<rootDir>/test/setup.ts',
+  globalTeardown: '<rootDir>/test/teardown.ts',
+  rootDir: '.',
+  testRegex: '.*\\.e2e-spec\\.ts$',
 };
 
-export default e2eConfig;
+export default E2EConfig;

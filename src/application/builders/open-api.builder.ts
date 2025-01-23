@@ -1,15 +1,17 @@
 import { Logger } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
-import { join, resolve } from 'path/posix';
-import { cwd } from 'process';
+import { cwd } from 'node:process';
+import { join, resolve } from 'path';
 
-import { getSwaggerDocument } from '../../utils';
+import { getSwaggerDocument } from '../utils';
 import { CommonAppFactory } from './common-app-factory.builder';
 
-export async function OpenApiBuilder(fileName = 'openapi.json'): Promise<void> {
+export async function OpenApiBuilder(
+  fileName = 'open-api.json',
+): Promise<void> {
   const logger = new Logger('OpenApiBuilder');
-  const { app } = await CommonAppFactory();
+  const { app, appConfig } = await CommonAppFactory();
 
   logger.log(`Setting file paths`);
 
@@ -23,7 +25,7 @@ export async function OpenApiBuilder(fileName = 'openapi.json'): Promise<void> {
 
   logger.log(`building Swagger.json file`);
 
-  const swaggerDocument = getSwaggerDocument(app, logger);
+  const swaggerDocument = getSwaggerDocument({ app, appConfig, logger });
   const swaggerFileContent = JSON.stringify(swaggerDocument, null, 2);
 
   logger.log(`Writing openOpenAPI file`);
