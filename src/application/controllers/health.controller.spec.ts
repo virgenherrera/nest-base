@@ -1,37 +1,61 @@
+import { Logger } from '@nestjs/common';
+
 import { Test } from '@nestjs/testing';
-import { GetHealthResponseDto } from '../dto';
+import { MockLoggerProvider, mockLogger } from '../__mocks__';
+import { GetHealthQueryDto, GetHealthResponseDto } from '../dto';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
   const enum should {
     init = 'Should be initialized properly.',
-    getHealth = 'Should return "up" status.',
+    getHealth = 'Should get status "OK"  with no query params provided.',
+    getHealthWithUptime = 'Should get status and Uptime when query Param was required.',
   }
 
-  let controller: HealthController = null;
+  let controller: HealthController;
+  let logger: Logger;
 
   beforeAll(async () => {
-    const testingModule = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [],
+      providers: [MockLoggerProvider],
     }).compile();
 
-    controller = testingModule.get(HealthController);
+    controller = moduleRef.get(HealthController);
+    logger = moduleRef.get(Logger);
+
+    // simulate Lifecycle hook
+    controller.onApplicationBootstrap();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-  });
-
-  it(should.init, async () => {
-    expect(controller).not.toBeNull();
+  it(should.init, () => {
+    expect(controller).toBeDefined();
     expect(controller).toBeInstanceOf(HealthController);
+    expect(logger).toBeDefined();
+    expect(mockLogger).toBe(mockLogger);
   });
 
-  it(should.getHealth, async () => {
-    await expect(controller.getHealth()).resolves.toBeInstanceOf(
-      GetHealthResponseDto,
-    );
+  it(should.getHealth, () => {
+    // Arrange
+    const queryParams: GetHealthQueryDto = {};
+
+    // Act
+    const result = controller.getHealth(queryParams);
+
+    // Assert
+    expect(result).toBeInstanceOf(GetHealthResponseDto);
+    expect(result.uptime).toBeUndefined();
+  });
+
+  it(should.getHealthWithUptime, () => {
+    // Arrange
+    const queryParams: GetHealthQueryDto = { uptime: true };
+
+    // Act
+    const result = controller.getHealth(queryParams);
+
+    // Assert
+    expect(result).toBeInstanceOf(GetHealthResponseDto);
+    expect(result.uptime).toBeDefined();
   });
 });

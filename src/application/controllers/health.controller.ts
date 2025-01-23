@@ -1,23 +1,40 @@
-import { Controller, Logger } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Logger,
+  OnApplicationBootstrap,
+  Query,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 import { formatDistanceToNow } from 'date-fns';
 
-import { plainToInstance } from 'class-transformer';
-import { GetHealthDocs } from '../docs';
-import { GetHealthResponseDto } from '../dto';
+import { GetHealthQueryDto, GetHealthResponseDto } from '../dto';
 
 @Controller('health')
 @ApiTags('health')
-export class HealthController {
-  private readonly logger = new Logger(this.constructor.name);
-  private readonly startTime = new Date();
+export class HealthController implements OnApplicationBootstrap {
+  private startTime: Date;
 
-  @GetHealthDocs()
-  async getHealth(): Promise<GetHealthResponseDto> {
+  constructor(private readonly logger: Logger) {}
+
+  onApplicationBootstrap() {
+    this.startTime = new Date();
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: 'Perform a health check of the service',
+    description: 'Checks the health of the service status report.',
+  })
+  @ApiOkResponse({
+    type: GetHealthResponseDto,
+  })
+  getHealth(@Query() params: GetHealthQueryDto): GetHealthResponseDto {
     this.logger.log(`Getting service Health.`);
 
     return plainToInstance(GetHealthResponseDto, {
-      uptime: formatDistanceToNow(this.startTime, { addSuffix: false }),
+      uptime: !params.uptime ? undefined : formatDistanceToNow(this.startTime),
     });
   }
 }

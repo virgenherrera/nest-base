@@ -22,7 +22,7 @@ export class EnvSchemaLoader<T> {
     });
   }
 
-  private async getValidConfig() {
+  private async getValidConfig(): Promise<T> {
     this.errors = await this.getConfigErrors();
 
     if (this.errors.length) this.handleError();

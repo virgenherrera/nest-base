@@ -17,7 +17,7 @@ export class PagedResultsInterceptor implements NestInterceptor {
     const { method, path } = context.switchToHttp().getRequest();
 
     return next.handle().pipe(
-      switchMap(data => {
+      switchMap((data) => {
         return method === 'GET' && data instanceof PagedResults
           ? this.addPrefixToPagedResults(path, data)
           : of(data);
