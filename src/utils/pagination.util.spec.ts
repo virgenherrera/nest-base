@@ -9,9 +9,10 @@ import { PaginationUtil } from './pagination.util';
 
 describe(`UT:${PaginationUtil.name}`, () => {
   const enum should {
-    declared = 'Should be Declared properly.',
-    paginate = 'Should paginate results properly.',
-    handleEmptyResults = 'Should handle empty results properly.',
+    beDeclared = 'Should be declared properly.',
+    Paginate = 'Should paginate results properly.',
+    HandleEmptyResults = 'Should handle empty results properly.',
+    HandlePrevUrl = 'Should generate a valid "prev" URL when there is a previous page.',
   }
 
   class TestPagedParamsDto extends BasePagedParamsDto {
@@ -23,12 +24,14 @@ describe(`UT:${PaginationUtil.name}`, () => {
     name: string;
   }
 
-  it(should.declared, () => {
+  it(should.beDeclared, () => {
+    // Assert
     expect(PaginationUtil).toBeDefined();
     expect(PaginationUtil).toHaveProperty('getResults', expect.any(Function));
   });
 
-  it(should.paginate, () => {
+  it(should.Paginate, () => {
+    // Arrange
     const testParams = {
       page: 1,
       perPage: 2,
@@ -41,12 +44,11 @@ describe(`UT:${PaginationUtil.name}`, () => {
       { id: 3, name: 'Test 3' },
     ];
     const totalRecords = 3;
-    const result = PaginationUtil.getResults(
-      testParams as any,
-      rows,
-      totalRecords,
-    );
 
+    // Act
+    const result = PaginationUtil.getResults(query, rows, totalRecords);
+
+    // Assert
     expect(result).toBeInstanceOf(PagedResults);
     expect(result.rows).toHaveLength(rows.length);
     expect(result.pagination).toBeInstanceOf(Pagination);
@@ -59,18 +61,20 @@ describe(`UT:${PaginationUtil.name}`, () => {
     );
   });
 
-  it(should.handleEmptyResults, () => {
+  it(should.HandleEmptyResults, () => {
+    // Arrange
     const query = plainToInstance(TestPagedParamsDto, {
       page: 1,
       perPage: 2,
       filter: 'test',
     });
-
     const rows: TestEntity[] = [];
     const totalRecords = 0;
 
+    // Act
     const result = PaginationUtil.getResults(query, rows, totalRecords);
 
+    // Assert
     expect(result).toBeInstanceOf(PagedResults);
     expect(result.rows).toHaveLength(0);
     expect(result.pagination).toBeInstanceOf(Pagination);
@@ -78,6 +82,37 @@ describe(`UT:${PaginationUtil.name}`, () => {
     expect(result.pagination.perPage).toBe(query.perPage);
     expect(result.pagination.totalRecords).toBe(totalRecords);
     expect(result.pagination.prev).toBeNull();
+    expect(result.pagination.next).toBeNull();
+  });
+
+  it(should.HandlePrevUrl, () => {
+    // Arrange
+    const testParams = {
+      page: 2,
+      perPage: 2,
+      filter: 'test',
+    };
+    const query = plainToInstance(TestPagedParamsDto, testParams);
+    const rows = [
+      { id: 1, name: 'Test 1' },
+      { id: 2, name: 'Test 2' },
+      { id: 3, name: 'Test 3' },
+    ];
+    const totalRecords = 3;
+
+    // Act
+    const result = PaginationUtil.getResults(query, rows, totalRecords);
+
+    // Assert
+    expect(result).toBeInstanceOf(PagedResults);
+    expect(result.rows).toHaveLength(rows.length);
+    expect(result.pagination).toBeInstanceOf(Pagination);
+    expect(result.pagination.page).toBe(query.page);
+    expect(result.pagination.perPage).toBe(query.perPage);
+    expect(result.pagination.totalRecords).toBe(totalRecords);
+    expect(result.pagination.prev).toBe(
+      `?filter=test&page=1&perPage=${query.perPage}`,
+    );
     expect(result.pagination.next).toBeNull();
   });
 });
