@@ -24,8 +24,6 @@ export function getSwaggerDocument({
   const swaggerConfig = new DocumentBuilder()
     .setTitle(appConfig.name)
     .setVersion(appConfig.version)
-    .setDescription(appConfig.description)
-    .setLicense(appConfig.license, '')
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 

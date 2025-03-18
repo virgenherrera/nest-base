@@ -1,6 +1,10 @@
-# Description
+# LAN-FILE-SHARE
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+LAN-FILE-SHARE is an innovative solution designed to streamline file sharing within a Local Area Network (LAN). Leveraging the power of NestJS for the backend and Angular for the frontend, this personal project simplifies sharing files across devices on the same network using the HTTP protocol. By adhering to clean code practices and incorporating comprehensive testing strategies, including static, dynamic, and end-to-end (E2E) tests, LAN-FILE-SHARE sets a high standard for code quality and reliability. With the integration of GitHub Actions, the project automates testing, builds, and deployments, enhancing development efficiency and ensuring continuous integration and delivery.
+
+## Description
+
+It is a personal project that allows you to share files within a Local Area Network easily using the HTTP protocol.
 
 ## Table of Contents
 

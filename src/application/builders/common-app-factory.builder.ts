@@ -14,7 +14,9 @@ export interface AppContext {
 
 export async function CommonAppFactory(apiPrefix = 'api'): Promise<AppContext> {
   const logger = new Logger('AppFactory');
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: true,
+  });
 
   logger.log('NestApplication created');
 

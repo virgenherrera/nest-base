@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { stdout } from 'node:process';
 import * as supertest from 'supertest';
 
 import { AppModule } from '../../src/app.module';
@@ -12,12 +13,7 @@ export class TestContext {
 
     const instance = new TestContext();
 
-    try {
-      TestContext.instance = await instance.initContext();
-    } catch (error) {
-      console.error('Failed to initialize test context:', error);
-      throw error;
-    }
+    TestContext.instance = await instance.initContext();
 
     return TestContext.instance;
   }
@@ -38,7 +34,7 @@ export class TestContext {
   }
 
   private async initContext() {
-    console.log(`${'\n'}Initializing E2E ${this.constructor.name}`);
+    stdout.write(`${'\n'}Initializing E2E ${this.constructor.name}`);
 
     const testingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -54,7 +50,7 @@ export class TestContext {
   }
 
   private async destroyContext() {
-    console.log(`${'\n'}destroying E2E ${this.constructor.name}`);
+    stdout.write(`${'\n'}destroying E2E ${this.constructor.name}`);
 
     if (this._app) await this._app.close();
 

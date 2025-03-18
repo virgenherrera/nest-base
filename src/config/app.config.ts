@@ -1,11 +1,5 @@
 import { Expose, Transform } from 'class-transformer';
-import {
-  IsIn,
-  IsNotEmpty,
-  IsOptional,
-  IsPort,
-  IsSemVer,
-} from 'class-validator';
+import { IsIn, IsNotEmpty, IsPort, IsSemVer } from 'class-validator';
 
 import { Environments } from '../application/constants';
 import { Environment } from '../application/types';
@@ -38,14 +32,6 @@ export class AppConfig {
   @IsNotEmpty()
   @IsSemVer()
   readonly version: string;
-
-  @Expose({ name: 'npm_package_description' })
-  @IsOptional()
-  readonly description: string;
-
-  @Expose({ name: 'npm_package_license' })
-  @IsNotEmpty()
-  readonly license: string;
 }
 
 export const appConfig = EnvSchemaLoader.validate(AppConfig);
