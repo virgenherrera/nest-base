@@ -1,22 +1,17 @@
-import {
-  Controller,
-  Get,
-  Logger,
-  OnApplicationBootstrap,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, OnApplicationBootstrap, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { formatDistanceToNow } from 'date-fns';
 
+import { Logger } from '../../common/decorators';
 import { GetHealthQueryDto, GetHealthResponseDto } from '../dto';
 
 @Controller('health')
 @ApiTags('health')
 export class HealthController implements OnApplicationBootstrap {
-  private startTime: Date;
+  @Logger() private readonly logger: Logger;
 
-  constructor(private readonly logger: Logger) {}
+  private startTime: Date;
 
   onApplicationBootstrap() {
     this.startTime = new Date();

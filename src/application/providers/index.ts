@@ -10,8 +10,10 @@ export const GlobalValidationPipeProvider: Provider = {
       whitelist: true,
       forbidNonWhitelisted: true,
       forbidUnknownValues: true,
+      transform: true,
       transformOptions: {
         excludeExtraneousValues: false,
+        enableImplicitConversion: true,
       },
     }),
 };

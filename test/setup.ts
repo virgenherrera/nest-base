@@ -5,5 +5,7 @@ export default function Setup() {
   Object.assign(env, {
     NODE_ENV: 'E2E',
     APP_PORT: '0',
+
+    APP_UPLOADS_PATH: 'e2e_Downloads',
   });
 }

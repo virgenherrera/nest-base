@@ -10,7 +10,7 @@ export const JestConfig: Config = {
   collectCoverage: true,
   collectCoverageFrom: [
     '**/*.(controller|filter|interceptor|pipe|service|util).ts',
-    '!**/application/utils/*.ts',
+    '!**/application/(filters|utils)/*.ts',
   ],
   coverageDirectory: '../coverage/unit',
   coverageReporters: ['json', 'html-spa'],
