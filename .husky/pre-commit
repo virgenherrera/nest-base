@@ -5,7 +5,9 @@ Example:
     "git commit -m <message> --no-verify"
 '
 
-pnpm run format || {
+pnpm run lintStaged && \
+pnpm run test || \
+{
   echo "ERROR: Linting issues were found in the committed files. Please address them before proceeding."
   exit 1
 }
