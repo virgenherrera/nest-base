@@ -1,37 +1,23 @@
-import { Expose, Transform } from 'class-transformer';
-import { IsIn, IsNotEmpty, IsPort, IsSemVer } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-import { Environments } from '../application/constants';
-import { Environment } from '../application/types';
-import { EnvSchemaLoader } from '../application/utils';
+import { Environments } from '../app/constants';
 
-function setEnvironment(envVar: any): Environment {
-  const regExp = new RegExp(`^${envVar}$`, 'i');
-  const matchedEnv = Environments.find((env) => regExp.test(env));
-
-  return matchedEnv || 'DEVELOPMENT';
-}
-
-export class AppConfig {
-  @Expose({ name: 'NODE_ENV' })
-  @Transform(({ value }) => setEnvironment(value))
-  @IsIn(Environments)
-  readonly environment: Environment;
-
-  @Expose({ name: 'APP_PORT' })
-  @Transform(({ value }) => (value || '3000') as `${number}`)
-  @IsNotEmpty()
-  @IsPort()
-  readonly port: `${number}`;
-
-  @Expose({ name: 'npm_package_name' })
-  @IsNotEmpty()
-  readonly name: string;
-
-  @Expose({ name: 'npm_package_version' })
-  @IsNotEmpty()
-  @IsSemVer()
-  readonly version: string;
-}
-
-export const appConfig = EnvSchemaLoader.validate(AppConfig);
+export class AppConfig extends createZodDto(
+  z
+    .object({
+      APP_PORT: z.coerce.number().min(0).max(65535).default(3e3),
+      HOSTNAME: z.string().nonempty().default('0.0.0.0'),
+      NODE_ENV: z.enum(Environments),
+      npm_package_name: z.string().nonempty(),
+      npm_package_version: z.string().nonempty(),
+    })
+    .strip()
+    .transform((nodeEnv) => ({
+      environment: nodeEnv.NODE_ENV,
+      hostname: nodeEnv.HOSTNAME,
+      name: nodeEnv.npm_package_name,
+      port: nodeEnv.APP_PORT,
+      version: nodeEnv.npm_package_version,
+    })),
+) {}

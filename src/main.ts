@@ -1,3 +1,3 @@
-import { HttpAppBuilder } from './application/builders/http-app.builder';
+import { HttpAppBuilder } from './app/builders';
 
 HttpAppBuilder().catch(console.error);

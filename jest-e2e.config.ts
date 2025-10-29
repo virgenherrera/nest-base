@@ -1,16 +1,24 @@
+/** @jest-config-loader ts-node */
+/** @jest-config-loader-options {"transpileOnly": true} */
+
+/*
+ * For a detailed explanation regarding each configuration property and type check visit:
+ * https://jestjs.io/docs/en/configuration.html
+ */
+import type { Config } from 'jest';
+
 import { JestConfig } from './jest.config';
 
-export const E2EConfig: typeof JestConfig = {
-  ...JestConfig,
-  collectCoverageFrom: [
-    'src/**/*.(controller|filter|interceptor|pipe|service|util).ts',
-    '!src/(application|common|utils)/**/*.ts',
-  ],
-  coverageDirectory: 'coverage/e2e',
-  globalSetup: '<rootDir>/test/setup.ts',
-  globalTeardown: '<rootDir>/test/teardown.ts',
-  rootDir: '.',
-  testRegex: '.*\\.e2e-spec\\.ts$',
-};
+export class JestE2eConfig extends JestConfig implements Config {
+  override rootDir = '.';
+  override collectCoverageFrom = [
+    'src/**/*.ts',
+    '!src/**/*.spec.ts',
+    '!src/**/(index|main).ts',
+  ];
+  override coverageDirectory = '<rootDir>/coverage/e2e';
+  globalSetup = '<rootDir>/test/utils/e2e.setup.ts';
+  override testRegex = 'test/.*\\.e2e-spec\\.ts$';
+}
 
-export default E2EConfig;
+export default new JestE2eConfig();

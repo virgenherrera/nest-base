@@ -1,16 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { HealthController } from './application/controllers';
-import { AppConfigModule } from './application/imports';
-import {
-  GlobalValidationPipeProvider,
-  PagedResultsInterceptorProvider,
-} from './application/providers';
-import { CommonModule } from './common/common.module';
+import { HealthController } from './app/controllers';
+import { AppConfigModule } from './app/imports';
+import { AppFilter, AppInterceptor, AppPipe } from './app/providers';
 
 @Module({
-  imports: [AppConfigModule.forRoot, CommonModule],
   controllers: [HealthController],
-  providers: [GlobalValidationPipeProvider, PagedResultsInterceptorProvider],
+  imports: [AppConfigModule],
+  providers: [AppPipe, AppInterceptor, AppFilter],
 })
 export class AppModule {}
