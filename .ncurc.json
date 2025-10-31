@@ -2,9 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/raineorshine/npm-check-updates/main/src/types/RunOptions.json",
   "doctor": true,
   "enginesNode": true,
-  "format": [
-    "group"
-  ],
+  "format": ["group"],
   "packageManager": "pnpm",
   "upgrade": true
 }

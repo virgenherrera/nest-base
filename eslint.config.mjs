@@ -17,8 +17,7 @@ export default tseslint.config(
         ...globals.node,
         ...globals.jest,
       },
-      ecmaVersion: 5,
-      sourceType: 'module',
+      sourceType: 'commonjs',
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
@@ -28,18 +27,14 @@ export default tseslint.config(
   {
     rules: {
       '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-return': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
       'eol-last': ['error', 'always'],
       'linebreak-style': ['error', 'unix'],
       'max-len': ['error', 150],
       'newline-before-return': 'error',
       'no-multiple-empty-lines': ['error'],
+      'prettier/prettier': ['error', { endOfLine: 'lf' }],
     },
   },
 );

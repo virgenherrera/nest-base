@@ -1,6 +1,6 @@
 import { NestApplication } from '@nestjs/core';
 
-import { TestContext } from '../../utils';
+import { getTestContext, TestContext } from '../../utils/getTestContext.util';
 
 describe(`e2e: GET /health`, () => {
   const enum should {
@@ -13,30 +13,33 @@ describe(`e2e: GET /health`, () => {
 
   let testCtx: TestContext;
 
-  beforeAll(async () => (testCtx = await TestContext.getInstance()));
+  beforeAll(async () => (testCtx = await getTestContext()));
 
   it(should.initTestContext, () => {
     expect(testCtx).toBeDefined();
-    expect(testCtx.request).not.toBeNull();
+    expect(testCtx.request).toBeDefined();
     expect(testCtx.app).toBeInstanceOf(NestApplication);
   });
 
   it(should.getHealth, async () => {
-    const { status, body } = await testCtx.request.get('/health');
+    const res = await testCtx.request.get('/health');
 
-    expect(status).toBe(200);
-    expect(body).toMatchObject(getHealthMatcher);
+    expect(res).toHaveProperty('status', 200);
+    expect(res).toHaveProperty('body');
+    expect(res.body).toMatchObject(getHealthMatcher);
   });
 
   it(should.getHealth, async () => {
-    const { status, body } = await testCtx.request
+    const res = await testCtx.request
       .get('/health')
-      .query({ uptime: true });
+      .query({ appMeta: true, uptime: true });
 
-    expect(status).toBe(200);
-    expect(body).toMatchObject({
+    expect(res).toHaveProperty('status', 200);
+    expect(res).toHaveProperty('body');
+    expect(res.body).toMatchObject({
       ...getHealthMatcher,
-      uptime: expect.any(String),
+      appMeta: expect.stringMatching(/^([\w-]+)@(\d+\.\d+\.\d+)$/),
+      uptime: expect.stringMatching(/.{1,}/),
     });
   });
 });
