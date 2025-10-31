@@ -1,23 +1,45 @@
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { Expose, Transform } from 'class-transformer';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 import { Environments } from '../app/constants';
+import type { Environment } from '../app/types';
 
-export class AppConfig extends createZodDto(
-  z
-    .object({
-      APP_PORT: z.coerce.number().min(0).max(65535).default(3e3),
-      HOSTNAME: z.string().nonempty().default('0.0.0.0'),
-      NODE_ENV: z.enum(Environments),
-      npm_package_name: z.string().nonempty(),
-      npm_package_version: z.string().nonempty(),
-    })
-    .strip()
-    .transform((nodeEnv) => ({
-      environment: nodeEnv.NODE_ENV,
-      hostname: nodeEnv.HOSTNAME,
-      name: nodeEnv.npm_package_name,
-      port: nodeEnv.APP_PORT,
-      version: nodeEnv.npm_package_version,
-    })),
-) {}
+export class AppConfig {
+  @Expose({ name: 'APP_PORT' })
+  @Transform(({ value }) => {
+    const num = Number(value);
+
+    return isNaN(num) ? 3000 : Math.min(Math.max(num, 0), 65535);
+  })
+  @IsNumber()
+  @Min(0)
+  @Max(65535)
+  port: number = 3000;
+
+  @Expose({ name: 'HOSTNAME' })
+  @Transform(({ value }) => (value as string) || '0.0.0.0')
+  @IsString()
+  @IsNotEmpty()
+  hostname: string = '0.0.0.0';
+
+  @Expose({ name: 'NODE_ENV' })
+  @IsIn(Environments)
+  environment: Environment;
+
+  @Expose({ name: 'npm_package_name' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @Expose({ name: 'npm_package_version' })
+  @IsString()
+  @IsNotEmpty()
+  version: string;
+}

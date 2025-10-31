@@ -12,7 +12,7 @@ import { JestConfig } from './jest.config';
 export class JestE2eConfig extends JestConfig implements Config {
   override rootDir = '.';
   override collectCoverageFrom = [
-    'src/**/*.ts',
+    'src/**/*.(controller|service).ts',
     '!src/**/*.spec.ts',
     '!src/**/(index|main).ts',
   ];

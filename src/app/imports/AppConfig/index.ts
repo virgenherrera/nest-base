@@ -1,6 +1,8 @@
 import { Type } from '@nestjs/common';
 import { ConfigModule, registerAs } from '@nestjs/config';
-import { z } from 'zod';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { env } from 'node:process';
 
 import * as ConfigNamespaces from '../../../config';
 
@@ -10,30 +12,40 @@ const dynamicModule = ConfigModule.forRoot({
   expandVariables: true,
   isGlobal: true,
   load: Object.values(ConfigNamespaces)
-    .filter((v: object) => 'create' in v && 'name' in v && 'schema' in v)
-    .map((classRef) => {
-      const configFactory = registerAs(classRef.name, async () => {
-        const { data, success, error } = await classRef.schema.safeParseAsync(
-          process.env,
-        );
+    .filter((fn) => /^class\s/.test(fn.toString()))
+    .map(<T>(classConstructor: ClassConstructor<T>) => {
+      const configFactory = registerAs(classConstructor.name, async () => {
+        const instance = plainToInstance(classConstructor, env, {
+          enableImplicitConversion: true,
+          excludeExtraneousValues: true,
+        });
 
-        if (!success) {
-          console.error('\n❌ Invalid environment configuration detected.\n');
-          console.error(z.prettifyError(error));
-          console.error(
-            '\n💡 Fix: Ensure all required variables are defined in your environment or .env file at the project root.\n',
-          );
-          process.exit(1);
+        const errors = await validate(instance as object, {
+          forbidNonWhitelisted: true,
+          stopAtFirstError: false,
+          whitelist: true,
+        });
+
+        if (errors.length) {
+          const msgTitle = `Environment validation error found!`;
+
+          console.warn(msgTitle + '\n' + '='.repeat(msgTitle.length));
+          errors.forEach(({ target, constraints }) => {
+            console.log('in:', target);
+            console.log('errors:', constraints);
+          });
+          console.trace();
+
+          throw new Error(msgTitle, { cause: errors });
         }
 
-        const instance = Object.assign(new classRef(), data);
         Object.seal(instance);
         Object.freeze(instance);
 
         return instance;
       });
 
-      ClassNameTokenMap.set(classRef.name, configFactory.KEY as symbol);
+      ClassNameTokenMap.set(classConstructor.name, configFactory.KEY as symbol);
 
       return configFactory;
     }),

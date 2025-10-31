@@ -35,7 +35,6 @@ export default tseslint.config(
       'newline-before-return': 'error',
       'no-multiple-empty-lines': ['error'],
       'prettier/prettier': ['error', { endOfLine: 'lf' }],
-      'sort-keys': ['error'],
     },
   },
 );

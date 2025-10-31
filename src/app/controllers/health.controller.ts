@@ -8,7 +8,7 @@ import {
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { formatDistanceToNow } from 'date-fns';
 
-import { ZodSerializerDto } from 'nestjs-zod';
+import { plainToInstance } from 'class-transformer';
 import { AppConfig } from '../../config';
 import { InjectConfig } from '../decorators';
 import { GetHealthQueryDto, GetHealthResponseDto } from '../dto';
@@ -34,7 +34,6 @@ export class HealthController implements OnApplicationBootstrap {
   @ApiOkResponse({
     type: GetHealthResponseDto,
   })
-  @ZodSerializerDto(GetHealthResponseDto)
   async getHealth(
     @Query() params: GetHealthQueryDto,
   ): Promise<GetHealthResponseDto> {
@@ -50,6 +49,6 @@ export class HealthController implements OnApplicationBootstrap {
       res.uptime = formatDistanceToNow(this.startTime);
     }
 
-    return res;
+    return plainToInstance(GetHealthResponseDto, res);
   }
 }

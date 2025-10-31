@@ -60,7 +60,6 @@ export async function HttpAppBuilder(): Promise<void> {
 
   if (mountSwagger) {
     logger.verbose('preparing Swagger Document');
-    const { cleanupOpenApiDoc } = await import('nestjs-zod');
     const { DocumentBuilder, SwaggerModule } = await import('@nestjs/swagger');
     const config = new DocumentBuilder()
       .setTitle(appConfig.name)
@@ -76,9 +75,8 @@ export async function HttpAppBuilder(): Promise<void> {
 
     const jsonDocumentUrl = `${apiPrefix}/json`;
     const yamlDocumentUrl = `${apiPrefix}/yaml`;
-    const cleanDoc = cleanupOpenApiDoc(swaggerDocument);
 
-    SwaggerModule.setup(apiPrefix, app, cleanDoc, {
+    SwaggerModule.setup(apiPrefix, app, swaggerDocument, {
       jsonDocumentUrl,
       yamlDocumentUrl,
     });

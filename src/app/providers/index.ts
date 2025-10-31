@@ -1,20 +1,17 @@
-import { ClassProvider } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
+import { Provider, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
 
-import { HttpExceptionFilter } from '../filters';
-
-export const AppPipe: ClassProvider = {
+export const GlobalValidationPipeProvider: Provider = {
   provide: APP_PIPE,
-  useClass: ZodValidationPipe,
-};
-
-export const AppInterceptor: ClassProvider = {
-  provide: APP_INTERCEPTOR,
-  useClass: ZodSerializerInterceptor,
-};
-
-export const AppFilter: ClassProvider = {
-  provide: APP_FILTER,
-  useClass: HttpExceptionFilter,
+  useFactory: () =>
+    new ValidationPipe({
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+        excludeExtraneousValues: false,
+      },
+      whitelist: true,
+    }),
 };

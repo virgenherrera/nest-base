@@ -30,12 +30,15 @@ describe(`e2e: GET /health`, () => {
   });
 
   it(should.getHealth, async () => {
-    const res = await testCtx.request.get('/health').query({ uptime: true });
+    const res = await testCtx.request
+      .get('/health')
+      .query({ appMeta: true, uptime: true });
 
     expect(res).toHaveProperty('status', 200);
     expect(res).toHaveProperty('body');
     expect(res.body).toMatchObject({
       ...getHealthMatcher,
+      appMeta: expect.stringMatching(/^([\w-]+)@(\d+\.\d+\.\d+)$/),
       uptime: expect.stringMatching(/.{1,}/),
     });
   });
