@@ -1,22 +1,25 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class GetHealthResponseDto {
-  @ApiPropertyOptional({
-    description:
-      'if requested via uptime Param will contain The App Name and version.',
-    example: 'AppName@0.0.1',
-  })
-  appMeta?: string;
-
   @ApiProperty({
+    description:
+      'Constant health status indicator returned when the service responds.',
     example: 'OK',
+    type: String,
   })
   status = 'OK';
 
   @ApiPropertyOptional({
     description:
-      'if requested via uptime Param will contain The duration of time that has elapsed since the service has been online.',
-    example: '3 hours ago',
+      'Present when `appMeta` query parameter is true and contains the package name and version from package.json.',
+    example: 'app-name@0.0.1',
+  })
+  appMeta?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'Present when `uptime` query parameter is true and contains a human-friendly duration describing how long the service has been running.',
+    example: 'about 3 hours',
   })
   uptime?: string;
 }
