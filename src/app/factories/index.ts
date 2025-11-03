@@ -3,10 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { existsSync, mkdirSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { cwd } from 'node:process';
 
-import { writeFile } from 'node:fs/promises';
 import { AppModule } from '../../app.module';
 import { AppConfig } from '../../config';
 
@@ -48,14 +48,13 @@ export async function CommonAppFactory(): Promise<AppContext> {
   };
 }
 
-export async function HttpAppBuilder(): Promise<void> {
-  const logger = new Logger(HttpAppBuilder.name);
+export async function HttpAppFactory(): Promise<void> {
+  const logger = new Logger(HttpAppFactory.name);
   const { app, appConfig, apiPrefix } = await CommonAppFactory();
   const mountSwagger = appConfig.environment === 'DEVELOPMENT';
 
-  logger.log(`TODO:mounting App global middlewares`);
-
-  // TODO: restore global Middlewares
+  logger.log(`mounting App global middlewares`);
+  app.enableCors();
   logger.verbose('Middlewares mounted successfully');
 
   if (mountSwagger) {
@@ -106,9 +105,9 @@ export async function HttpAppBuilder(): Promise<void> {
   }
 }
 
-export async function OpenApiBuilder(): Promise<void> {
+export async function OpenApiFactory(): Promise<void> {
   const fileName = 'open-api.json';
-  const logger = new Logger(OpenApiBuilder.name);
+  const logger = new Logger(OpenApiFactory.name);
   const { app, appConfig } = await CommonAppFactory();
 
   logger.log(`Setting file paths`);
