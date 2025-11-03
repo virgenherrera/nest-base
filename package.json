@@ -46,7 +46,9 @@
     "@nestjs/swagger": "^11.2.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "compression": "^1.8.1",
     "date-fns": "^4.1.0",
+    "helmet": "^8.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },
@@ -56,13 +58,14 @@
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.8",
+    "@types/compression": "^1.8.1",
     "@types/express": "^5.0.5",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.0",
     "@types/supertest": "^6.0.3",
+    "eslint": "^9.39.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint": "^9.39.0",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
@@ -75,7 +78,7 @@
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript-eslint": "^8.46.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3"
   }
 }

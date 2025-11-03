@@ -1,4 +1,6 @@
 import { Logger } from '@nestjs/common';
+import compression from 'compression';
+import helmet from 'helmet';
 
 import { CommonAppFactory } from '../common';
 
@@ -7,9 +9,14 @@ export async function HttpAppFactory(): Promise<void> {
   const { app, appConfig, apiPrefix, getSwaggerDocument } =
     await CommonAppFactory();
   const mountSwagger = appConfig.environment === 'DEVELOPMENT';
+  const jsonDocumentUrl = `${apiPrefix}/json`;
+  const yamlDocumentUrl = `${apiPrefix}/yaml`;
 
   logger.log(`mounting App global middlewares`);
+  console.log(appConfig);
   app.enableCors();
+  app.use(helmet());
+  app.use(compression());
   logger.verbose('Middlewares mounted successfully');
 
   if (mountSwagger) {
@@ -19,9 +26,6 @@ export async function HttpAppFactory(): Promise<void> {
     const swaggerDocument = await getSwaggerDocument();
 
     logger.verbose(`mounting SwaggerDocs`);
-
-    const jsonDocumentUrl = `${apiPrefix}/json`;
-    const yamlDocumentUrl = `${apiPrefix}/yaml`;
 
     SwaggerModule.setup(apiPrefix, app, swaggerDocument, {
       jsonDocumentUrl,
@@ -38,8 +42,6 @@ export async function HttpAppFactory(): Promise<void> {
 
   if (mountSwagger) {
     const url = new URL(apiPrefix, appUrl);
-    const jsonDocumentUrl = `${apiPrefix}/json`;
-    const yamlDocumentUrl = `${apiPrefix}/yaml`;
 
     logger.log(`SwaggerDocs available in: ${url.href}`);
 
