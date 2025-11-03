@@ -1,98 +1,128 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Base
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Starter kit for building NestJS 11 HTTP services with typed environment configuration, ready-made OpenAPI docs, and a local test pipeline that mirrors your CI workflow.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Navigation
 
-## Description
+- [Key features](#key-features)
+- [Before you start](#before-you-start)
+- [Quick start](#quick-start)
+- [Environment variables](#environment-variables)
+- [Useful scripts](#useful-scripts)
+- [API documentation](#api-documentation)
+- [Health check](#health-check)
+- [Testing & coverage](#testing--coverage)
+- [Namespaced configuration workflow](#namespaced-configuration-workflow)
+- [Next steps](#next-steps)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Key features
 
-## Project setup
+[(back to menu)](#navigation)
 
-```bash
-$ pnpm install
+- Auto-namespaced configuration classes (`src/config/*.config.ts`) validated with `class-validator` and injected via `@InjectConfig`.
+- Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
+- Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
+- Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that simulates CI.
+- `pnpm run bumpDependencies` upgrades dependencies but aborts if the test suite fails.
+
+## Before you start
+
+[(back to menu)](#navigation)
+
+Match your local runtime with the versions declared in the `engines` field inside `package.json`. That field is the source of truth.
+
+## Quick start
+
+[(back to menu)](#navigation)
+
+1. Install dependencies: `pnpm install`.
+2. Bootstrap environment variables: `cp .env.example .env`.
+3. Adjust the values that apply to your setup.
+4. Start the app in watch mode: `pnpm run start:dev`.
+5. Open `http://localhost:3000/api/health` to verify the health endpoint.
+
+> For production builds run `pnpm run build:app` and serve it with `pnpm run start:prod`.
+
+## Environment variables
+
+[(back to menu)](#navigation)
+
+Classes in `src/config` define and validate every environment variable the app consumes. Highlights:
+
+| Variable   | Description                                      | Default |
+| ---------- | ------------------------------------------------ | ------- |
+| `NODE_ENV` | Application environment (development/test/prod). | `development` |
+| `APP_PORT` | HTTP port exposed by Nest.                       | `3000` |
+| `HOSTNAME` | Host interface Nest listens on.                  | `0.0.0.0` |
+
+Each property uses `@Expose({ name: 'ENV_VAR' })`. Only declared variables survive the validation step; missing or invalid values stop the boot process with a detailed error.
+
+## Useful scripts
+
+[(back to menu)](#navigation)
+
+| Script | Purpose |
+| ------ | ------- |
+| `pnpm run start:dev` | Start the server with watch mode. |
+| `pnpm run start:prod` | Run the compiled app from `dist/`. |
+| `pnpm run test` | Local “mini CI”: cleanup, linting, unit tests, e2e tests, API docs build, and application build. |
+| `pnpm run test:static` | ESLint + Prettier checks. |
+| `pnpm run test:unit` / `test:e2e` | Run Jest unit or e2e suites. |
+| `pnpm run watch:UT` / `watch:E2E` | Run Jest in watch mode (unit or e2e). |
+| `pnpm run build:api-docs` | Generate `api-docs/open-api.json`. |
+| `pnpm run bumpDependencies` | Update dependencies (fails fast if tests break). |
+
+Husky runs `lint-staged` before every commit to keep formatting and linting green.
+
+## API documentation
+
+[(back to menu)](#navigation)
+
+- With `NODE_ENV=development`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`.
+- To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
+
+## Health check
+
+[(back to menu)](#navigation)
+
+`GET /api/health` responds with `{ "status": "OK" }` and accepts:
+
+- `appMeta=true` → adds `name@version` derived from `package.json`.
+- `uptime=true` → returns a human-readable uptime using `date-fns`.
+
+Use it as a baseline for your own operational diagnostics.
+
+## Testing & coverage
+
+[(back to menu)](#navigation)
+
+- `pnpm run test:unit` and `pnpm run test:e2e` create coverage reports under `coverage/unit` and `coverage/e2e`. The `.json` files integrate with CI providers.
+- View the HTML reports by opening `coverage/unit/index.html` or `coverage/e2e/index.html` in your browser.
+
+## Namespaced configuration workflow
+
+[(back to menu)](#navigation)
+
+1. Create a class in `src/config/foo.config.ts` and export it.
+2. Map each setting with `@Expose({ name: 'ENV_VAR' })`.
+3. Add constraints with `class-validator` decorators.
+4. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
+
+```ts
+@Injectable()
+export class FooService {
+  constructor(@InjectConfig(FooConfig) private readonly foo: FooConfig) {}
+
+  findValue() {
+    return this.foo.someProperty;
+  }
+}
 ```
 
-## Compile and run the project
+`AppConfigModule` treats every class as a namespaced configuration factory, freezes the instances, and raises descriptive errors when validation fails.
 
-```bash
-# development
-$ pnpm run start
+## Next steps
 
-# watch mode
-$ pnpm run start:dev
+[(back to menu)](#navigation)
 
-# production mode
-$ pnpm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Build on top of this template by adding your own modules, integrating an ORM (Prisma, TypeORM, Mongoose), setting up queues, or wiring any other NestJS technique your service needs. The project layout and configuration helpers are designed to scale with those additions.
