@@ -1,197 +1,128 @@
-# NestJs Base
+# NestJS Base
 
-(mejora esto)
+Starter kit for building NestJS 11 HTTP services with typed environment configuration, ready-made OpenAPI docs, and a local test pipeline that mirrors your CI workflow.
 
-## Description
+## Navigation
 
-(mejora esto)
+- [Key features](#key-features)
+- [Before you start](#before-you-start)
+- [Quick start](#quick-start)
+- [Environment variables](#environment-variables)
+- [Useful scripts](#useful-scripts)
+- [API documentation](#api-documentation)
+- [Health check](#health-check)
+- [Testing & coverage](#testing--coverage)
+- [Namespaced configuration workflow](#namespaced-configuration-workflow)
+- [Next steps](#next-steps)
 
-## Table of Contents
+## Key features
 
-- [Project setup](#project-setup)
-  - [Install Dependencies](#install-dependencies)
-  - [Environment Variables](#environment-variables)
-- [Compile and run the project](#compile-and-run-the-project)
-- [Run tests](#run-tests)
-- [Develop tests](#develop-tests)
-- [Auto-Format](#auto-format)
-- [Local CI (test script)](#local-ci-test-script)
-- [Mitigate Tech Debt (bumpDependencies script)](#mitigate-tech-debt-bumpdependencies-script)
-- [NestJS Auto-Namespaced Configuration](#nestjs-auto-namespaced-configuration)
-  - [Creating a New Configuration](#creating-a-new-configuration)
-  - [Injecting the Configuration](#injecting-the-configuration)
-- [Beyond Configuration](#beyond-configuration)
-- [Coverage Reports](#coverage-reports)
-- [Generating API Docs](#generating-api-docs)
+[(back to menu)](#navigation)
 
-## Project setup
+- Auto-namespaced configuration classes (`src/config/*.config.ts`) validated with `class-validator` and injected via `@InjectConfig`.
+- Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
+- Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
+- Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that simulates CI.
+- `pnpm run bumpDependencies` upgrades dependencies but aborts if the test suite fails.
 
-This project requires `Node.js` and `PNPM` as specified in the package.json `engines`.
-Visit [Node.js](https://nodejs.org/en/) to install the recommended version of Node,
-and [pnpm.io](https://pnpm.io/) for PNPM.
-Once both are installed, run the command below to set up the project.
+## Before you start
 
-### Install Dependencies
+[(back to menu)](#navigation)
 
-Use the following command to install all required dependencies and set up your development environment.
+Match your local runtime with the versions declared in the `engines` field inside `package.json`. That field is the source of truth.
 
-```bash
-pnpm install
+## Quick start
+
+[(back to menu)](#navigation)
+
+1. Install dependencies: `pnpm install`.
+2. Bootstrap environment variables: `cp .env.example .env`.
+3. Adjust the values that apply to your setup.
+4. Start the app in watch mode: `pnpm run start:dev`.
+5. Open `http://localhost:3000/api/health` to verify the health endpoint.
+
+> For production builds run `pnpm run build:app` and serve it with `pnpm run start:prod`.
+
+## Environment variables
+
+[(back to menu)](#navigation)
+
+Classes in `src/config` define and validate every environment variable the app consumes. Highlights:
+
+| Variable   | Description                                      | Default |
+| ---------- | ------------------------------------------------ | ------- |
+| `NODE_ENV` | Application environment (development/test/prod). | `development` |
+| `APP_PORT` | HTTP port exposed by Nest.                       | `3000` |
+| `HOSTNAME` | Host interface Nest listens on.                  | `0.0.0.0` |
+
+Each property uses `@Expose({ name: 'ENV_VAR' })`. Only declared variables survive the validation step; missing or invalid values stop the boot process with a detailed error.
+
+## Useful scripts
+
+[(back to menu)](#navigation)
+
+| Script | Purpose |
+| ------ | ------- |
+| `pnpm run start:dev` | Start the server with watch mode. |
+| `pnpm run start:prod` | Run the compiled app from `dist/`. |
+| `pnpm run test` | Local “mini CI”: cleanup, linting, unit tests, e2e tests, API docs build, and application build. |
+| `pnpm run test:static` | ESLint + Prettier checks. |
+| `pnpm run test:unit` / `test:e2e` | Run Jest unit or e2e suites. |
+| `pnpm run watch:UT` / `watch:E2E` | Run Jest in watch mode (unit or e2e). |
+| `pnpm run build:api-docs` | Generate `api-docs/open-api.json`. |
+| `pnpm run bumpDependencies` | Update dependencies (fails fast if tests break). |
+
+Husky runs `lint-staged` before every commit to keep formatting and linting green.
+
+## API documentation
+
+[(back to menu)](#navigation)
+
+- With `NODE_ENV=development`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`.
+- To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
+
+## Health check
+
+[(back to menu)](#navigation)
+
+`GET /api/health` responds with `{ "status": "OK" }` and accepts:
+
+- `appMeta=true` → adds `name@version` derived from `package.json`.
+- `uptime=true` → returns a human-readable uptime using `date-fns`.
+
+Use it as a baseline for your own operational diagnostics.
+
+## Testing & coverage
+
+[(back to menu)](#navigation)
+
+- `pnpm run test:unit` and `pnpm run test:e2e` create coverage reports under `coverage/unit` and `coverage/e2e`. The `.json` files integrate with CI providers.
+- View the HTML reports by opening `coverage/unit/index.html` or `coverage/e2e/index.html` in your browser.
+
+## Namespaced configuration workflow
+
+[(back to menu)](#navigation)
+
+1. Create a class in `src/config/foo.config.ts` and export it.
+2. Map each setting with `@Expose({ name: 'ENV_VAR' })`.
+3. Add constraints with `class-validator` decorators.
+4. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
+
+```ts
+@Injectable()
+export class FooService {
+  constructor(@InjectConfig(FooConfig) private readonly foo: FooConfig) {}
+
+  findValue() {
+    return this.foo.someProperty;
+  }
+}
 ```
 
-### Environment Variables
+`AppConfigModule` treats every class as a namespaced configuration factory, freezes the instances, and raises descriptive errors when validation fails.
 
-This project requires certain environment variables to run properly.
-You can either set them at the system level or copy the **.env.example**
-file to a new **.env** file and define your variables there.
+## Next steps
 
-## Compile and run the project
+[(back to menu)](#navigation)
 
-Below are the scripts for compiling and running the application.
-Use `start:dev` for watch mode during development and `start:prod`
-for a production-ready build.
-
-```bash
-# development watch mode
-pnpm run start:dev
-
-# production mode
-pnpm run start:prod
-```
-
-## Run tests
-
-Use the following scripts to verify code quality and functionality.
-`test:static` performs static analysis through linting,
-`test:unit` runs unit tests for individual components,
-and `test:e2e` checks end-to-end workflows.
-
-```bash
-# static tests
-pnpm run test:static
-
-# unit tests
-pnpm run test:unit
-
-# e2e tests
-pnpm run test:e2e
-```
-
-## Develop tests
-
-The scripts `watch:UT` and `watch:E2E` run tests in watch mode, which could help to accelerate test-driven development.
-
-```bash
-# Develop Unit Tests
-pnpm run watch:UT
-
-# Develop end-to-end Tests
-pnpm run watch:E2E
-```
-
-## Auto-Format
-
-This project will run code formatting checks. It’s also configured to run automatically via Husky on every commit, ensuring a consistent code style.
-
-## Local CI (test script)
-
-When you run `pnpm run test`, it simulates the checks that would occur in the CI  pipeline, like running:
-
-- Static tests.
-- Unit tests.
-- E2E tests.
-- Build App.
-- Build ApiDocs.
-
-```bash
-# simulate locally the CI process
-pnpm run test
-```
-
-## Mitigate Tech Debt (bumpDependencies script)
-
-This script attempts to update dependencies to mitigate technical debt.
-However, it will only complete successfully if all tests pass, preventing updates that introduce breaking changes.
-
-```bash
-# Attempts to update project's dependencies
-pnpm run bumpDependencies
-```
-
-## NestJS Auto-Namespaced Configuration
-
-This project automatically loads configuration files placed under `/src/config/*.config.ts`.
-Each of these config files follows the structure recommended by
-[NestJS Configuration Docs](https://docs.nestjs.com/techniques/configuration#configuration-namespaces),
-including class-based validation and the `.KEY` property for namespaced injection.
-
-### Creating a New Configuration
-
-1. **Create** a file named `foo.config.ts` inside `/src/config/`.
-2. **Define and export** a class (e.g., `FooConfig`)
-   **The `@Expose({ name: 'YOUR_ENV_VAR' })` decorator is crucial**
-   because this project uses that name to match against the actual environment variable
-   (e.g., `process.env.YOUR_ENV_VAR`) before validation.
-   You can also use any `class-validator` decorators (e.g., `@IsOptional`, `@IsBoolean`, etc.)
-  to ensure each environment variable meets your constraints:
-
-   ```ts
-   export class FooConfig {
-     //Property to find inside process.env
-     @Expose({ name: 'FOO_VALUE' })
-     // in this case will be process.env.FOO_VALUE
-     @IsNotEmpty()
-     readonly foo: string;
-   }
-   ```
-
-### Injecting the Configuration
-
-To access any namespaced config within your controllers/services, you must inject the InjectConfig decorator. For example:
-
-   ```ts
-   import { Injectable } from '@nestjs/common';
-   import { FooConfig } from '../config/foo.config'; // <- Adjust path as needed
-   import { InjectConfig } from '../decorators';  // <- Adjust path as needed
-
-   @Injectable()
-   export class FooService {
-     constructor(@InjectConfig(FooConfig) private readonly fooCfg: FooConfig) {}
-
-     getFooValue() {
-       return this.fooCfg.foo;
-     }
-   }
-   ```
-
-## Beyond Configuration
-
-Aside from the namespaced configuration setup, the rest of the development process
-is the same as any other NestJS application. You can integrate various techniques and libraries based on your needs, such as:
-
-- [Prisma Integration](https://docs.nestjs.com/recipes/prisma)
-- [MongoDB](https://docs.nestjs.com/techniques/mongodb)
-- [Cookies & Sessions](https://docs.nestjs.com/recipes/session)
-- [HTTP Module](https://docs.nestjs.com/techniques/http-module)
-- [Task Scheduling](https://docs.nestjs.com/techniques/task-scheduling)
-
-For a full list of NestJS techniques and recipes, check out the
-[official NestJS documentation](https://docs.nestjs.com/).
-
-## Coverage Reports
-
-Coverage results are split into **unit** and **end-to-end** categories. You can find them under:
-
-- Unit Tests
-  - [index.html](coverage/unit/index.html) (human-readable report)
-  - [coverage-final.json](coverage/unit/coverage-final.json) (CI-compatible report)
-- end-to-end Tests
-  - [index.html](coverage/e2e/index.html) (human-readable report)
-  - [coverage-final.json](coverage/e2e/coverage-final.json) (CI-compatible report)
-
-## Generating API Docs
-
-This project includes a script to build OpenAPI specification files.
-By running `pnpm run build:api-docs`, you will generate:
-
-- **[open-api.json](api-docs/open-api.json)**, containing the OpenAPI definition
+Build on top of this template by adding your own modules, integrating an ORM (Prisma, TypeORM, Mongoose), setting up queues, or wiring any other NestJS technique your service needs. The project layout and configuration helpers are designed to scale with those additions.
