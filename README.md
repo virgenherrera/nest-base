@@ -20,6 +20,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 [(back to menu)](#navigation)
 
 - Auto-namespaced configuration classes (`src/config/*.config.ts`) validated with `class-validator` and injected via `@InjectConfig`.
+- DTOs rely on `class-validator` and `class-transformer` for request validation and serialization.
 - Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
 - Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
 - Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that simulates CI.
@@ -47,7 +48,7 @@ Match your local runtime with the versions declared in the `engines` field insid
 
 [(back to menu)](#navigation)
 
-Classes in `src/config` define and validate every environment variable the app consumes. Highlights:
+Classes in `src/config` define and validate every environment variable the app consumes. They leverage `class-transformer` to map the raw `.env` namespace into typed objects and `class-validator` to enforce constraints before the app finishes booting. Highlights:
 
 | Variable   | Description                                      | Default |
 | ---------- | ------------------------------------------------ | ------- |
@@ -79,6 +80,7 @@ Husky runs `lint-staged` before every commit to keep formatting and linting gree
 [(back to menu)](#navigation)
 
 - With `NODE_ENV=development`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`.
+- DTO metadata comes from the same `class-validator`/`class-transformer`-decorated classes that power runtime validation, so the docs stay in sync with your request/response contracts.
 - To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
 
 ## Health check

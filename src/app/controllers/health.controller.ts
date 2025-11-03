@@ -5,7 +5,13 @@ import {
   OnApplicationBootstrap,
   Query,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { formatDistanceToNow } from 'date-fns';
 
 import { plainToInstance } from 'class-transformer';
@@ -28,11 +34,32 @@ export class HealthController implements OnApplicationBootstrap {
 
   @Get()
   @ApiOperation({
-    description: 'Checks the health of the service status report.',
-    summary: 'Perform a health check of the service',
+    summary: 'Retrieve service health information',
+    description:
+      'Returns the service health status and, when requested via query parameters, augments the payload with application metadata and uptime details',
   })
   @ApiOkResponse({
+    description:
+      'Health status successfully retrieved. Optional fields are present only when requested via query parameters.',
     type: GetHealthResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Returned when query parameters fail validation (e.g., non-boolean values).',
+  })
+  @ApiQuery({
+    name: 'appMeta',
+    required: false,
+    type: Boolean,
+    description:
+      'When true, includes the package name and version in the response.',
+  })
+  @ApiQuery({
+    name: 'uptime',
+    required: false,
+    type: Boolean,
+    description:
+      'When true, includes a human-friendly duration indicating how long the service has been running.',
   })
   async getHealth(
     @Query() params: GetHealthQueryDto,
