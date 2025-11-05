@@ -43,6 +43,5 @@
   },
   "[mjs]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "cSpell.words": ["linebreak", "metatype", "nestjs", "openapi", "paren"]
+  }
 }
