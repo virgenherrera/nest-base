@@ -17,6 +17,8 @@
   },
   "eslint.validate": ["javascript", "json", "typescript", "mjs"],
   "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
   "git.autofetch": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "npm.packageManager": "pnpm",
@@ -41,6 +43,5 @@
   },
   "[mjs]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "cSpell.words": ["linebreak", "metatype", "nestjs", "openapi", "paren"]
+  }
 }
