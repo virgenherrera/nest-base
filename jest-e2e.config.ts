@@ -11,11 +11,6 @@ import { JestConfig } from './jest.config';
 
 export class JestE2eConfig extends JestConfig implements Config {
   override rootDir = '.';
-  override collectCoverageFrom = [
-    'src/**/*.(controller|service).ts',
-    '!src/**/*.spec.ts',
-    '!src/**/(index|main).ts',
-  ];
   override coverageDirectory = '<rootDir>/coverage/e2e';
   globalSetup = '<rootDir>/test/utils/e2e.setup.ts';
   override testRegex = 'test/.*\\.e2e-spec\\.ts$';

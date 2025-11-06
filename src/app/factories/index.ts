@@ -1,2 +1,2 @@
-export * from './http';
-export * from './open-api';
+export * from './http.factory';
+export * from './open-api.factory';

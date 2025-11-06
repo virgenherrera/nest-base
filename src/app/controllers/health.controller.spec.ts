@@ -54,13 +54,7 @@ describe(`UT:${HealthController.name}`, () => {
     };
 
     // Act & Assert
-    await expect(
-      controller.getHealth(queryParams).then((val) => {
-        console.log(val);
-
-        return val;
-      }),
-    ).resolves.toMatchObject({
+    await expect(controller.getHealth(queryParams)).resolves.toMatchObject({
       appMeta: expect.stringMatching(/^([\w-]+)@(\d+\.\d+\.\d+)$/),
       status: 'OK',
       uptime: expect.stringMatching(/.{1,}/),

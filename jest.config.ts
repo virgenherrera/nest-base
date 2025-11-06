@@ -10,9 +10,10 @@ export class JestConfig implements Config {
   cache = false;
   collectCoverage = true;
   collectCoverageFrom = [
-    '**/*.ts',
-    '!**/(index|main).ts',
-    '!**/*.(config|module).ts',
+    '<rootDir>/**/*.(controller|guard|middleware|pipe|service|util).ts',
+    '<rootDir>/!**/*.spec.ts',
+    '<rootDir>/!**/(index|main).ts',
+    '<rootDir>/!**/test/**',
   ];
   coverageDirectory = '../coverage/unit';
   coverageReporters: Config['coverageReporters'] = ['html-spa'];
