@@ -4,7 +4,7 @@ import { writeFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { cwd } from 'process';
 
-import { CommonAppFactory } from '../common';
+import { CommonAppFactory } from './common.factory';
 
 export async function OpenApiFactory(): Promise<void> {
   const fileName = 'open-api.json';

@@ -4,8 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { OpenAPIObject } from '@nestjs/swagger';
 
-import { AppModule } from '../../../app.module';
-import { AppConfig } from '../../../config';
+import { AppModule } from '../../app.module';
+import { AppConfig } from '../../config';
 
 export interface AppContext {
   apiPrefix: string;

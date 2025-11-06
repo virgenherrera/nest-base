@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import compression from 'compression';
 import helmet from 'helmet';
 
-import { CommonAppFactory } from '../common';
+import { CommonAppFactory } from './common.factory';
 
 export async function HttpAppFactory(): Promise<void> {
   const logger = new Logger(HttpAppFactory.name);
