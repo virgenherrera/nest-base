@@ -30,7 +30,7 @@
     "test:unit": "jest",
     "test:e2e": "jest --config jest-e2e.config.ts",
     "build:api-docs": "ts-node -r tsconfig-paths/register ./scripts/build-open-api.ts",
-    "build:app": "nest build",
+    "build:app": "nest build -p tsconfig.build.prod.json",
     "eslintCheck": "eslint '{apps,libs,scripts,src,test}/**/*.ts'",
     "prettierCheck": "prettier --check '{apps,libs,scripts,src,test}/**/*.ts'",
     "prepare": "husky",
