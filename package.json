@@ -21,9 +21,9 @@
     "pnpm": ">=10.20.0"
   },
   "scripts": {
+    "test": "pnpm run cleanup && pnpm run test:static && pnpm run test:unit && pnpm run test:e2e && pnpm run build:api-docs && pnpm run build:app",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
-    "test": "pnpm run cleanup && pnpm run test:static && pnpm run test:unit && pnpm run test:e2e && pnpm run build:api-docs && pnpm run build:app",
     "watch:UT": "jest --watch --maxWorkers=1",
     "watch:E2E": "jest --config jest-e2e.config.ts --watch --maxWorkers=1",
     "test:static": "pnpm run eslintCheck && pnpm run prettierCheck",
@@ -63,9 +63,9 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.0",
     "@types/supertest": "^6.0.3",
-    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
@@ -78,7 +78,7 @@
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.3"
+    "typescript-eslint": "^8.46.4",
+    "typescript": "^5.9.3"
   }
 }
