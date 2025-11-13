@@ -4,7 +4,7 @@ import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { env } from 'node:process';
 
-import * as ConfigNamespaces from '../../../config';
+import * as ConfigNamespaces from '../../config';
 
 const ClassNameTokenMap = new Map<string, symbol>();
 const dynamicModule = ConfigModule.forRoot({
