@@ -66,11 +66,12 @@ Each property uses `@Expose({ name: 'ENV_VAR' })`. Only declared variables survi
 | ------ | ------- |
 | `pnpm run start:dev` | Start the server with watch mode. |
 | `pnpm run start:prod` | Run the compiled app from `dist/`. |
-| `pnpm run test` | Local “mini CI”: cleanup, linting, unit tests, e2e tests, API docs build, and application build. |
-| `pnpm run test:static` | ESLint + Prettier checks. |
+| `pnpm run test` | Local “mini CI” that mirrors `.github/workflows/ci.yml`: cleanup, linting, unit tests, e2e tests, API docs build, and application build. |
+| `pnpm run test:static` | Security audit + ESLint + Prettier checks. |
 | `pnpm run test:unit` / `test:e2e` | Run Jest unit or e2e suites. |
 | `pnpm run watch:UT` / `watch:E2E` | Run Jest in watch mode (unit or e2e). |
 | `pnpm run build:api-docs` | Generate `api-docs/open-api.json`. |
+| `pnpm run securityCheck` | Run `pnpm audit` to surface dependency vulnerabilities. |
 | `pnpm run bumpDependencies` | Update dependencies (fails fast if tests break). |
 
 Husky runs `lint-staged` before every commit to keep formatting and linting green.
@@ -105,18 +106,34 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
+`AppConfig` already normalizes `APP_PORT`, `HOSTNAME`, `NODE_ENV`, and exposes `npm_package_*` metadata for things like the health endpoint. To add your own namespace:
+
 1. Create a class in `src/config/foo.config.ts` and export it.
-2. Map each setting with `@Expose({ name: 'ENV_VAR' })`.
-3. Add constraints with `class-validator` decorators.
+2. Map each setting with `@Expose({ name: 'ENV_VAR' })`; use `@Transform` when you need defaults or coercion.
+3. Validate with `class-validator` decorators so the app fails fast when misconfigured.
 4. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
 
 ```ts
+// src/config/foo.config.ts
+import { Expose } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
+
+export class FooConfig {
+  @Expose({ name: 'FOO_FEATURE_FLAG' })
+  @IsString()
+  @IsNotEmpty()
+  featureFlag: string;
+}
+```
+
+```ts
+// Anywhere in the app
 @Injectable()
 export class FooService {
   constructor(@InjectConfig(FooConfig) private readonly foo: FooConfig) {}
 
   findValue() {
-    return this.foo.someProperty;
+    return this.foo.featureFlag;
   }
 }
 ```
