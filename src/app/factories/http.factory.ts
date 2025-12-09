@@ -13,7 +13,6 @@ export async function HttpAppFactory(): Promise<void> {
   const yamlDocumentUrl = `${apiPrefix}/yaml`;
 
   logger.log(`mounting App global middlewares`);
-  console.log(appConfig);
   app.enableCors();
   app.use(helmet());
   app.use(compression());

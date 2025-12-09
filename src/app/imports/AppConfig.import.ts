@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common';
 import { ConfigModule, registerAs } from '@nestjs/config';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
+import { ValidationError, validate } from 'class-validator';
 import { env } from 'node:process';
 
 import * as ConfigNamespaces from '../../config';
@@ -27,16 +27,53 @@ const dynamicModule = ConfigModule.forRoot({
         });
 
         if (errors.length) {
-          const msgTitle = `Environment validation error found!`;
+          const formatError = (
+            error: ValidationError,
+            parent = error.property,
+          ): string[] => {
+            const scopedPath = parent || error.property;
+            const serializedValue = (() => {
+              const val =
+                error.value ??
+                (error.target as Record<string, unknown> | undefined)?.[
+                  error.property
+                ];
+              try {
+                const json = JSON.stringify(val);
 
-          console.warn(msgTitle + '\n' + '='.repeat(msgTitle.length));
-          errors.forEach(({ target, constraints }) => {
-            console.log('in:', target);
-            console.log('errors:', constraints);
-          });
-          console.trace();
+                return json === undefined ? String(val) : json;
+              } catch {
+                return String(val);
+              }
+            })();
 
-          throw new Error(msgTitle, { cause: errors });
+            const current =
+              error.constraints && Object.keys(error.constraints).length
+                ? [
+                    `${classConstructor.name}.${scopedPath}: ${Object.values(
+                      error.constraints,
+                    ).join('; ')} | value: ${serializedValue}`,
+                  ]
+                : [];
+
+            const children =
+              error.children?.flatMap((child) =>
+                formatError(child, `${scopedPath}.${child.property}`),
+              ) ?? [];
+
+            return [...current, ...children];
+          };
+
+          const messages = errors.flatMap((err) => formatError(err));
+          const title = `Environment validation error(s) in ${classConstructor.name} class`;
+          const body =
+            messages.length > 0
+              ? messages.join('\n')
+              : JSON.stringify(errors, null, 2);
+
+          console.error(`${title}\n${'='.repeat(title.length)}\n${body}\n\n\n`);
+
+          throw new TypeError(`${title}\n${body}`);
         }
 
         Object.seal(instance);
