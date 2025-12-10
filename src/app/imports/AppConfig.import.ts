@@ -6,9 +6,9 @@ import { env } from 'node:process';
 
 import * as ConfigNamespaces from '../../config';
 
-const ClassNameTokenMap = new Map<string, symbol>();
+const ClassNameTokenMap = new Map<string, string | symbol>();
 const dynamicModule = ConfigModule.forRoot({
-  cache: true,
+  cache: false,
   expandVariables: true,
   isGlobal: true,
   load: Object.values(ConfigNamespaces)
@@ -19,7 +19,6 @@ const dynamicModule = ConfigModule.forRoot({
           enableImplicitConversion: true,
           excludeExtraneousValues: true,
         });
-
         const errors = await validate(instance as object, {
           forbidNonWhitelisted: true,
           stopAtFirstError: false,
@@ -65,13 +64,13 @@ const dynamicModule = ConfigModule.forRoot({
           };
 
           const messages = errors.flatMap((err) => formatError(err));
-          const title = `Environment validation error(s) in ${classConstructor.name} class`;
+          const title = `Configuration validation error(s) in ${classConstructor.name} class`;
           const body =
             messages.length > 0
               ? messages.join('\n')
               : JSON.stringify(errors, null, 2);
 
-          console.error(`${title}\n${'='.repeat(title.length)}\n${body}\n\n\n`);
+          console.error(`${title}\n${'='.repeat(title.length)}\n${body}`);
 
           throw new TypeError(`${title}\n${body}`);
         }
@@ -82,14 +81,14 @@ const dynamicModule = ConfigModule.forRoot({
         return instance;
       });
 
-      ClassNameTokenMap.set(classConstructor.name, configFactory.KEY as symbol);
+      ClassNameTokenMap.set(classConstructor.name, configFactory.KEY);
 
       return configFactory;
     }),
 });
 
 export const AppConfigModule: ReturnType<typeof ConfigModule.forRoot> & {
-  getToken(cls: Type): symbol | undefined;
+  getToken(cls: Type): string | symbol | undefined;
 } = Object.assign(dynamicModule, {
   getToken(cls: Type) {
     return ClassNameTokenMap.get(cls.name);

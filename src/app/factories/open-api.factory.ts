@@ -9,9 +9,11 @@ import { CommonAppFactory } from './common.factory';
 export async function OpenApiFactory(): Promise<void> {
   const fileName = 'open-api.json';
   const logger = new Logger(OpenApiFactory.name);
-  const { app, getSwaggerDocument } = await CommonAppFactory();
+  const { app, appConfig, getSwaggerDocument } = await CommonAppFactory();
 
-  logger.log(`Setting file paths`);
+  logger.log(
+    `Preparing OpenAPI build for environment label "${appConfig.environmentLabel}"`,
+  );
 
   const openApiPath = join(resolve(cwd()), 'api-docs/');
 
@@ -32,7 +34,9 @@ export async function OpenApiFactory(): Promise<void> {
     encoding: 'utf8',
   });
 
-  logger.log(`Closing NestJs application`);
+  logger.log(
+    `Closing NestJs application after OpenAPI build for "${appConfig.environmentLabel}"`,
+  );
   await app.close();
   logger.verbose(`file: ${swaggerFilePath} built successfully`);
 }
