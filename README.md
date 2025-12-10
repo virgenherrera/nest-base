@@ -52,9 +52,13 @@ Classes in `src/config` define and validate every environment variable the app c
 
 | Variable   | Description                                      | Default |
 | ---------- | ------------------------------------------------ | ------- |
-| `NODE_ENV` | Application environment (development/test/prod). | `development` |
+| `APP_ENV` | Free-form label to describe the deployment (e.g., `local`, `qa`, `prod`). | `local` |
 | `APP_PORT` | HTTP port exposed by Nest.                       | `3000` |
 | `HOSTNAME` | Host interface Nest listens on.                  | `0.0.0.0` |
+| `ENABLE_CORS` | Enables CORS middleware. | `true` |
+| `ENABLE_HELMET` | Enables Helmet security headers. | `true` |
+| `ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true` |
+| `ENABLE_SWAGGER` | Mounts Swagger UI/JSON/YAML when true. | `false` |
 
 Each property uses `@Expose({ name: 'ENV_VAR' })`. Only declared variables survive the validation step; missing or invalid values stop the boot process with a detailed error.
 
@@ -80,7 +84,7 @@ Husky runs `lint-staged` before every commit to keep formatting and linting gree
 
 [(back to menu)](#navigation)
 
-- With `NODE_ENV=development`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`.
+- When `ENABLE_SWAGGER=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
 - DTO metadata comes from the same `class-validator`/`class-transformer`-decorated classes that power runtime validation, so the docs stay in sync with your request/response contracts.
 - To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
 
@@ -106,7 +110,7 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
-`AppConfig` already normalizes `APP_PORT`, `HOSTNAME`, `NODE_ENV`, and exposes `npm_package_*` metadata for things like the health endpoint. To add your own namespace:
+`AppConfig` already normalizes `APP_PORT`, `HOSTNAME`, `APP_ENV`, `ENABLE_SWAGGER`, and exposes `npm_package_*` metadata for things like the health endpoint. To add your own namespace:
 
 1. Create a class in `src/config/foo.config.ts` and export it.
 2. Map each setting with `@Expose({ name: 'ENV_VAR' })`; use `@Transform` when you need defaults or coercion.

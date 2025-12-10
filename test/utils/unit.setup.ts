@@ -4,6 +4,7 @@ import { env } from 'node:process';
 export default async function Setup() {
   // set E2E TEST ENV Variables
   Object.assign(env, {
-    NODE_ENV: 'TEST:UNIT',
+    APP_ENV: 'test:unit',
+    ENABLE_SWAGGER: 'false',
   });
 }
