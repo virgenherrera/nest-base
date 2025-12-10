@@ -30,8 +30,9 @@ export async function CommonAppFactory(): Promise<AppContext> {
 
   if (!appConfig) throw new Error(`Unable to find ${AppConfig.name}`);
 
+  app.useLogger(appConfig.logLevels);
   logger.log(
-    `Applying application configuration for environment label "${appConfig.environmentLabel}"`,
+    `Configuring environment "${appConfig.environmentLabel}" with log levels: ${appConfig.logLevels.join(', ')}`,
   );
 
   logger.log(`setting app prefix: ${apiPrefix}`);

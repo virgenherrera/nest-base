@@ -1,6 +1,9 @@
+import { LOG_LEVELS, type LogLevel } from '@nestjs/common';
 import { Expose, Transform } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -27,8 +30,8 @@ export class AppConfig {
   @Max(65535)
   port: number = 3000;
 
-  @Expose({ name: 'HOSTNAME' })
-  @Transform(({ value }) => (value as string) || '0.0.0.0')
+  @Expose({ name: 'APP_HOSTNAME' })
+  @Transform(({ value }) => (!value ? '0.0.0.0' : `${value}`))
   @IsString()
   @IsNotEmpty()
   hostname: string = '0.0.0.0';
@@ -38,23 +41,29 @@ export class AppConfig {
   @IsNotEmpty()
   environmentLabel: string = 'local';
 
-  @Expose({ name: 'ENABLE_CORS' })
-  @Transform(({ obj }) => getBoolean(obj, 'ENABLE_CORS'))
+  @Expose({ name: 'APP_LOG_LEVELS' })
+  @Transform(({ value }) => (!value ? LOG_LEVELS : `${value}`.split(',')))
+  @IsArray()
+  @IsIn(LOG_LEVELS, { each: true })
+  logLevels: LogLevel[];
+
+  @Expose({ name: 'APP_ENABLE_CORS' })
+  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_CORS'))
   @IsBoolean()
   enableCors: boolean;
 
-  @Expose({ name: 'ENABLE_HELMET' })
-  @Transform(({ obj }) => getBoolean(obj, 'ENABLE_HELMET'))
+  @Expose({ name: 'APP_ENABLE_HELMET' })
+  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_HELMET'))
   @IsBoolean()
   enableHelmet: boolean;
 
-  @Expose({ name: 'ENABLE_COMPRESSION' })
-  @Transform(({ obj }) => getBoolean(obj, 'ENABLE_COMPRESSION'))
+  @Expose({ name: 'APP_ENABLE_COMPRESSION' })
+  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_COMPRESSION'))
   @IsBoolean()
   enableCompression: boolean;
 
-  @Expose({ name: 'ENABLE_SWAGGER' })
-  @Transform(({ obj }) => getBoolean(obj, 'ENABLE_SWAGGER'))
+  @Expose({ name: 'APP_ENABLE_SWAGGER' })
+  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_SWAGGER'))
   @IsBoolean()
   enableSwagger: boolean;
 
