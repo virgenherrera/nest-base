@@ -54,11 +54,12 @@ Classes in `src/config` define and validate every environment variable the app c
 | ---------- | ------------------------------------------------ | ------- |
 | `APP_ENV` | Free-form label to describe the deployment (e.g., `local`, `qa`, `prod`). | `local` |
 | `APP_PORT` | HTTP port exposed by Nest.                       | `3000` |
-| `HOSTNAME` | Host interface Nest listens on.                  | `0.0.0.0` |
-| `ENABLE_CORS` | Enables CORS middleware. | `true` |
-| `ENABLE_HELMET` | Enables Helmet security headers. | `true` |
-| `ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true` |
-| `ENABLE_SWAGGER` | Mounts Swagger UI/JSON/YAML when true. | `false` |
+| `APP_HOSTNAME` | Host interface Nest listens on.                  | `0.0.0.0` |
+| `APP_LOG_LEVELS` | Comma-separated log levels (`log,error,warn,debug,verbose,fatal` as per Nest’s `useLogger`). | `log,error,warn,debug,verbose,fatal` |
+| `APP_ENABLE_CORS` | Enables CORS middleware. | `true` |
+| `APP_ENABLE_HELMET` | Enables Helmet security headers. | `true` |
+| `APP_ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true` |
+| `APP_ENABLE_SWAGGER` | Mounts Swagger UI/JSON/YAML when true. | `false` |
 
 Each property uses `@Expose({ name: 'ENV_VAR' })`. Only declared variables survive the validation step; missing or invalid values stop the boot process with a detailed error.
 
@@ -84,7 +85,8 @@ Husky runs `lint-staged` before every commit to keep formatting and linting gree
 
 [(back to menu)](#navigation)
 
-- When `ENABLE_SWAGGER=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
+- When `APP_ENABLE_SWAGGER=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
+- `APP_LOG_LEVELS` accepts the same values as Nest’s `useLogger` (`log,error,warn,debug,verbose,fatal`), comma-separated. Default enables all of them.
 - DTO metadata comes from the same `class-validator`/`class-transformer`-decorated classes that power runtime validation, so the docs stay in sync with your request/response contracts.
 - To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
 

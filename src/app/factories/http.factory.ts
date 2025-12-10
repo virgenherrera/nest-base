@@ -8,7 +8,7 @@ export async function HttpAppFactory(): Promise<void> {
   const jsonDocumentUrl = `${apiPrefix}/json`;
   const yamlDocumentUrl = `${apiPrefix}/yaml`;
 
-  logger.log(`mounting App global middlewares`);
+  logger.log('Mounting global middlewares');
 
   if (appConfig.enableCors) {
     app.enableCors();
@@ -21,7 +21,7 @@ export async function HttpAppFactory(): Promise<void> {
       (helmetModule as Record<string, unknown>).default ?? helmetModule;
 
     app.use(helmet as unknown as (...args: unknown[]) => unknown);
-    logger.verbose(`Helmet middleware mounted`);
+    logger.verbose('Helmet middleware mounted');
   }
 
   if (appConfig.enableCompression) {
@@ -30,18 +30,18 @@ export async function HttpAppFactory(): Promise<void> {
       (compressionModule as Record<string, unknown>).default ??
       compressionModule;
     app.use(compression as unknown as (...args: unknown[]) => unknown);
-    logger.verbose(`Compression middleware mounted`);
+    logger.verbose('Compression middleware mounted');
   }
 
   logger.verbose('Middlewares mounted successfully');
 
   if (appConfig.enableSwagger) {
-    logger.verbose('preparing Swagger Document');
+    logger.verbose('Preparing Swagger Document');
     const { SwaggerModule } = await import('@nestjs/swagger');
 
     const swaggerDocument = await getSwaggerDocument();
 
-    logger.verbose(`mounting SwaggerDocs`);
+    logger.verbose('Mounting SwaggerDocs');
 
     SwaggerModule.setup(apiPrefix, app, swaggerDocument, {
       jsonDocumentUrl,

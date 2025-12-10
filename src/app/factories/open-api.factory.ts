@@ -23,12 +23,12 @@ export async function OpenApiFactory(): Promise<void> {
 
   const swaggerFilePath = join(openApiPath, fileName);
 
-  logger.log(`building '${fileName}' file`);
+  logger.log(`Building '${fileName}' file`);
 
   const swaggerDocument = getSwaggerDocument();
   const swaggerFileContent = JSON.stringify(swaggerDocument, null, 2);
 
-  logger.log(`Writing openOpenAPI file`);
+  logger.verbose(`Writing OpenAPI file to ${swaggerFilePath}`);
 
   await writeFile(swaggerFilePath, swaggerFileContent, {
     encoding: 'utf8',
