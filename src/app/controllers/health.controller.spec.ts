@@ -31,12 +31,12 @@ describe(`UT:${HealthController.name}`, () => {
     controller.onApplicationBootstrap();
   });
 
-  it.only(should.init, () => {
+  it(should.init, () => {
     expect(controller).toBeDefined();
     expect(controller).toBeInstanceOf(HealthController);
   });
 
-  it.only(should.getHealth, async () => {
+  it(should.getHealth, async () => {
     // Arrange
     const queryParams = {} as GetHealthQueryDto;
 
@@ -46,7 +46,7 @@ describe(`UT:${HealthController.name}`, () => {
     });
   });
 
-  it.only(should.getHealthWithMeta, async () => {
+  it(should.getHealthWithMeta, async () => {
     // Arrange
     const queryParams: GetHealthQueryDto = {
       appMeta: true,
