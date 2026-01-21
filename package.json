@@ -16,7 +16,7 @@
   "contributors": [
     "Hugo Virgen (https://github.com/virgenherrera)"
   ],
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.28.1",
   "engines": {
     "node": ">=24.12.0 <25"
   },
@@ -40,11 +40,11 @@
     "bumpDependencies": "pnpm dlx npm-check-updates"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.11",
+    "@nestjs/common": "^11.1.12",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.11",
-    "@nestjs/platform-express": "^11.1.11",
-    "@nestjs/swagger": "^11.2.4",
+    "@nestjs/core": "^11.1.12",
+    "@nestjs/platform-express": "^11.1.12",
+    "@nestjs/swagger": "^11.2.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "compression": "^1.8.1",
@@ -56,22 +56,22 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
-    "@nestjs/cli": "^11.0.14",
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.11",
+    "@nestjs/testing": "^11.1.12",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.10",
     "@types/supertest": "^6.0.3",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.1",
     "rimraf": "^6.1.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.2.2",
@@ -80,6 +80,11 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.52.0"
+    "typescript-eslint": "^8.53.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash@>=4.0.0 <=4.17.22": ">=4.17.23"
+    }
   }
 }
