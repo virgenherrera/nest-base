@@ -17,7 +17,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { plainToInstance } from 'class-transformer';
 import { AppConfig } from '../../config';
 import { InjectConfig } from '../decorators';
-import { GetHealthQueryDto, GetHealthResponseDto } from '../dto';
+import { HealthQueryDto, HealthResponseDto } from '../dto';
 
 @Controller('health')
 @ApiTags('health')
@@ -41,7 +41,7 @@ export class HealthController implements OnApplicationBootstrap {
   @ApiOkResponse({
     description:
       'Health status successfully retrieved. Optional fields are present only when requested via query parameters.',
-    type: GetHealthResponseDto,
+    type: HealthResponseDto,
   })
   @ApiBadRequestResponse({
     description:
@@ -61,11 +61,9 @@ export class HealthController implements OnApplicationBootstrap {
     description:
       'When true, includes a human-friendly duration indicating how long the service has been running.',
   })
-  async getHealth(
-    @Query() params: GetHealthQueryDto,
-  ): Promise<GetHealthResponseDto> {
+  async getHealth(@Query() params: HealthQueryDto): Promise<HealthResponseDto> {
     this.logger.log(`Getting service Health.`);
-    const res: GetHealthResponseDto = { status: 'OK' };
+    const res: HealthResponseDto = { status: 'OK' };
 
     if (params.appMeta) {
       const { name, version } = await Promise.resolve(this.appConfig);
@@ -76,6 +74,6 @@ export class HealthController implements OnApplicationBootstrap {
       res.uptime = formatDistanceToNow(this.startTime);
     }
 
-    return plainToInstance(GetHealthResponseDto, res);
+    return plainToInstance(HealthResponseDto, res);
   }
 }

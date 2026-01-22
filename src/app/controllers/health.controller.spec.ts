@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { AppConfig } from '../../config';
-import { GetHealthQueryDto } from '../dto';
+import { HealthQueryDto } from '../dto';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
@@ -38,7 +38,7 @@ describe(`UT:${HealthController.name}`, () => {
 
   it(should.getHealth, async () => {
     // Arrange
-    const queryParams = {} as GetHealthQueryDto;
+    const queryParams = {} as HealthQueryDto;
 
     // Act & Assert
     await expect(controller.getHealth(queryParams)).resolves.toMatchObject({
@@ -48,7 +48,7 @@ describe(`UT:${HealthController.name}`, () => {
 
   it(should.getHealthWithMeta, async () => {
     // Arrange
-    const queryParams: GetHealthQueryDto = {
+    const queryParams: HealthQueryDto = {
       appMeta: true,
       uptime: true,
     };

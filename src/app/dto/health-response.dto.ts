@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class GetHealthResponseDto {
+export class HealthResponseDto {
   @ApiProperty({
     description:
       'Constant health status indicator returned when the service responds.',
