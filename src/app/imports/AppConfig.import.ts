@@ -1,18 +1,31 @@
 import { DynamicModule, Logger, Type } from '@nestjs/common';
-import { ConfigModule, registerAs } from '@nestjs/config';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
+import { ConfigModule, getConfigToken, registerAs } from '@nestjs/config';
+import {
+  ClassConstructor,
+  ClassTransformOptions,
+  plainToInstance,
+} from 'class-transformer';
+import { validate, ValidatorOptions } from 'class-validator';
 import { env } from 'node:process';
 
 type EnvProvider = () => NodeJS.ProcessEnv | Promise<NodeJS.ProcessEnv>;
 type ConfigClass = ClassConstructor<unknown>;
-
+type SafeTransformOptions = Omit<
+  ClassTransformOptions,
+  'enableImplicitConversion' | 'excludeExtraneousValues'
+>;
+type SafeValidatorOptions = Omit<
+  ValidatorOptions,
+  'forbidNonWhitelisted' | 'whitelist'
+>;
 export type AppConfigModuleOptions = {
   cache?: boolean;
   expandVariables?: boolean;
   isGlobal?: boolean;
   configClasses: [ConfigClass, ...ConfigClass[]];
   envProvider?: EnvProvider;
+  transformerOptions?: SafeTransformOptions;
+  validatorOptions?: SafeValidatorOptions;
 };
 
 type ResolvedAppConfigOptions = {
@@ -21,20 +34,18 @@ type ResolvedAppConfigOptions = {
   isGlobal: boolean;
   configClasses: [ConfigClass, ...ConfigClass[]];
   envProvider: EnvProvider;
+  transformerOptions: ClassTransformOptions;
+  validatorOptions: ValidatorOptions;
 };
 
 export class AppConfigModule {
   private static readonly logger = new Logger(AppConfigModule.name);
-  private static readonly classNameTokenMap = new Map<
-    string,
-    string | symbol
-  >();
 
   static forRoot(options: AppConfigModuleOptions): DynamicModule {
     const resolved = this.resolveOptions(options);
     const configFactories = this.registerConfigFactories(
       resolved.configClasses,
-      resolved.envProvider,
+      resolved,
     );
     const configModule = ConfigModule.forRoot({
       cache: resolved.cache,
@@ -54,8 +65,8 @@ export class AppConfigModule {
     };
   }
 
-  static getToken(cls: Type): string | symbol | undefined {
-    return this.classNameTokenMap.get(cls.name) ?? `CONFIGURATION(${cls.name})`;
+  static getToken(cls: Type): string {
+    return getConfigToken(cls.name);
   }
 
   private static resolveOptions(
@@ -73,32 +84,40 @@ export class AppConfigModule {
       isGlobal: options.isGlobal ?? true,
       configClasses: options.configClasses,
       envProvider: options.envProvider ?? (() => env),
+      transformerOptions: {
+        enableImplicitConversion: true,
+        excludeExtraneousValues: true,
+        ...options.transformerOptions,
+      },
+      validatorOptions: {
+        forbidNonWhitelisted: true,
+        stopAtFirstError: false,
+        whitelist: true,
+        ...options.validatorOptions,
+      },
     };
   }
 
   private static registerConfigFactories(
     configClasses: ConfigClass[],
-    envProvider: EnvProvider,
+    options: ResolvedAppConfigOptions,
   ): ReturnType<typeof registerAs>[] {
     return configClasses.map((configClass) =>
-      this.createConfigFactory(configClass, envProvider),
+      this.createConfigFactory(configClass, options),
     );
   }
 
   private static createConfigFactory<T>(
     classConstructor: ClassConstructor<T>,
-    envProvider: EnvProvider,
+    options: ResolvedAppConfigOptions,
   ) {
     const configFactory = registerAs(classConstructor.name, async () => {
-      const envSource = await envProvider();
+      const envSource = await options.envProvider();
       const instance = plainToInstance(classConstructor, envSource, {
-        enableImplicitConversion: true,
-        excludeExtraneousValues: true,
+        ...options.transformerOptions,
       });
       const errors = await validate(instance as object, {
-        forbidNonWhitelisted: true,
-        stopAtFirstError: false,
-        whitelist: true,
+        ...options.validatorOptions,
       });
 
       if (errors.length) {
@@ -110,8 +129,6 @@ export class AppConfigModule {
 
       return instance;
     });
-
-    this.classNameTokenMap.set(classConstructor.name, configFactory.KEY);
 
     return configFactory;
   }

@@ -1,9 +1,8 @@
 import { Inject, Type } from '@nestjs/common';
-
-import { AppConfigModule } from '../imports';
+import { getConfigToken } from '@nestjs/config';
 
 export function InjectConfig<T extends Type>(configCls: T): ParameterDecorator {
-  const registryKey = AppConfigModule.getToken(configCls);
+  const registryKey = getConfigToken(configCls.name);
 
   return Inject(registryKey);
 }
