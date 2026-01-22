@@ -12,6 +12,10 @@ export const GlobalValidationPipeProvider: Provider = {
         enableImplicitConversion: true,
         excludeExtraneousValues: false,
       },
+      validationError: {
+        target: false,
+        value: false,
+      },
       whitelist: true,
     }),
 };

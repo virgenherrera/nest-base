@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 
 import { AppConfigModule } from './app/imports';
 import { HealthController } from './app/controllers';
+import { HttpErrorFilter } from './app/filters/http-exception.filter';
 import { GlobalValidationPipeProvider } from './app/providers';
 import { AppConfig } from './config';
 
@@ -15,6 +17,12 @@ import { AppConfig } from './config';
       isGlobal: true,
     }),
   ],
-  providers: [GlobalValidationPipeProvider],
+  providers: [
+    GlobalValidationPipeProvider,
+    {
+      provide: APP_FILTER,
+      useClass: HttpErrorFilter,
+    },
+  ],
 })
 export class AppModule {}
