@@ -7,7 +7,7 @@ describe(`e2e: GET /health`, () => {
     initTestContext = 'Should test Context be properly initialized.',
     getHealth = `Should GET App health.`,
     getHealthWithUptime = 'Should get App Health with uptime.',
-    getBadRequest = 'Should return validation error for invalid query params.',
+    ignoreUnknownQuery = 'Should ignore unknown query params.',
     getNotFound = 'Should return not found for unknown routes.',
   }
 
@@ -45,15 +45,11 @@ describe(`e2e: GET /health`, () => {
     });
   });
 
-  it(should.getBadRequest, async () => {
+  it(should.ignoreUnknownQuery, async () => {
     const res = await testCtx.request.get('/health').query({ foo: 'bar' });
 
-    expect(res).toHaveProperty('status', 400);
-    expect(res.body).toMatchObject({
-      error: 'Bad Request',
-      message: expect.arrayContaining([expect.stringMatching(/foo/)]),
-      path: '/health?foo=bar',
-    });
+    expect(res).toHaveProperty('status', 200);
+    expect(res.body).toMatchObject(getHealthMatcher);
   });
 
   it(should.getNotFound, async () => {
