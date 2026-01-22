@@ -112,12 +112,23 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
-`AppConfig` already normalizes `APP_PORT`, `HOSTNAME`, `APP_ENV`, `ENABLE_SWAGGER`, and exposes `npm_package_*` metadata for things like the health endpoint. To add your own namespace:
+`AppConfig` already normalizes `APP_PORT`, `HOSTNAME`, `APP_ENV`, `ENABLE_SWAGGER`, and exposes `npm_package_*` metadata for things like the health endpoint. The gimmick is simple: every config class becomes its own namespace, validated once at boot, frozen to avoid mutation, and injected by type so you get autocomplete + compile-time hints instead of stringly-typed config keys.
+
+### Why this improves DX
+
+- Each class is registered with `registerAs(<ClassName>)`, so Nest creates a stable config namespace per class.
+- The `@InjectConfig(FooConfig)` decorator resolves the namespace token via `getConfigToken(FooConfig.name)`, then injects a fully typed instance.
+- You never touch `ConfigService.get('string.key')`; you only use the config class directly, keeping refactors safe.
+- Validation errors are aggregated and thrown at startup with actionable messages.
+- Instances are sealed + frozen after validation to prevent runtime drift.
+
+### Add your own namespace
 
 1. Create a class in `src/config/foo.config.ts` and export it.
 2. Map each setting with `@Expose({ name: 'ENV_VAR' })`; use `@Transform` when you need defaults or coercion.
 3. Validate with `class-validator` decorators so the app fails fast when misconfigured.
-4. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
+4. Register the class in `AppConfigModule.forRoot({ configClasses: [AppConfig, FooConfig] })`.
+5. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
 
 ```ts
 // src/config/foo.config.ts
@@ -144,7 +155,12 @@ export class FooService {
 }
 ```
 
-`AppConfigModule` treats every class as a namespaced configuration factory, freezes the instances, and raises descriptive errors when validation fails.
+### Advanced behavior
+
+`AppConfigModule` treats every class as a namespaced configuration factory, freezes the instances, and raises descriptive errors when validation fails. It also allows optional overrides for transformation and validation:
+
+- `transformerOptions`: merge with defaults for `class-transformer` (cannot override core coercion/exposure).
+- `validatorOptions`: merge with defaults for `class-validator` (cannot disable whitelist/forbidNonWhitelisted).
 
 ## Next steps
 
