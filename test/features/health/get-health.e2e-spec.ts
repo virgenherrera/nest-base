@@ -7,6 +7,8 @@ describe(`e2e: GET /health`, () => {
     initTestContext = 'Should test Context be properly initialized.',
     getHealth = `Should GET App health.`,
     getHealthWithUptime = 'Should get App Health with uptime.',
+    getBadRequest = 'Should return validation error for invalid query params.',
+    getNotFound = 'Should return not found for unknown routes.',
   }
 
   const getHealthMatcher = { status: 'OK' };
@@ -40,6 +42,28 @@ describe(`e2e: GET /health`, () => {
       ...getHealthMatcher,
       appMeta: expect.stringMatching(/^([\w-]+)@(\d+\.\d+\.\d+)$/),
       uptime: expect.stringMatching(/.{1,}/),
+    });
+  });
+
+  it(should.getBadRequest, async () => {
+    const res = await testCtx.request.get('/health').query({ foo: 'bar' });
+
+    expect(res).toHaveProperty('status', 400);
+    expect(res.body).toMatchObject({
+      error: 'Bad Request',
+      message: expect.arrayContaining([expect.stringMatching(/foo/)]),
+      path: '/health?foo=bar',
+    });
+  });
+
+  it(should.getNotFound, async () => {
+    const res = await testCtx.request.get('/missing-route');
+
+    expect(res).toHaveProperty('status', 404);
+    expect(res.body).toMatchObject({
+      error: 'Not Found',
+      message: expect.arrayContaining([expect.stringMatching(/Cannot GET/)]),
+      path: '/missing-route',
     });
   });
 });

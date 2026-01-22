@@ -1,5 +1,5 @@
 import { INestApplication, Logger } from '@nestjs/common';
-import { CommonAppFactory } from './app/factories/common.factory';
+import { AppBootstrap } from './app/bootstrap/app.bootstrap';
 
 class HttpAppMain {
   private static readonly logger = new Logger(HttpAppMain.name);
@@ -9,6 +9,7 @@ class HttpAppMain {
     try {
       await this.bootstrapHttpServer();
       this.registerShutdownHooks();
+      this.registerProcessErrorHandlers();
     } catch (error) {
       this.logFatalAndExit(error);
     }
@@ -16,7 +17,7 @@ class HttpAppMain {
 
   private static async bootstrapHttpServer(): Promise<void> {
     const { app, appConfig, apiPrefix, getSwaggerDocument } =
-      await CommonAppFactory();
+      await AppBootstrap.createAppContext();
     this.app = app;
     const jsonDocumentUrl = `${apiPrefix}/json`;
     const yamlDocumentUrl = `${apiPrefix}/yaml`;
@@ -86,6 +87,17 @@ class HttpAppMain {
     });
     process.on('SIGINT', () => {
       void this.shutdown('SIGINT');
+    });
+  }
+
+  private static registerProcessErrorHandlers(): void {
+    process.on('uncaughtException', (error) => {
+      this.logFatalAndExit(error);
+    });
+    process.on('unhandledRejection', (reason) => {
+      const error =
+        reason instanceof Error ? reason : new Error(String(reason));
+      this.logFatalAndExit(error);
     });
   }
 

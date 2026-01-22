@@ -10,7 +10,7 @@ export class JestConfig implements Config {
   cache = false;
   collectCoverage = true;
   collectCoverageFrom = [
-    '<rootDir>/**/*.(controller|guard|middleware|pipe|service|util).ts',
+    '<rootDir>/**/*.(controller|filter|guard|middleware|pipe|service|util).ts',
     '<rootDir>/!**/*.spec.ts',
     '<rootDir>/!**/(index|main).ts',
     '<rootDir>/!**/test/**',

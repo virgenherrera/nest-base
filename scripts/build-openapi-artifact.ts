@@ -4,7 +4,7 @@ import { writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { cwd, env } from 'node:process';
 
-import { CommonAppFactory } from '../src/app/factories/common.factory';
+import { AppBootstrap } from '../src/app/bootstrap/app.bootstrap';
 
 class OpenApiArtifactBuilder {
   private static readonly logger = new Logger(OpenApiArtifactBuilder.name);
@@ -29,7 +29,8 @@ class OpenApiArtifactBuilder {
 
   private static async buildOpenApiArtifact(): Promise<void> {
     const fileName = 'open-api.json';
-    const { app, appConfig, getSwaggerDocument } = await CommonAppFactory();
+    const { app, appConfig, getSwaggerDocument } =
+      await AppBootstrap.createAppContext();
 
     this.logger.log(
       `Preparing OpenAPI build for environment label "${appConfig.environmentLabel}"`,

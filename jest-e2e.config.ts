@@ -12,7 +12,16 @@ import { JestConfig } from './jest.config';
 export class JestE2eConfig extends JestConfig implements Config {
   override rootDir = '.';
   override coverageDirectory = '<rootDir>/coverage/e2e';
-  globalSetup = '<rootDir>/test/utils/e2e.setup.ts';
+  override coverageThreshold = {
+    global: { branches: 60, functions: 100, lines: 89, statements: 90 },
+    'src/app/filters/http-exception.filter.ts': {
+      branches: 50,
+      functions: 100,
+      lines: 81,
+      statements: 82,
+    },
+  };
+  override globalSetup = '<rootDir>/test/utils/e2e.setup.ts';
   override testRegex = 'test/.*\\.e2e-spec\\.ts$';
 }
 
