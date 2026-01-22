@@ -29,7 +29,7 @@
     "test:static": "pnpm run securityCheck && pnpm run eslintCheck && pnpm run prettierCheck",
     "test:unit": "jest",
     "test:e2e": "jest --config jest-e2e.config.ts",
-    "build:api-docs": "ts-node -r tsconfig-paths/register ./scripts/build-open-api.ts",
+    "build:api-docs": "ts-node -r tsconfig-paths/register ./scripts/build-openapi-artifact.ts",
     "build:app": "nest build -p tsconfig.build.prod.json",
     "securityCheck": "pnpm audit",
     "eslintCheck": "eslint '{apps,libs,scripts,src,test}/**/*.ts'",

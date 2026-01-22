@@ -1,2 +1,2 @@
-export * from './GetHealthQueryDto';
-export * from './GetHealthResponseDto';
+export * from './health-query.dto';
+export * from './health-response.dto';

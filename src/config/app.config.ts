@@ -6,13 +6,14 @@ import {
   IsIn,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Max,
   Min,
 } from 'class-validator';
 
-const TruthyExpression = /^(true|1|yes|y|on)$/i;
-const getBoolean = (obj: unknown, key: string): boolean => {
+const TruthyExpression = /^(true|1|yes|on)$/i;
+export const getBoolean = (obj: unknown, key: string): boolean => {
   const raw = (obj as Record<string, string>)[key];
 
   return TruthyExpression.test(`${raw}`);
@@ -20,23 +21,19 @@ const getBoolean = (obj: unknown, key: string): boolean => {
 
 export class AppConfig {
   @Expose({ name: 'APP_PORT' })
-  @Transform(({ value }) => {
-    const num = Number(value);
-
-    return isNaN(num) ? 3000 : Math.min(Math.max(num, 0), 65535);
-  })
   @IsNumber()
   @Min(0)
   @Max(65535)
-  port: number = 3000;
+  port: number;
 
   @Expose({ name: 'APP_HOSTNAME' })
   @Transform(({ value }) => (!value ? '0.0.0.0' : `${value}`))
   @IsString()
   @IsNotEmpty()
-  hostname: string = '0.0.0.0';
+  hostname: string;
 
   @Expose({ name: 'APP_ENV' })
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   environmentLabel: string = 'local';
