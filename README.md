@@ -19,8 +19,8 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 
 [(back to menu)](#navigation)
 
-- Auto-namespaced configuration classes (`src/config/*.config.ts`) validated with `class-validator` and injected via `@InjectConfig`.
-- DTOs rely on `class-validator` and `class-transformer` for request validation and serialization.
+- Auto-namespaced configuration classes (`src/config/*.config.ts`) validated with Zod (nestjs-zod) and injected via `@InjectConfig`.
+- DTOs rely on Zod (nestjs-zod) for request validation and response serialization.
 - Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
 - Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
 - Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that simulates CI.
@@ -48,7 +48,7 @@ Match your local runtime with the versions declared in the `engines` field insid
 
 [(back to menu)](#navigation)
 
-Classes in `src/config` define and validate every environment variable the app consumes. They leverage `class-transformer` to map the raw `.env` namespace into typed objects and `class-validator` to enforce constraints before the app finishes booting. Highlights:
+Classes in `src/config` define and validate every environment variable the app consumes. They leverage Zod schemas (via `createZodDto`) to map/coerce the raw `.env` namespace into typed objects and enforce constraints before the app finishes booting. Highlights:
 
 | Variable   | Description                                      | Default |
 | ---------- | ------------------------------------------------ | ------- |
@@ -61,7 +61,7 @@ Classes in `src/config` define and validate every environment variable the app c
 | `APP_ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true` |
 | `APP_ENABLE_SWAGGER` | Mounts Swagger UI/JSON/YAML when true. | `false` |
 
-Each property uses `@Expose({ name: 'ENV_VAR' })`. Only declared variables survive the validation step; missing or invalid values stop the boot process with a detailed error.
+Each property is defined in the Zod schema and mapped into the final typed config shape. Missing or invalid values stop the boot process with a detailed error.
 
 ## Useful scripts
 
@@ -87,7 +87,7 @@ Husky runs `lint-staged` before every commit to keep formatting and linting gree
 
 - When `APP_ENABLE_SWAGGER=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
 - `APP_LOG_LEVELS` accepts the same values as Nest’s `useLogger` (`log,error,warn,debug,verbose,fatal`), comma-separated. Default enables all of them.
-- DTO metadata comes from the same `class-validator`/`class-transformer`-decorated classes that power runtime validation, so the docs stay in sync with your request/response contracts.
+- DTO metadata comes from the same Zod schemas that power runtime validation, so the docs stay in sync with your request/response contracts. `cleanupOpenApiDoc` is applied to keep Swagger output aligned with Zod schemas.
 - To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
 
 ## Health check
@@ -119,28 +119,30 @@ Use it as a baseline for your own operational diagnostics.
 - Each class is registered with `registerAs(<ClassName>)`, so Nest creates a stable config namespace per class.
 - The `@InjectConfig(FooConfig)` decorator resolves the namespace token via `getConfigToken(FooConfig.name)`, then injects a fully typed instance.
 - You never touch `ConfigService.get('string.key')`; you only use the config class directly, keeping refactors safe.
-- Validation errors are aggregated and thrown at startup with actionable messages.
+- Validation errors are aggregated and thrown at startup with actionable messages (`z.prettifyError`).
 - Instances are sealed + frozen after validation to prevent runtime drift.
 
 ### Add your own namespace
 
 1. Create a class in `src/config/foo.config.ts` and export it.
-2. Map each setting with `@Expose({ name: 'ENV_VAR' })`; use `@Transform` when you need defaults or coercion.
-3. Validate with `class-validator` decorators so the app fails fast when misconfigured.
-4. Register the class in `AppConfigModule.forRoot({ configClasses: [AppConfig, FooConfig] })`.
-5. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
+2. Define a Zod schema inline in `createZodDto(...)` with coercion/defaults as needed.
+3. Register the class in `AppConfigModule.forRoot({ configClasses: [AppConfig, FooConfig] })`.
+4. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
 
 ```ts
 // src/config/foo.config.ts
-import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-export class FooConfig {
-  @Expose({ name: 'FOO_FEATURE_FLAG' })
-  @IsString()
-  @IsNotEmpty()
-  featureFlag: string;
-}
+export class FooConfig extends createZodDto(
+  z
+    .object({
+      FOO_FEATURE_FLAG: z.string().min(1),
+    })
+    .transform((value) => ({
+      featureFlag: value.FOO_FEATURE_FLAG,
+    })),
+) {}
 ```
 
 ```ts
@@ -157,10 +159,7 @@ export class FooService {
 
 ### Advanced behavior
 
-`AppConfigModule` treats every class as a namespaced configuration factory, freezes the instances, and raises descriptive errors when validation fails. It also allows optional overrides for transformation and validation:
-
-- `transformerOptions`: merge with defaults for `class-transformer` (cannot override core coercion/exposure).
-- `validatorOptions`: merge with defaults for `class-validator` (cannot disable whitelist/forbidNonWhitelisted).
+`AppConfigModule` treats every class as a namespaced configuration factory, freezes the instances, and raises descriptive errors when validation fails. The environment provider is executed once per `forRoot` call and cached for all config classes registered in that call.
 
 ## Next steps
 

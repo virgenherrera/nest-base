@@ -1,76 +1,63 @@
 import { LOG_LEVELS, type LogLevel } from '@nestjs/common';
-import { Expose, Transform } from 'class-transformer';
-import {
-  IsArray,
-  IsBoolean,
-  IsIn,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 const TruthyExpression = /^(true|1|yes|on)$/i;
-export const getBoolean = (obj: unknown, key: string): boolean => {
-  const raw = (obj as Record<string, string>)[key];
+const LogLevelSchema = z.enum([...LOG_LEVELS] as [LogLevel, ...LogLevel[]]);
 
-  return TruthyExpression.test(`${raw}`);
-};
-
-export class AppConfig {
-  @Expose({ name: 'APP_PORT' })
-  @IsNumber()
-  @Min(0)
-  @Max(65535)
-  port: number;
-
-  @Expose({ name: 'APP_HOSTNAME' })
-  @Transform(({ value }) => (!value ? '0.0.0.0' : `${value}`))
-  @IsString()
-  @IsNotEmpty()
-  hostname: string;
-
-  @Expose({ name: 'APP_ENV' })
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  environmentLabel: string = 'local';
-
-  @Expose({ name: 'APP_LOG_LEVELS' })
-  @Transform(({ value }) => (!value ? LOG_LEVELS : `${value}`.split(',')))
-  @IsArray()
-  @IsIn(LOG_LEVELS, { each: true })
-  logLevels: LogLevel[];
-
-  @Expose({ name: 'APP_ENABLE_CORS' })
-  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_CORS'))
-  @IsBoolean()
-  enableCors: boolean;
-
-  @Expose({ name: 'APP_ENABLE_HELMET' })
-  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_HELMET'))
-  @IsBoolean()
-  enableHelmet: boolean;
-
-  @Expose({ name: 'APP_ENABLE_COMPRESSION' })
-  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_COMPRESSION'))
-  @IsBoolean()
-  enableCompression: boolean;
-
-  @Expose({ name: 'APP_ENABLE_SWAGGER' })
-  @Transform(({ obj }) => getBoolean(obj, 'APP_ENABLE_SWAGGER'))
-  @IsBoolean()
-  enableSwagger: boolean;
-
-  @Expose({ name: 'npm_package_name' })
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @Expose({ name: 'npm_package_version' })
-  @IsString()
-  @IsNotEmpty()
-  version: string;
-}
+export class AppConfig extends createZodDto(
+  z
+    .object({
+      APP_PORT: z.coerce.number().int().min(0).max(65535),
+      APP_HOSTNAME: z
+        .string()
+        .optional()
+        .transform((value) => (value ? value : '0.0.0.0')),
+      APP_ENV: z
+        .string()
+        .optional()
+        .transform((value) => (value ? value : 'local')),
+      APP_LOG_LEVELS: z
+        .string()
+        .optional()
+        .transform((value) => {
+          return !value
+            ? LOG_LEVELS
+            : value
+                .split(',')
+                .map((level) => level.trim())
+                .filter((level) => level.length > 0);
+        })
+        .pipe(z.array(LogLevelSchema)),
+      APP_ENABLE_CORS: z.coerce
+        .string()
+        .optional()
+        .transform((value) => TruthyExpression.test(`${value}`)),
+      APP_ENABLE_HELMET: z.coerce
+        .string()
+        .optional()
+        .transform((value) => TruthyExpression.test(`${value}`)),
+      APP_ENABLE_COMPRESSION: z.coerce
+        .string()
+        .optional()
+        .transform((value) => TruthyExpression.test(`${value}`)),
+      APP_ENABLE_SWAGGER: z.coerce
+        .string()
+        .optional()
+        .transform((value) => TruthyExpression.test(`${value}`)),
+      npm_package_name: z.string().min(1),
+      npm_package_version: z.string().min(1),
+    })
+    .transform((value) => ({
+      port: value.APP_PORT,
+      hostname: value.APP_HOSTNAME,
+      environmentLabel: value.APP_ENV,
+      logLevels: value.APP_LOG_LEVELS,
+      enableCors: value.APP_ENABLE_CORS,
+      enableHelmet: value.APP_ENABLE_HELMET,
+      enableCompression: value.APP_ENABLE_COMPRESSION,
+      enableSwagger: value.APP_ENABLE_SWAGGER,
+      name: value.npm_package_name,
+      version: value.npm_package_version,
+    })),
+) {}
