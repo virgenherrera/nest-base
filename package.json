@@ -16,9 +16,9 @@
   "contributors": [
     "Hugo Virgen (https://github.com/virgenherrera)"
   ],
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.29.2",
   "engines": {
-    "node": ">=24.12.0 <25"
+    "node": ">=24.13.0 <25"
   },
   "scripts": {
     "test": "pnpm run cleanup && pnpm run test:static && pnpm run test:unit && pnpm run test:e2e && pnpm run build:api-docs && pnpm run build:app",
@@ -29,6 +29,7 @@
     "test:static": "pnpm run securityCheck && pnpm run eslintCheck && pnpm run prettierCheck",
     "test:unit": "jest",
     "test:e2e": "jest --config jest-e2e.config.ts",
+    "test:doctor": "pnpm run cleanup && pnpm run eslintCheck && pnpm run prettierCheck && pnpm run test:unit && pnpm run build:app",
     "build:api-docs": "ts-node -r tsconfig-paths/register ./scripts/build-openapi-artifact.ts",
     "build:app": "nest build -p tsconfig.build.prod.json",
     "securityCheck": "pnpm audit --audit-level high",
@@ -37,14 +38,15 @@
     "prepare": "husky",
     "lintStaged": "lint-staged",
     "cleanup": "rimraf api-docs/ coverage/ dist/",
-    "bumpDependencies": "pnpm dlx npm-check-updates"
+    "bumpDependencies": "pnpm dlx npm-check-updates",
+    "updatePnpm": "pnpm self-update"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.12",
-    "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.12",
-    "@nestjs/platform-express": "^11.1.12",
-    "@nestjs/swagger": "^11.2.5",
+    "@nestjs/common": "^11.1.13",
+    "@nestjs/config": "^4.0.3",
+    "@nestjs/core": "^11.1.13",
+    "@nestjs/platform-express": "^11.1.13",
+    "@nestjs/swagger": "^11.2.6",
     "compression": "^1.8.1",
     "date-fns": "^4.1.0",
     "helmet": "^8.1.0",
@@ -55,19 +57,19 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.12",
+    "@nestjs/testing": "^11.1.13",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.2.3",
     "@types/supertest": "^6.0.3",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "globals": "^17.0.0",
+    "globals": "^17.3.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
@@ -80,11 +82,9 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.1"
+    "typescript-eslint": "^8.55.0"
   },
   "pnpm": {
-    "overrides": {
-      "lodash@>=4.0.0 <=4.17.22": ">=4.17.23"
-    }
+    "overrides": {}
   }
 }
