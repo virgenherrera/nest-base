@@ -1,0 +1,46 @@
+name: Bump Dependencies
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump-dependencies:
+    name: Bump Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Bump dependencies
+        continue-on-error: true
+        run: pnpm run bumpDependencies
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          commit-message: "task: bumpDependencies"
+          branch: chore/bump-dependencies
+          title: "task: bumpDependencies"
+          body: |
+            Automated dependency updates via `pnpm run bumpDependencies`.
+
+            Each upgrade was individually validated by NCU doctor mode:
+            - `pnpm audit --audit-level high` (security)
+            - `eslint` + `prettier` (code quality)
+            - `jest` unit tests (behavior)
+            - `nest build` (compilation)
+
+            Upgrades that failed any check were automatically reverted.
+          labels: dependencies
