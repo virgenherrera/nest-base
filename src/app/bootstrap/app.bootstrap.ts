@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { OpenAPIObject } from '@nestjs/swagger';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 import { AppModule } from '../../app.module';
 import { AppConfig } from '../../config';
@@ -66,7 +67,7 @@ export class AppBootstrap {
         `successfully created OpenAPI ${swaggerDocument.info.title}`,
       );
 
-      return swaggerDocument;
+      return cleanupOpenApiDoc(swaggerDocument);
     };
 
     return {

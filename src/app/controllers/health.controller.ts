@@ -5,16 +5,10 @@ import {
   OnApplicationBootstrap,
   Query,
 } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { formatDistanceToNow } from 'date-fns';
+import { ZodResponse } from 'nestjs-zod';
 
-import { plainToInstance } from 'class-transformer';
 import { AppConfig } from '../../config';
 import { InjectConfig } from '../decorators';
 import { HealthQueryDto, HealthResponseDto } from '../dto';
@@ -38,7 +32,8 @@ export class HealthController implements OnApplicationBootstrap {
     description:
       'Returns the service health status and, when requested via query parameters, augments the payload with application metadata and uptime details',
   })
-  @ApiOkResponse({
+  @ZodResponse({
+    status: 200,
     description:
       'Health status successfully retrieved. Optional fields are present only when requested via query parameters.',
     type: HealthResponseDto,
@@ -46,20 +41,6 @@ export class HealthController implements OnApplicationBootstrap {
   @ApiBadRequestResponse({
     description:
       'Returned when query parameters fail validation (e.g., non-boolean values).',
-  })
-  @ApiQuery({
-    name: 'appMeta',
-    required: false,
-    type: Boolean,
-    description:
-      'When true, includes the package name and version in the response.',
-  })
-  @ApiQuery({
-    name: 'uptime',
-    required: false,
-    type: Boolean,
-    description:
-      'When true, includes a human-friendly duration indicating how long the service has been running.',
   })
   async getHealth(@Query() params: HealthQueryDto): Promise<HealthResponseDto> {
     this.logger.log(`Getting service Health.`);
@@ -74,6 +55,6 @@ export class HealthController implements OnApplicationBootstrap {
       res.uptime = formatDistanceToNow(this.startTime);
     }
 
-    return plainToInstance(HealthResponseDto, res);
+    return res;
   }
 }

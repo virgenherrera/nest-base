@@ -17,10 +17,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
   const createHost = () => {
     const json = jest.fn();
     const status = jest.fn(() => ({ json }));
-    const response = { status, json } as unknown as {
-      status: jest.Mock;
-      json: jest.Mock;
-    };
+    const response = { status, json };
     const request = {
       url: '/health',
       headers: { 'x-request-id': 'req-123' },
@@ -38,14 +35,11 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
   const createHostWithoutRequestId = () => {
     const json = jest.fn();
     const status = jest.fn(() => ({ json }));
-    const response = { status, json } as unknown as {
-      status: jest.Mock;
-      json: jest.Mock;
-    };
+    const response = { status, json };
     const request = {
       url: '/health',
       headers: {},
-    } as unknown as { url: string; headers: Record<string, string> };
+    };
 
     const host = {
       switchToHttp: () => ({

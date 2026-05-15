@@ -1,8 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/raineorshine/npm-check-updates/main/src/types/RunOptions.json",
   "doctor": true,
+  "doctorTest": "pnpm run test:doctor",
   "enginesNode": true,
   "format": ["group"],
   "packageManager": "pnpm",
+  "reject": ["pnpm"],
   "upgrade": true
 }

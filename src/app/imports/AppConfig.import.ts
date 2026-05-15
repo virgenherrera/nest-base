@@ -1,31 +1,17 @@
 import { DynamicModule, Logger, Type } from '@nestjs/common';
 import { ConfigModule, getConfigToken, registerAs } from '@nestjs/config';
-import {
-  ClassConstructor,
-  ClassTransformOptions,
-  plainToInstance,
-} from 'class-transformer';
-import { validate, ValidatorOptions } from 'class-validator';
+import { type ZodDto } from 'nestjs-zod';
 import { env } from 'node:process';
+import { z, ZodError } from 'zod';
 
 type EnvProvider = () => NodeJS.ProcessEnv | Promise<NodeJS.ProcessEnv>;
-type ConfigClass = ClassConstructor<unknown>;
-type SafeTransformOptions = Omit<
-  ClassTransformOptions,
-  'enableImplicitConversion' | 'excludeExtraneousValues'
->;
-type SafeValidatorOptions = Omit<
-  ValidatorOptions,
-  'forbidNonWhitelisted' | 'whitelist'
->;
+type ConfigClass = ZodDto;
 export type AppConfigModuleOptions = {
   cache?: boolean;
   expandVariables?: boolean;
   isGlobal?: boolean;
   configClasses: [ConfigClass, ...ConfigClass[]];
   envProvider?: EnvProvider;
-  transformerOptions?: SafeTransformOptions;
-  validatorOptions?: SafeValidatorOptions;
 };
 
 type ResolvedAppConfigOptions = {
@@ -33,9 +19,7 @@ type ResolvedAppConfigOptions = {
   expandVariables: boolean;
   isGlobal: boolean;
   configClasses: [ConfigClass, ...ConfigClass[]];
-  envProvider: EnvProvider;
-  transformerOptions: ClassTransformOptions;
-  validatorOptions: ValidatorOptions;
+  envProvider: () => Promise<NodeJS.ProcessEnv>;
 };
 
 export class AppConfigModule {
@@ -78,22 +62,20 @@ export class AppConfigModule {
       );
     }
 
+    const baseProvider = options.envProvider ?? (() => env);
+    let cachedEnvSource: Promise<NodeJS.ProcessEnv> | null = null;
+
     return {
       cache: options.cache ?? false,
       expandVariables: options.expandVariables ?? true,
       isGlobal: options.isGlobal ?? true,
       configClasses: options.configClasses,
-      envProvider: options.envProvider ?? (() => env),
-      transformerOptions: {
-        enableImplicitConversion: true,
-        excludeExtraneousValues: true,
-        ...options.transformerOptions,
-      },
-      validatorOptions: {
-        forbidNonWhitelisted: true,
-        stopAtFirstError: false,
-        whitelist: true,
-        ...options.validatorOptions,
+      envProvider: () => {
+        if (!cachedEnvSource) {
+          cachedEnvSource = Promise.resolve(baseProvider());
+        }
+
+        return cachedEnvSource;
       },
     };
   }
@@ -107,22 +89,33 @@ export class AppConfigModule {
     );
   }
 
-  private static createConfigFactory<T>(
-    classConstructor: ClassConstructor<T>,
+  private static createConfigFactory<T extends ConfigClass>(
+    classConstructor: T,
     options: ResolvedAppConfigOptions,
   ) {
     const configFactory = registerAs(classConstructor.name, async () => {
-      const envSource = await options.envProvider();
-      const instance = plainToInstance(classConstructor, envSource, {
-        ...options.transformerOptions,
-      });
-      const errors = await validate(instance as object, {
-        ...options.validatorOptions,
-      });
-
-      if (errors.length) {
-        throw this.buildValidationError(classConstructor, errors);
+      const resolvedEnvironment = await options.envProvider();
+      if (!('isZodDto' in classConstructor) || !classConstructor.isZodDto) {
+        throw new TypeError(
+          `Configuration class "${classConstructor.name}" must be a nestjs-zod DTO.`,
+        );
       }
+
+      const schema = classConstructor.schema as z.ZodTypeAny;
+
+      if (typeof schema.safeParse !== 'function') {
+        throw new TypeError(
+          `Configuration class "${classConstructor.name}" must use a zod schema that supports safeParse.`,
+        );
+      }
+
+      const result = schema.safeParse(resolvedEnvironment);
+
+      if (!result.success) {
+        this.buildValidationError(classConstructor, result.error);
+      }
+
+      const instance = result.data;
 
       Object.seal(instance);
       Object.freeze(instance);
@@ -134,21 +127,14 @@ export class AppConfigModule {
   }
 
   private static buildValidationError(
-    classConstructor: ClassConstructor<unknown>,
-    errors: Awaited<ReturnType<typeof validate>>,
-  ): TypeError {
-    const messages = errors.flatMap(
-      (err) =>
-        `\t${err.property}: invalid value provided ${err.value} -> ${Object.values(err.constraints!).join('; ')}`,
-    );
+    classConstructor: ConfigClass,
+    error: ZodError,
+  ): never {
     const title = `Configuration validation error(s) in class "${classConstructor.name}"`;
-    const body =
-      messages.length > 0
-        ? messages.join('\n')
-        : JSON.stringify(errors, null, 2);
+    const body = z.prettifyError(error);
     const footer =
       'Verify the values provided via environment variables or your .env file.';
 
-    return new TypeError(`${title}\n${body}\n${footer}`);
+    throw new TypeError(`${title}\n${body}\n${footer}`);
   }
 }
