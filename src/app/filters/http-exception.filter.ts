@@ -17,11 +17,10 @@ export class HttpErrorFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const status = (
+    const status =
       exception instanceof HttpException
         ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR
-    ) as HttpStatus;
+        : HttpStatus.INTERNAL_SERVER_ERROR;
     const responseBody =
       exception instanceof HttpException
         ? exception.getResponse()
@@ -43,7 +42,7 @@ export class HttpErrorFilter implements ExceptionFilter {
       payload.requestId = requestId;
     }
 
-    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (status >= 500) {
       const err =
         exception instanceof Error
           ? exception
