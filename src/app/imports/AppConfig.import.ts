@@ -83,7 +83,7 @@ export class AppConfigModule {
   private static registerConfigFactories(
     configClasses: ConfigClass[],
     options: ResolvedAppConfigOptions,
-  ): ReturnType<typeof registerAs>[] {
+  ) {
     return configClasses.map((configClass) =>
       this.createConfigFactory(configClass, options),
     );
