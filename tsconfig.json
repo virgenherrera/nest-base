@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
@@ -12,14 +10,12 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
     "outDir": "./dist",
     "removeComments": true,
     "resolvePackageJsonExports": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictBindCallApply": true,
-    "strictNullChecks": true,
+    "strict": true,
     "target": "ES2023"
   }
 }

@@ -20,7 +20,7 @@ export class HealthController implements OnApplicationBootstrap {
 
   private readonly logger = new Logger(HealthController.name);
 
-  private startTime: Date;
+  private startTime: Date = new Date();
 
   onApplicationBootstrap() {
     this.startTime = new Date();

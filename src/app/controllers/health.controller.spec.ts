@@ -4,10 +4,12 @@ import { HealthQueryDto } from '../dto';
 import { HealthController } from './health.controller';
 
 describe(`UT:${HealthController.name}`, () => {
-  const enum should {
-    init = 'Should be initialized properly.',
-    getHealth = 'Should get status "OK"  with no query params provided.',
-    getHealthWithMeta = 'Should get status and Uptime when optional query Param was requested.',
+  class HealthControllerTestCase {
+    static readonly init = 'Should be initialized properly.';
+    static readonly getHealth =
+      'Should get status "OK"  with no query params provided.';
+    static readonly getHealthWithMeta =
+      'Should get status and Uptime when optional query Param was requested.';
   }
 
   let controller: HealthController;
@@ -31,12 +33,12 @@ describe(`UT:${HealthController.name}`, () => {
     controller.onApplicationBootstrap();
   });
 
-  it(should.init, () => {
+  it(HealthControllerTestCase.init, () => {
     expect(controller).toBeDefined();
     expect(controller).toBeInstanceOf(HealthController);
   });
 
-  it(should.getHealth, async () => {
+  it(HealthControllerTestCase.getHealth, async () => {
     // Arrange
     const queryParams = {} as HealthQueryDto;
 
@@ -46,7 +48,7 @@ describe(`UT:${HealthController.name}`, () => {
     });
   });
 
-  it(should.getHealthWithMeta, async () => {
+  it(HealthControllerTestCase.getHealthWithMeta, async () => {
     // Arrange
     const queryParams: HealthQueryDto = {
       appMeta: true,

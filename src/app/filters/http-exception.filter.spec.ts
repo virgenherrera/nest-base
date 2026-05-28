@@ -9,9 +9,11 @@ import {
 import { HttpErrorFilter } from './http-exception.filter';
 
 describe(`UT:${HttpErrorFilter.name}`, () => {
-  const enum should {
-    handleHttpException = 'Should format HttpException responses consistently.',
-    handleUnknownError = 'Should format unknown errors as 500 responses.',
+  class HttpErrorFilterTestCase {
+    static readonly handleHttpException =
+      'Should format HttpException responses consistently.';
+    static readonly handleUnknownError =
+      'Should format unknown errors as 500 responses.';
   }
 
   const createHost = () => {
@@ -60,7 +62,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
     jest.restoreAllMocks();
   });
 
-  it(should.handleHttpException, () => {
+  it(HttpErrorFilterTestCase.handleHttpException, () => {
     const filter = new HttpErrorFilter();
     const { host, response } = createHost();
 
@@ -81,7 +83,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
     );
   });
 
-  it(should.handleUnknownError, () => {
+  it(HttpErrorFilterTestCase.handleUnknownError, () => {
     const filter = new HttpErrorFilter();
     const { host, response } = createHost();
 
