@@ -1,7 +1,7 @@
 packages:
   - "."
 
-minimumReleaseAge: 7d
+minimumReleaseAge: 1440
 
 allowBuilds:
   '@nestjs/core': true
@@ -13,6 +13,5 @@ minimumReleaseAgeExclude:
   - eslint-plugin-prettier@5.5.6
   - synckit@0.11.13
 
-settings:
-  auditConfig:
-    ignoreCves: []
+auditConfig:
+  ignoreCves: []
