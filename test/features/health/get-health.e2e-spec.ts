@@ -3,12 +3,13 @@ import { NestApplication } from '@nestjs/core';
 import { getTestContext, TestContext } from '../../utils/getTestContext.util';
 
 describe(`e2e: GET /health`, () => {
-  const enum should {
-    initTestContext = 'Should test Context be properly initialized.',
-    getHealth = `Should GET App health.`,
-    getHealthWithUptime = 'Should get App Health with uptime.',
-    ignoreUnknownQuery = 'Should ignore unknown query params.',
-    getNotFound = 'Should return not found for unknown routes.',
+  class GetHealthTestCase {
+    static readonly initTestContext =
+      'Should test Context be properly initialized.';
+    static readonly getHealth = `Should GET App health.`;
+    static readonly getHealthWithUptime = 'Should get App Health with uptime.';
+    static readonly ignoreUnknownQuery = 'Should ignore unknown query params.';
+    static readonly getNotFound = 'Should return not found for unknown routes.';
   }
 
   const getHealthMatcher = { status: 'OK' };
@@ -17,13 +18,17 @@ describe(`e2e: GET /health`, () => {
 
   beforeAll(async () => (testCtx = await getTestContext()));
 
-  it(should.initTestContext, () => {
+  afterAll(async () => {
+    await testCtx.app.close();
+  });
+
+  it(GetHealthTestCase.initTestContext, () => {
     expect(testCtx).toBeDefined();
     expect(testCtx.request).toBeDefined();
     expect(testCtx.app).toBeInstanceOf(NestApplication);
   });
 
-  it(should.getHealth, async () => {
+  it(GetHealthTestCase.getHealth, async () => {
     const res = await testCtx.request.get('/health');
 
     expect(res).toHaveProperty('status', 200);
@@ -31,7 +36,7 @@ describe(`e2e: GET /health`, () => {
     expect(res.body).toMatchObject(getHealthMatcher);
   });
 
-  it(should.getHealth, async () => {
+  it(GetHealthTestCase.getHealthWithUptime, async () => {
     const res = await testCtx.request
       .get('/health')
       .query({ appMeta: true, uptime: true });
@@ -45,14 +50,14 @@ describe(`e2e: GET /health`, () => {
     });
   });
 
-  it(should.ignoreUnknownQuery, async () => {
+  it(GetHealthTestCase.ignoreUnknownQuery, async () => {
     const res = await testCtx.request.get('/health').query({ foo: 'bar' });
 
     expect(res).toHaveProperty('status', 200);
     expect(res.body).toMatchObject(getHealthMatcher);
   });
 
-  it(should.getNotFound, async () => {
+  it(GetHealthTestCase.getNotFound, async () => {
     const res = await testCtx.request.get('/missing-route');
 
     expect(res).toHaveProperty('status', 404);

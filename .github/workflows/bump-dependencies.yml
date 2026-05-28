@@ -22,10 +22,11 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Bump dependencies
-        continue-on-error: true
+        id: bump
         run: pnpm run bumpDependencies
 
       - name: Create Pull Request
+        if: steps.bump.outcome == 'success'
         uses: peter-evans/create-pull-request@v7
         with:
           committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
