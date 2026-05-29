@@ -1,14 +1,12 @@
-import { INestApplication, Logger } from '@nestjs/common';
-import { AppBootstrap } from './app/bootstrap/app.bootstrap';
+import { Logger } from '@nestjs/common';
+import { AppBootstrap } from './core/bootstrap/app.bootstrap';
 
 class HttpAppMain {
   private static readonly logger = new Logger(HttpAppMain.name);
-  private static app?: INestApplication;
 
   static async main(): Promise<void> {
     try {
       await this.bootstrapHttpServer();
-      this.registerShutdownHooks();
       this.registerProcessErrorHandlers();
     } catch (error) {
       this.logFatalAndExit(error);
@@ -16,27 +14,32 @@ class HttpAppMain {
   }
 
   private static async bootstrapHttpServer(): Promise<void> {
-    const { app, appConfig, apiPrefix, getSwaggerDocument } =
-      await AppBootstrap.createAppContext();
-    this.app = app;
+    const {
+      app,
+      appConfig,
+      serverConfig,
+      swaggerConfig,
+      apiPrefix,
+      getSwaggerDocument,
+    } = await AppBootstrap.createAppContext();
     const jsonDocumentUrl = `${apiPrefix}/json`;
     const yamlDocumentUrl = `${apiPrefix}/yaml`;
 
     this.logger.log('Mounting global middlewares');
 
-    if (appConfig.enableCors) {
+    if (serverConfig.enableCors) {
       app.enableCors();
       this.logger.verbose('CORS middleware mounted');
     }
 
-    if (appConfig.enableHelmet) {
+    if (serverConfig.enableHelmet) {
       const { default: helmetMiddleware } = await import('helmet');
 
       app.use(helmetMiddleware());
       this.logger.verbose('Helmet middleware mounted');
     }
 
-    if (appConfig.enableCompression) {
+    if (serverConfig.enableCompression) {
       const { default: compressionMiddleware } = await import('compression');
 
       app.use(compressionMiddleware());
@@ -45,7 +48,7 @@ class HttpAppMain {
 
     this.logger.verbose('Middlewares mounted successfully');
 
-    if (appConfig.enableSwagger) {
+    if (swaggerConfig.enabled) {
       this.logger.verbose('Preparing Swagger Document');
       const { SwaggerModule } = await import('@nestjs/swagger');
 
@@ -59,14 +62,14 @@ class HttpAppMain {
       });
     }
 
-    await app.listen(appConfig.port, appConfig.hostname);
+    await app.listen(serverConfig.port, serverConfig.hostname);
     const appUrl = await app.getUrl();
     this.logger.log(
       `HTTP service is running in "${appConfig.environmentLabel}" environment`,
     );
     this.logger.log(`Application is running on: ${appUrl}`);
 
-    if (appConfig.enableSwagger) {
+    if (swaggerConfig.enabled) {
       const url = new URL(apiPrefix, appUrl);
 
       this.logger.log(`SwaggerDocs available in: ${url.href}`);
@@ -81,15 +84,6 @@ class HttpAppMain {
     }
   }
 
-  private static registerShutdownHooks(): void {
-    process.on('SIGTERM', () => {
-      void this.shutdown('SIGTERM');
-    });
-    process.on('SIGINT', () => {
-      void this.shutdown('SIGINT');
-    });
-  }
-
   private static registerProcessErrorHandlers(): void {
     process.on('uncaughtException', (error) => {
       this.logFatalAndExit(error);
@@ -99,17 +93,6 @@ class HttpAppMain {
         reason instanceof Error ? reason : new Error(String(reason));
       this.logFatalAndExit(error);
     });
-  }
-
-  private static async shutdown(signal: string): Promise<void> {
-    try {
-      this.logger.log(`Received ${signal}, shutting down`);
-      await this.app?.close();
-      this.logger.log('Shutdown complete');
-      this.exitProcess(0);
-    } catch (error) {
-      this.logFatalAndExit(error);
-    }
   }
 
   private static logFatalAndExit(error: unknown): void {

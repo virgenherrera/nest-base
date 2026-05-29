@@ -10,8 +10,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { ZodResponse } from 'nestjs-zod';
 
 import { AppConfig } from '../../config';
-import { InjectConfig } from '../decorators';
-import { HealthQueryDto, HealthResponseDto } from '../dto';
+import { InjectConfig } from '../../core/config';
+import { HealthQueryDto, HealthResponseDto } from './dto';
 
 @Controller('health')
 @ApiTags('health')

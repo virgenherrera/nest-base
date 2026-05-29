@@ -1,24 +1,25 @@
 import { Test } from '@nestjs/testing';
 import { AppConfig } from '../../config';
-import { HealthQueryDto } from '../dto';
+import { AppConfigModule } from '../../core/config';
+import { HealthQueryDto } from './dto';
 import { HealthController } from './health.controller';
 
-describe(`UT:${HealthController.name}`, () => {
-  class HealthControllerTestCase {
-    static readonly init = 'Should be initialized properly.';
-    static readonly getHealth =
-      'Should get status "OK"  with no query params provided.';
-    static readonly getHealthWithMeta =
-      'Should get status and Uptime when optional query Param was requested.';
-  }
+class HealthControllerTestCase {
+  static readonly init = 'Should be initialized properly.';
+  static readonly getHealth =
+    'Should get status "OK"  with no query params provided.';
+  static readonly getHealthWithMeta =
+    'Should get status and Uptime when optional query Param was requested.';
+}
 
+describe(`UT:${HealthController.name}`, () => {
   let controller: HealthController;
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [HealthController],
       providers: [
         {
-          provide: `CONFIGURATION(${AppConfig.name})`,
+          provide: AppConfigModule.getToken(AppConfig),
           useValue: {
             name: 'mocked-name',
             version: '0.0.0',

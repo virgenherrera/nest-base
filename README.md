@@ -20,7 +20,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 
 [(back to menu)](#navigation)
 
-- Auto-namespaced configuration classes (`src/config/*.config.ts`) validated with Zod (nestjs-zod) and injected via `@InjectConfig`.
+- Isolated config namespace classes (`src/config/`) validated with Zod (nestjs-zod) and injected via `@InjectConfig`. Ships with three namespaces (`AppConfig`, `ServerConfig`, `SwaggerConfig`) as a working example.
 - DTOs rely on Zod (nestjs-zod) for request validation and response serialization.
 - Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
 - Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
@@ -49,20 +49,32 @@ Match your local runtime with the versions declared in the `engines` field insid
 
 [(back to menu)](#navigation)
 
-Classes in `src/config` define and validate every environment variable the app consumes. They leverage Zod schemas (via `createZodDto`) to map/coerce the raw `.env` namespace into typed objects and enforce constraints before the app finishes booting. Highlights:
+Each config class in `src/config/` owns and validates its own subset of environment variables. Raw env vars are transformed into typed properties via Zod schemas (e.g., `SERVER_PORT` string becomes a numeric `port`). Missing or invalid values stop the boot process with a detailed error.
 
-| Variable                 | Description                                                                                  | Default                              |
-| ------------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `APP_ENV`                | Free-form label to describe the deployment (e.g., `local`, `qa`, `prod`).                    | `local`                              |
-| `APP_PORT`               | HTTP port exposed by Nest.                                                                   | `3000`                               |
-| `APP_HOSTNAME`           | Host interface Nest listens on.                                                              | `0.0.0.0`                            |
-| `APP_LOG_LEVELS`         | Comma-separated log levels (`log,error,warn,debug,verbose,fatal` as per Nest’s `useLogger`). | `log,error,warn,debug,verbose,fatal` |
-| `APP_ENABLE_CORS`        | Enables CORS middleware.                                                                     | `true`                               |
-| `APP_ENABLE_HELMET`      | Enables Helmet security headers.                                                             | `true`                               |
-| `APP_ENABLE_COMPRESSION` | Enables gzip compression middleware.                                                         | `true`                               |
-| `APP_ENABLE_SWAGGER`     | Mounts Swagger UI/JSON/YAML when true.                                                       | `false`                              |
+#### App identity and runtime (`AppConfig` — `src/config/app.config.ts`)
 
-Each property is defined in the Zod schema and mapped into the final typed config shape. Missing or invalid values stop the boot process with a detailed error.
+| Variable           | Description                                                                                  | Default                              |
+| ------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `APP_ENV`          | Free-form label to describe the deployment (e.g., `local`, `qa`, `prod`).                    | `local`                              |
+| `APP_LOG_LEVELS`   | Comma-separated log levels (`log,error,warn,debug,verbose,fatal` as per Nest’s `useLogger`). | `log,error,warn,debug,verbose,fatal` |
+
+`npm_package_name` and `npm_package_version` are injected automatically by the pnpm lifecycle — no `.env` entry needed.
+
+#### HTTP server (`ServerConfig` — `src/config/server.config.ts`)
+
+| Variable                    | Description                        | Default |
+| --------------------------- | ---------------------------------- | ------- |
+| `SERVER_PORT`               | HTTP port exposed by Nest.         | `3000`  |
+| `SERVER_HOSTNAME`           | Host interface Nest listens on.    | `0.0.0.0` |
+| `SERVER_ENABLE_CORS`        | Enables CORS middleware.           | `true`  |
+| `SERVER_ENABLE_HELMET`      | Enables Helmet security headers.   | `true`  |
+| `SERVER_ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true` |
+
+#### OpenAPI documentation (`SwaggerConfig` — `src/config/swagger.config.ts`)
+
+| Variable          | Description                                  | Default |
+| ----------------- | -------------------------------------------- | ------- |
+| `SWAGGER_ENABLED` | Mounts Swagger UI/JSON/YAML when true.       | `false` |
 
 ## Useful scripts
 
@@ -88,7 +100,7 @@ Husky runs `lint-staged` before every commit to keep formatting and linting gree
 
 [(back to menu)](#navigation)
 
-- When `APP_ENABLE_SWAGGER=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
+- When `SWAGGER_ENABLED=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
 - `APP_LOG_LEVELS` accepts the same values as Nest’s `useLogger` (`log,error,warn,debug,verbose,fatal`), comma-separated. Default enables all of them.
 - DTO metadata comes from the same Zod schemas that power runtime validation, so the docs stay in sync with your request/response contracts. `cleanupOpenApiDoc` is applied to keep Swagger output aligned with Zod schemas.
 - To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
@@ -115,7 +127,7 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
-`AppConfig` already normalizes `APP_PORT`, `HOSTNAME`, `APP_ENV`, `ENABLE_SWAGGER`, and exposes `npm_package_*` metadata for things like the health endpoint. The gimmick is simple: every config class becomes its own namespace, validated once at boot, frozen to avoid mutation, and injected by type so you get autocomplete + compile-time hints instead of stringly-typed config keys.
+The project ships with three config namespace classes in `src/config/` as a working example: `AppConfig` (app identity + runtime), `ServerConfig` (HTTP transport), and `SwaggerConfig` (OpenAPI toggle). Each class owns its own subset of env vars, is validated once at boot, frozen to avoid mutation, and injected by type — so you get autocomplete and compile-time hints instead of stringly-typed config keys.
 
 ### Why this improves DX
 
@@ -127,23 +139,27 @@ Use it as a baseline for your own operational diagnostics.
 
 ### Add your own namespace
 
-1. Create a class in `src/config/foo.config.ts` and export it.
+The three shipped classes in `src/config/` demonstrate the full pattern. To add your own (e.g., Redis):
+
+1. Create a class in `src/config/redis.config.ts` and export it.
 2. Define a Zod schema inline in `createZodDto(...)` with coercion/defaults as needed.
-3. Register the class in `AppConfigModule.forRoot({ configClasses: [AppConfig, FooConfig] })`.
-4. Inject the validated configuration anywhere via `@InjectConfig(FooConfig)`:
+3. Add it to the existing array in `AppConfigModule.forRoot({ configClasses: [AppConfig, ServerConfig, SwaggerConfig, RedisConfig] })`.
+4. Inject the validated configuration anywhere via `@InjectConfig(RedisConfig)`:
 
 ```ts
-// src/config/foo.config.ts
+// src/config/redis.config.ts
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
-export class FooConfig extends createZodDto(
+export class RedisConfig extends createZodDto(
   z
     .object({
-      FOO_FEATURE_FLAG: z.string().min(1),
+      REDIS_HOST: z.string().min(1),
+      REDIS_PORT: z.coerce.number().int().min(0).max(65535),
     })
     .transform((value) => ({
-      featureFlag: value.FOO_FEATURE_FLAG,
+      host: value.REDIS_HOST,
+      port: value.REDIS_PORT,
     })),
 ) {}
 ```
@@ -151,11 +167,11 @@ export class FooConfig extends createZodDto(
 ```ts
 // Anywhere in the app
 @Injectable()
-export class FooService {
-  constructor(@InjectConfig(FooConfig) private readonly foo: FooConfig) {}
+export class CacheService {
+  constructor(@InjectConfig(RedisConfig) private readonly redis: RedisConfig) {}
 
-  findValue() {
-    return this.foo.featureFlag;
+  getConnectionString() {
+    return `${this.redis.host}:${this.redis.port}`;
   }
 }
 ```
@@ -220,6 +236,8 @@ flowchart TD
 
 ### How `test:doctor` validates each upgrade
 
+`test:doctor` is a deliberate subset of `test`: it omits e2e tests and the API docs build to keep each per-dependency validation cycle as fast as possible. `test` (the full CI mirror) still covers those steps; `test:doctor` trades breadth for speed so NCU can iterate over many dependencies without a multi-minute gate on each one.
+
 NCU runs `test:doctor` as its validation gate for every single dependency upgrade. If any step fails, that specific upgrade is reverted:
 
 ```mermaid
@@ -275,7 +293,7 @@ The project provides several layers for managing vulnerability risk:
 
 - **`pnpm.overrides`** — Forces specific transitive dependency versions when a parent package pins a vulnerable range. Use sparingly and with bounded version ranges (e.g., `">=3.1.4 <4.0.0"`, not `">=3.1.4"`).
 
-- **Dependabot** — Configured in `.github/dependabot.yml` for both npm and GitHub Actions ecosystems. Sends weekly pull requests grouped by category (nestjs, testing, linting) to reduce PR noise.
+- **Dependabot** — Configured in `.github/dependabot.yml` for the GitHub Actions ecosystem only. npm dependencies are managed by the `bumpDependencies` pipeline (NCU doctor mode), not by Dependabot.
 
 ### When to use each script
 

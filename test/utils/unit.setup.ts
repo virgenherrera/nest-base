@@ -5,6 +5,6 @@ export default async function Setup() {
   // set E2E TEST ENV Variables
   Object.assign(env, {
     APP_ENV: 'test:unit',
-    ENABLE_SWAGGER: 'false',
+    SWAGGER_ENABLED: 'false',
   });
 }

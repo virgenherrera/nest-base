@@ -1,4 +1,5 @@
 {
+  "//": "NCU doctor mode config — validates each dep upgrade individually against test:doctor. Without this file, bumpDependencies runs without safety checks.",
   "$schema": "https://raw.githubusercontent.com/raineorshine/npm-check-updates/main/src/types/RunOptions.json",
   "doctor": true,
   "doctorTest": "pnpm run test:doctor",

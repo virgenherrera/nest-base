@@ -1,5 +1,5 @@
 name: "Setup Node.js & pnpm"
-description: "Checkout, setup pnpm and Node.js, install dependencies"
+description: "Composite action that installs pnpm, Node.js, and project dependencies. Extracted to avoid duplicating these three steps across ci.yml and bump-dependencies.yml."
 
 runs:
   using: "composite"
