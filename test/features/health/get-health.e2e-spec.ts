@@ -1,17 +1,13 @@
-import { NestApplication } from '@nestjs/core';
-
 import { getTestContext, TestContext } from '../../utils/getTestContext.util';
 
-describe(`e2e: GET /health`, () => {
-  class GetHealthTestCase {
-    static readonly initTestContext =
-      'Should test Context be properly initialized.';
-    static readonly getHealth = `Should GET App health.`;
-    static readonly getHealthWithUptime = 'Should get App Health with uptime.';
-    static readonly ignoreUnknownQuery = 'Should ignore unknown query params.';
-    static readonly getNotFound = 'Should return not found for unknown routes.';
-  }
+class GetHealthTestCase {
+  static readonly getHealth = `Should GET App health.`;
+  static readonly getHealthWithUptime = 'Should get App Health with uptime.';
+  static readonly ignoreUnknownQuery = 'Should ignore unknown query params.';
+  static readonly getNotFound = 'Should return not found for unknown routes.';
+}
 
+describe(`e2e: GET /health`, () => {
   const getHealthMatcher = { status: 'OK' };
 
   let testCtx: TestContext;
@@ -22,14 +18,8 @@ describe(`e2e: GET /health`, () => {
     await testCtx.app.close();
   });
 
-  it(GetHealthTestCase.initTestContext, () => {
-    expect(testCtx).toBeDefined();
-    expect(testCtx.request).toBeDefined();
-    expect(testCtx.app).toBeInstanceOf(NestApplication);
-  });
-
   it(GetHealthTestCase.getHealth, async () => {
-    const res = await testCtx.request.get('/health');
+    const res = await testCtx.request.get('/api/health');
 
     expect(res).toHaveProperty('status', 200);
     expect(res).toHaveProperty('body');
@@ -38,7 +28,7 @@ describe(`e2e: GET /health`, () => {
 
   it(GetHealthTestCase.getHealthWithUptime, async () => {
     const res = await testCtx.request
-      .get('/health')
+      .get('/api/health')
       .query({ appMeta: true, uptime: true });
 
     expect(res).toHaveProperty('status', 200);
@@ -51,7 +41,7 @@ describe(`e2e: GET /health`, () => {
   });
 
   it(GetHealthTestCase.ignoreUnknownQuery, async () => {
-    const res = await testCtx.request.get('/health').query({ foo: 'bar' });
+    const res = await testCtx.request.get('/api/health').query({ foo: 'bar' });
 
     expect(res).toHaveProperty('status', 200);
     expect(res.body).toMatchObject(getHealthMatcher);

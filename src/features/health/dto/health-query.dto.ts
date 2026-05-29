@@ -1,7 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
-const TruthyExpression = /^(true|1|yes|on)$/i;
+import { TruthyExpression } from '../../../core/utils';
 
 export class HealthQueryDto extends createZodDto(
   z.object({
@@ -21,7 +21,7 @@ export class HealthQueryDto extends createZodDto(
         value === undefined ? undefined : TruthyExpression.test(value),
       )
       .describe(
-        'Set to true to include service uptime information (in seconds) in the health response.',
+        'Set to true to include a human-readable service uptime duration in the health response.',
       ),
   }),
 ) {}

@@ -1,17 +1,27 @@
 packages:
   - "."
 
+# Supply chain security: blocks packages published less than 24 hours ago (1440 minutes).
+# This window is the most common attack vector for malicious package hijacking.
 minimumReleaseAge: 1440
 
+# Controls whether a package is allowed to run postinstall scripts (native build, telemetry, etc.).
+# Omitting an entry defaults to pnpm's global policy; explicit entries document the trust decision.
 allowBuilds:
-  '@nestjs/core': true
-  '@scarf/scarf': false
-  unrs-resolver: true
+  '@nestjs/core': true   # Required: runs nest-specific postinstall hooks
+  '@scarf/scarf': false  # Blocked: telemetry collection — not wanted in this template
+  unrs-resolver: true    # Required: compiles native bindings needed by some lint tools
 
+# Packages exempted from minimumReleaseAge during a bump cycle.
+# Add entries here when a newly published package is blocked by the 24h window
+# but you have verified it is safe (e.g., it is a known maintainer's patch release).
+# Remove entries after the package passes the age threshold in the next cycle.
 minimumReleaseAgeExclude:
   - '@pkgr/core@0.3.6'
   - eslint-plugin-prettier@5.5.6
   - synckit@0.11.13
 
+# Mirrors pnpm.auditConfig in package.json; ignoreCves lists CVEs with no available fix
+# that should not permanently block the security check step.
 auditConfig:
   ignoreCves: []

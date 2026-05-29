@@ -1,10 +1,16 @@
-import { Logger } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { existsSync, mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { cwd, env } from 'node:process';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 
-import { AppBootstrap } from '../src/app/bootstrap/app.bootstrap';
+import { AppModule } from '../src/app.module';
+import { AppConfig } from '../src/config';
 
 class OpenApiArtifactBuilder {
   private static readonly logger = new Logger(OpenApiArtifactBuilder.name);
@@ -23,14 +29,28 @@ class OpenApiArtifactBuilder {
     Object.assign(env, {
       APP_ENV: 'BUILD-API-DOCS',
       APP_LOG_LEVELS: '',
-      APP_PORT: 0,
+      SERVER_PORT: '0',
     });
   }
 
   private static async buildOpenApiArtifact(): Promise<void> {
     const fileName = 'open-api.json';
-    const { app, appConfig, getSwaggerDocument } =
-      await AppBootstrap.createAppContext();
+    const apiPrefix = 'api';
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+    await ConfigModule.envVariablesLoaded;
+
+    app.setGlobalPrefix(apiPrefix);
+    app.enableVersioning({
+      header: 'X-API-Version',
+      type: VersioningType.HEADER,
+    });
+
+    const appConfig = app.get(ConfigService).get<AppConfig>(AppConfig.name);
+
+    if (!appConfig) {
+      throw new Error(`Unable to find ${AppConfig.name}`);
+    }
 
     this.logger.log(
       `Preparing OpenAPI build for environment label "${appConfig.environmentLabel}"`,
@@ -46,7 +66,13 @@ class OpenApiArtifactBuilder {
 
     this.logger.log(`Building '${fileName}' file`);
 
-    const swaggerDocument = await getSwaggerDocument();
+    const config = new DocumentBuilder()
+      .setTitle(appConfig.name)
+      .setVersion(appConfig.version)
+      .build();
+    const swaggerDocument = cleanupOpenApiDoc(
+      SwaggerModule.createDocument(app, config),
+    );
     const swaggerFileContent = JSON.stringify(swaggerDocument, null, 2);
 
     this.logger.verbose(`Writing OpenAPI file to ${swaggerFilePath}`);

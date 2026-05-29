@@ -2,7 +2,7 @@ name: Bump Dependencies
 
 on:
   schedule:
-    - cron: "0 6 * * 1"
+    - cron: "0 6 * * 1" # Monday 6am UTC — start of week for early review
   workflow_dispatch:
 
 permissions:
@@ -25,6 +25,7 @@ jobs:
         id: bump
         run: pnpm run bumpDependencies
 
+      # Only open a PR when bumpDependencies actually succeeded — skips noisy PRs on no-op runs
       - name: Create Pull Request
         if: steps.bump.outcome == 'success'
         uses: peter-evans/create-pull-request@v7

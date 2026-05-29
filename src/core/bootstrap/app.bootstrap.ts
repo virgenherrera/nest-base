@@ -6,12 +6,14 @@ import { OpenAPIObject } from '@nestjs/swagger';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 import { AppModule } from '../../app.module';
-import { AppConfig } from '../../config';
+import { AppConfig, ServerConfig, SwaggerConfig } from '../../config';
 
 export interface AppContext {
   apiPrefix: string;
   app: INestApplication;
   appConfig: AppConfig;
+  serverConfig: ServerConfig;
+  swaggerConfig: SwaggerConfig;
   getSwaggerDocument: () => Promise<OpenAPIObject>;
 }
 
@@ -29,10 +31,23 @@ export class AppBootstrap {
     await ConfigModule.envVariablesLoaded;
     this.logger.verbose('Environment Variables Loaded');
 
-    const appConfig = app.get(ConfigService).get<AppConfig>(AppConfig.name);
+    const configService = app.get(ConfigService);
+    const appConfig = configService.get<AppConfig>(AppConfig.name);
 
     if (!appConfig) {
       throw new Error(`Unable to find ${AppConfig.name}`);
+    }
+
+    const serverConfig = configService.get<ServerConfig>(ServerConfig.name);
+
+    if (!serverConfig) {
+      throw new Error(`Unable to find ${ServerConfig.name}`);
+    }
+
+    const swaggerConfig = configService.get<SwaggerConfig>(SwaggerConfig.name);
+
+    if (!swaggerConfig) {
+      throw new Error(`Unable to find ${SwaggerConfig.name}`);
     }
 
     app.useLogger(appConfig.logLevels);
@@ -74,6 +89,8 @@ export class AppBootstrap {
       apiPrefix,
       app,
       appConfig,
+      serverConfig,
+      swaggerConfig,
       getSwaggerDocument,
     };
   }

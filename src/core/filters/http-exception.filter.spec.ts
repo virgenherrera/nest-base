@@ -8,14 +8,22 @@ import {
 
 import { HttpErrorFilter } from './http-exception.filter';
 
-describe(`UT:${HttpErrorFilter.name}`, () => {
-  class HttpErrorFilterTestCase {
-    static readonly handleHttpException =
-      'Should format HttpException responses consistently.';
-    static readonly handleUnknownError =
-      'Should format unknown errors as 500 responses.';
-  }
+class HttpErrorFilterTestCase {
+  static readonly handleHttpException =
+    'Should format HttpException responses consistently.';
+  static readonly handleUnknownError =
+    'Should format unknown errors as 500 responses.';
+  static readonly handleStringException =
+    'Should format string-based HttpException responses.';
+  static readonly handleCustomErrorLabel =
+    'Should honor explicit error labels in HttpException responses.';
+  static readonly handleMissingMessage =
+    'Should fall back when HttpException response has no message.';
+  static readonly handleUnknownStatus =
+    'Should fall back to generic error label for unknown status.';
+}
 
+describe(`UT:${HttpErrorFilter.name}`, () => {
   const createHost = () => {
     const json = jest.fn();
     const status = jest.fn(() => ({ json }));
@@ -104,7 +112,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
     );
   });
 
-  it('Should format string-based HttpException responses.', () => {
+  it(HttpErrorFilterTestCase.handleStringException, () => {
     const filter = new HttpErrorFilter();
     const { host, response } = createHostWithoutRequestId();
 
@@ -122,7 +130,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
     );
   });
 
-  it('Should honor explicit error labels in HttpException responses.', () => {
+  it(HttpErrorFilterTestCase.handleCustomErrorLabel, () => {
     const filter = new HttpErrorFilter();
     const { host, response } = createHost();
 
@@ -140,7 +148,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
     );
   });
 
-  it('Should fall back when HttpException response has no message.', () => {
+  it(HttpErrorFilterTestCase.handleMissingMessage, () => {
     const filter = new HttpErrorFilter();
     const { host, response } = createHost();
 
@@ -154,7 +162,7 @@ describe(`UT:${HttpErrorFilter.name}`, () => {
     );
   });
 
-  it('Should fall back to generic error label for unknown status.', () => {
+  it(HttpErrorFilterTestCase.handleUnknownStatus, () => {
     const filter = new HttpErrorFilter();
     const { host, response } = createHost();
 

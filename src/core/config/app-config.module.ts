@@ -1,8 +1,25 @@
 import { DynamicModule, Logger, Type } from '@nestjs/common';
 import { ConfigModule, getConfigToken, registerAs } from '@nestjs/config';
 import { type ZodDto } from 'nestjs-zod';
-import { env } from 'node:process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { cwd, env } from 'node:process';
 import { z, ZodError } from 'zod';
+
+const PackageIdentitySchema = z.object({
+  npm_package_name: z.string().min(1),
+  npm_package_version: z.string().min(1),
+});
+
+const PackageJsonFallbackSchema = z
+  .object({
+    name: z.string().min(1),
+    version: z.string().min(1),
+  })
+  .transform((pkg) => ({
+    npm_package_name: pkg.name,
+    npm_package_version: pkg.version,
+  }));
 
 type EnvProvider = () => NodeJS.ProcessEnv | Promise<NodeJS.ProcessEnv>;
 type ConfigClass = ZodDto;
@@ -70,9 +87,12 @@ export class AppConfigModule {
       expandVariables: options.expandVariables ?? true,
       isGlobal: options.isGlobal ?? true,
       configClasses: options.configClasses,
-      envProvider: () => {
+      envProvider: async () => {
         if (!cachedEnvSource) {
-          cachedEnvSource = Promise.resolve(baseProvider());
+          cachedEnvSource = Promise.resolve(baseProvider()).then((baseEnv) => ({
+            ...this.resolvePackageIdentity(baseEnv),
+            ...baseEnv,
+          }));
         }
 
         return cachedEnvSource;
@@ -124,6 +144,18 @@ export class AppConfigModule {
     });
 
     return configFactory;
+  }
+
+  private static resolvePackageIdentity(
+    baseEnv: NodeJS.ProcessEnv,
+  ): z.infer<typeof PackageIdentitySchema> {
+    const fromEnv = PackageIdentitySchema.strip().safeParse(baseEnv);
+
+    if (fromEnv.success) return fromEnv.data;
+
+    const pkg = JSON.parse(readFileSync(join(cwd(), 'package.json'), 'utf-8'));
+
+    return PackageJsonFallbackSchema.parse(pkg);
   }
 
   private static buildValidationError(
