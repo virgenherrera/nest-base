@@ -30,13 +30,9 @@ jobs:
         run: pnpm run prettierCheck
 
       # Tests
-      - name: Unit tests
+      - name: Tests
         timeout-minutes: 15
-        run: pnpm run test:unit
-
-      - name: E2E tests
-        timeout-minutes: 15
-        run: pnpm run test:e2e
+        run: pnpm run test:dynamic
 
       # Build
       - name: Build API docs
