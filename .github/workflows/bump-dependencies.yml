@@ -30,8 +30,8 @@ jobs:
         if: steps.bump.outcome == 'success'
         uses: peter-evans/create-pull-request@v7
         with:
-          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          committer: "Hugo Virgen <virgenherrera+gha-actions@gmail.com>"
+          author: "Hugo Virgen <virgenherrera+gha-actions@gmail.com>"
           commit-message: "task: bumpDependencies"
           branch: chore/bump-dependencies
           title: "task: bumpDependencies"
