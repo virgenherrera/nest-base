@@ -19,9 +19,6 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
-      - name: cleanup
-        run: pnpm run cleanup
-
       - name: securityCheck
         run: |
           pnpm run securityCheck
