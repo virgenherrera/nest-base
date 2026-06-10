@@ -19,24 +19,33 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
-      # Static Analysis
-      - name: Security audit
-        run: pnpm run securityCheck
+      - name: securityCheck
+        run: |
+          pnpm run securityCheck
+          echo "✅ **securityCheck** — no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
 
-      - name: ESLint
-        run: pnpm run eslintCheck
+      - name: eslintCheck
+        run: |
+          pnpm run eslintCheck
+          echo "✅ **eslintCheck** — no lint errors" >> $GITHUB_STEP_SUMMARY
 
-      - name: Prettier
-        run: pnpm run prettierCheck
+      - name: prettierCheck
+        run: |
+          pnpm run prettierCheck
+          echo "✅ **prettierCheck** — all files formatted" >> $GITHUB_STEP_SUMMARY
 
-      # Tests
-      - name: Tests
+      - name: test:dynamic
         timeout-minutes: 15
-        run: pnpm run test:dynamic
+        run: |
+          pnpm run test:dynamic
+          echo "✅ **test:dynamic** — all tests passed" >> $GITHUB_STEP_SUMMARY
 
-      # Build
-      - name: Build API docs
-        run: pnpm run build:api-docs
+      - name: build:api-docs
+        run: |
+          pnpm run build:api-docs
+          echo "✅ **build:api-docs** — OpenAPI artifact generated" >> $GITHUB_STEP_SUMMARY
 
-      - name: Build project
-        run: pnpm run build:app
+      - name: build:app
+        run: |
+          pnpm run build:app
+          echo "✅ **build:app** — compilation successful" >> $GITHUB_STEP_SUMMARY
