@@ -33,11 +33,11 @@ This eliminates drift: if a script's command changes, every context inherits tha
 | `start:dev` | atomic | serve | yes | no | no | no | no |
 | `start:prod` | atomic | serve | yes | no | no | no | no |
 | `test` | composite | pipeline | yes | no | no | ¹ | no |
-| `build` | composite | build | yes | no | yes | ¹ | yes |
+| `build` | composite | build | yes | no | yes | yes | yes |
 | `build:app` | atomic | build | yes | no | yes | yes | yes |
 | `build:api-docs` | atomic | build | yes | no | yes | yes | yes |
 | `test:doctor` | composite | pipeline | yes | no | no | no | yes |
-| `test:static` | composite | check | yes | no | no | ¹ | no |
+| `test:static` | composite | check | yes | no | no | yes | no |
 | `test:dynamic` | atomic | test | yes | no | yes | yes | yes |
 | `securityCheck` | atomic | check | yes | no | no | yes | yes |
 | `eslintCheck` | atomic | check | yes | no | no | yes | yes |
@@ -51,7 +51,7 @@ This eliminates drift: if a script's command changes, every context inherits tha
 | `updatePnpm` | atomic | maintenance | yes | no | no | no | no |
 | `bumpDependencies` | composite | maintenance | yes | no | no | no | no |
 
-> ¹ CI does not call `test`, `test:static`, or `build` composites directly — it runs their constituent atomics as individual workflow steps for granular GitHub step summaries. The effect is equivalent.
+> ¹ CI does not call the `test` meta-composite — it calls `test:static`, `test:dynamic`, and `build` as individual workflow steps matching the pipeline stages.
 >
 > bumpDeps column: scripts marked `yes` are invoked via `test:doctor` (the NCU validation gate), except `securityFix` which is called directly by `bumpDependencies`. `bumpDependencies` itself is the context, not a participant.
 
@@ -186,11 +186,11 @@ That's it. All contexts inherit the change through the composite chain:
 
 | Composite | Propagates to |
 |---|---|
-| `test:static` | `test`, `test:doctor`, `bumpDependencies` (via test:doctor) |
-| `build` | `test`, `test:doctor`, `pre-commit`, `bumpDependencies` (via test:doctor) |
+| `test:static` | `test`, `test:doctor`, CI, `bumpDependencies` (via test:doctor) |
+| `build` | `test`, `test:doctor`, CI, `pre-commit`, `bumpDependencies` (via test:doctor) |
 | `test:dynamic` | jest discovers tests via config — no composite change needed |
 
-CI is the one exception: it runs composite children as individual workflow steps for granular GitHub step summaries. Adding a new atomic to a composite also requires a corresponding CI step.
+CI now calls composites directly (`test:static`, `test:dynamic`, `build`), so new scripts propagate to CI automatically.
 
 [(back to menu)](#navigation)
 
