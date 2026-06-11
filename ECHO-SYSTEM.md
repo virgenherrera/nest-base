@@ -51,9 +51,12 @@ Scripts are organized into five stages. **No script in stage N may depend on a s
 |---|---|---|
 | 0 | clone/checkout | — |
 | 1 | projectSetup | node install → pnpm install |
+| 1.5 | cleanup | `cleanup` (composites that need a clean slate run this first) |
 | 2 | test:static | `securityCheck` → `eslintCheck` → `prettierCheck` |
 | 3 | test:dynamic | `test:dynamic` (jest — unit + e2e) |
-| 4 | build | `build:app` → `build:api-docs` (independent; CI runs them sequentially) |
+| 4 | build | `build:api-docs` → `build:app` (independent; order matches CI and `test` composite) |
+
+`securityFix` is not assigned a stage — it is a maintenance action invoked only by `bumpDependencies` (pre/post upgrade), not part of the standard pipeline.
 
 A violation occurs when a stage-2 script is invoked before stage-1 completes, or when a stage-4 script is called as a precondition for a stage-3 script. The `&&` chains in composite scripts encode this order.
 
@@ -99,10 +102,8 @@ flowchart TD
 
     C --> D[.lintstagedrc.json]
     D --> E[pnpm run prettierFix -- staged-files]
-    D --> F[pnpm run eslintFix -- staged-files]
-
-    E --> G{lintStaged done}
-    F --> G
+    E --> F[pnpm run eslintFix -- staged-files]
+    F --> G{lintStaged done}
 
     G --> H[pnpm run test:dynamic]
     H --> I[pnpm run build:app]
@@ -117,7 +118,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     A([pnpm run bumpDependencies]) --> B[pnpm run securityFix]
-    B --> C[pnpm dlx npm-check-updates --doctor]
+    B --> C["pnpm dlx npm-check-updates@17 (doctor mode via .ncurc.json)"]
 
     C --> D{For each dependency}
     D --> E[Upgrade dependency in package.json]
@@ -154,3 +155,13 @@ When invoking these scripts standalone during local development, pass the glob e
 pnpm run prettierFix -- '{apps,libs,scripts,src,test}/**/*.ts'
 pnpm run eslintFix -- '{apps,libs,scripts,src,test}/**/*.ts'
 ```
+
+---
+
+## Scope Difference: lint-staged vs Check Scripts
+
+`.lintstagedrc.json` targets `*.{js,json,mjs,ts,tsx}` — five file extensions. The check scripts (`eslintCheck`, `prettierCheck`) only target `*.ts` files within specific directories.
+
+This means lint-staged applies fixes to `.js`, `.json`, `.mjs`, and `.tsx` files during pre-commit, but CI's check scripts only verify `.ts` files. A formatting regression in a non-`.ts` file would be caught by pre-commit but NOT by CI.
+
+This is intentional: lint-staged fixes everything it touches before committing, while CI validates the primary source files. The broader lint-staged glob acts as a first-pass safety net.

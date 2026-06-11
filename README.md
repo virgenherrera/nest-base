@@ -85,14 +85,14 @@ Each config class in `src/config/` owns and validates its own subset of environm
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm run start:dev`        | Start the server with watch mode.                                                                                                                                 |
 | `pnpm run start:prod`       | Run the compiled app from `dist/`.                                                                                                                                |
-| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes cleanup and api-docs steps that CI runs separately.              |
+| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes `cleanup`, which CI does not run.                                |
 | `pnpm run test:static`      | Security audit + ESLint + Prettier checks.                                                                                                                        |
 | `pnpm run test:dynamic`     | Run the Jest suite (unit + e2e).                                                                                                                                  |
 | `pnpm run build:api-docs`   | Generate `api-docs/open-api.json`.                                                                                                                                |
 | `pnpm run securityCheck`    | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                                                   |
 | `pnpm run securityFix`      | Run `pnpm update` to pull the latest semver-compatible versions of all dependencies, including transitive ones.                                                   |
 | `pnpm run bumpDependencies` | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security).                         |
-| `pnpm run updatePnpm`       | Update the pnpm package manager itself via `pnpm self-update`.                                                                                                    |
+| `pnpm run updatePnpm`       | Update the pnpm package manager itself via `corepack up`.                                                                                                    |
 
 Husky runs `lint-staged` before every commit to keep formatting and linting green.
 
@@ -122,7 +122,7 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
-- `pnpm run test:dynamic` runs all Jest suites and creates coverage reports under `coverage/`. The `.json` files integrate with CI providers.
+- `pnpm run test:dynamic` runs all Jest suites and creates a coverage report under `coverage/`.
 - View the HTML report by opening `coverage/index.html` in your browser.
 
 ## Namespaced configuration workflow
