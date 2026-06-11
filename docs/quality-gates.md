@@ -65,11 +65,11 @@ Each composite script is an ordered `&&` chain of atomic scripts. If any step fa
 | Composite | Expansion |
 |---|---|
 | `test:static` | `securityCheck` → `eslintCheck` → `prettierCheck` |
-| `test:doctor` | `cleanup` → `securityCheck` → `eslintCheck` → `prettierCheck` → `test:dynamic` → `build:app` |
-| `test` | `cleanup` → `test:static` → `test:dynamic` → `build:api-docs` → `build:app` |
+| `test:doctor` | `cleanup` → **`test:static`** → `test:dynamic` → `build:app` |
+| `test` | `cleanup` → **`test:static`** → `test:dynamic` → `build:api-docs` → `build:app` |
 | `bumpDependencies` | `securityFix` → `pnpm dlx npm-check-updates@17` → `securityFix` |
 
-`test:doctor` is a deliberate subset of `test` — it omits `build:api-docs` to keep per-dependency NCU validation cycles fast.
+Both `test:doctor` and `test` call `test:static` as a composite — adding a new check to `test:static` propagates to both automatically. `test:doctor` omits `build:api-docs` to keep per-dependency NCU validation cycles fast.
 
 [(back to menu)](#navigation)
 
@@ -112,7 +112,7 @@ Cross-check this matrix against `.lintstagedrc.json`, `.husky/pre-commit`, `.git
 | `build:api-docs` | optional | no | no | yes | no |
 | `build:app` | optional | no | yes (last) | yes | yes (via test:doctor) |
 
-CI runs check scripts (read-only), not fix scripts. Fix scripts are pre-commit only. bumpDependencies uses `test:doctor` as its validation gate — NCU rolls back any dependency whose upgrade causes `test:doctor` to fail.
+CI runs check scripts (read-only), not fix scripts. Fix scripts are pre-commit only. bumpDependencies uses `test:doctor` as its validation gate (which calls `test:static` as a composite) — NCU rolls back any dependency whose upgrade causes `test:doctor` to fail.
 
 [(back to menu)](#navigation)
 
@@ -153,10 +153,8 @@ flowchart TD
     E --> F[pnpm run test:doctor]
 
     F --> G[pnpm run cleanup]
-    G --> H[pnpm run securityCheck]
-    H --> I[pnpm run eslintCheck]
-    I --> J[pnpm run prettierCheck]
-    J --> K[pnpm run test:dynamic]
+    G --> H[pnpm run test:static]
+    H --> K[pnpm run test:dynamic]
     K --> L[pnpm run build:app]
 
     L --> M{test:doctor passed?}
@@ -175,14 +173,18 @@ flowchart TD
 
 ## Adding a New Script
 
-The echo principle propagates **command changes** automatically, but **adding a new script** requires manual updates across contexts. Checklist:
+Adding a new script to the echo system is a two-step process:
 
-1. Add the script to `package.json` (atomic scripts only — composites are `&&` chains of atomics)
-2. Add it to the relevant composite(s): `test:static`, `test:doctor`, `test`
-3. If it should run in CI: add a step to `.github/workflows/ci.yml` with the same script name
-4. If it should run in pre-commit: add it to `.husky/pre-commit` pipeline chain
-5. If it should run in lint-staged: add it to `.lintstagedrc.json` as `pnpm run <name> --`
-6. Update this document: taxonomy table row, composite expansion, context comparison matrix, pipeline diagrams
+1. Add the atomic script to `package.json`
+2. Hook it into the relevant composite (`test:static`, `test:dynamic`, or `build` stage of `test`/`test:doctor`)
+
+That's it. All contexts inherit the change through the composite chain:
+
+- `test:static` propagates to → `test`, `test:doctor`, and indirectly to `bumpDependencies` (via `test:doctor`)
+- `test:dynamic` is a single jest call — new test files are picked up automatically via jest config
+- Build scripts in `test`/`test:doctor` propagate to all contexts that call those composites
+
+CI runs composite children as individual workflow steps for granular GitHub step summaries. If you add a new atomic to an existing composite, CI will also need a corresponding step — but this is the ONE exception, and it only applies to CI.
 
 [(back to menu)](#navigation)
 
