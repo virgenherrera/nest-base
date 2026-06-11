@@ -1,4 +1,18 @@
-# Echo System
+# Quality Gates
+
+Script architecture, pipeline order, and execution context mapping for the echo system.
+
+## Navigation
+
+- [Echo principle](#echo-principle)
+- [Script taxonomy](#script-taxonomy)
+- [Composite expansion](#composite-expansion)
+- [Pipeline order contract](#pipeline-order-contract)
+- [Execution context comparison](#execution-context-comparison)
+- [Pipeline diagrams](#pipeline-diagrams)
+- [Adding a new script](#adding-a-new-script)
+- [lint-staged forwarding note](#lint-staged-forwarding-note)
+- [Scope difference: lint-staged vs check scripts](#scope-difference-lint-staged-vs-check-scripts)
 
 ## Echo Principle
 
@@ -8,38 +22,56 @@ This eliminates drift: if a script's command changes, every context inherits tha
 
 **Corollary — lint-staged rule**: `.lintstagedrc.json` MUST NOT call bare tool binaries (`prettier`, `eslint`, etc.). It MUST call `pnpm run <script-name> --` so that lint-staged forwards staged filenames as positional args to the named script.
 
+[(back to menu)](#navigation)
+
 ---
 
 ## Script Taxonomy
-
-Scripts fall into two types:
-
-- **atomic** — single-tool, single-purpose. Safe to call from any context without side effects.
-- **composite** — ordered composition of atomic scripts connected by `&&`. Encodes a pipeline stage.
 
 | Script | Type | Category | local-dev | lint-staged | pre-commit | CI | bumpDeps |
 |---|---|---|:---:|:---:|:---:|:---:|:---:|
 | `start:dev` | atomic | serve | yes | no | no | no | no |
 | `start:prod` | atomic | serve | yes | no | no | no | no |
-| `test` | composite | pipeline | yes | no | no | no | no |
-| `build:app` | atomic | build | yes | no | yes | yes | yes (via test:doctor) |
+| `test` | composite | pipeline | yes | no | no | ¹ | no |
+| `build:app` | atomic | build | yes | no | yes | yes | yes |
 | `build:api-docs` | atomic | build | yes | no | no | yes | no |
-| `test:doctor` | composite | pipeline | yes | no | no | no | yes (NCU gate) |
-| `test:static` | composite | check | yes | no | no | no | no |
-| `test:dynamic` | atomic | test | yes | no | yes | yes | yes (via test:doctor) |
-| `securityCheck` | atomic | check | yes | no | no | yes | yes (via test:doctor) |
-| `eslintCheck` | atomic | check | yes | no | no | yes | yes (via test:doctor) |
+| `test:doctor` | composite | pipeline | yes | no | no | no | yes |
+| `test:static` | composite | check | yes | no | no | ¹ | no |
+| `test:dynamic` | atomic | test | yes | no | yes | yes | yes |
+| `securityCheck` | atomic | check | yes | no | no | yes | yes |
+| `eslintCheck` | atomic | check | yes | no | no | yes | yes |
 | `eslintFix` | atomic | fix | yes | yes | no | no | no |
-| `prettierCheck` | atomic | check | yes | no | no | yes | yes (via test:doctor) |
+| `prettierCheck` | atomic | check | yes | no | no | yes | yes |
 | `prettierFix` | atomic | fix | yes | yes | no | no | no |
 | `prepare` | atomic | lifecycle | yes | no | no | no | no |
 | `lintStaged` | atomic | orchestration | yes | no | yes | no | no |
-| `cleanup` | atomic | housekeeping | yes | no | no | no | yes (via test:doctor) |
-| `securityFix` | atomic | fix | yes | no | no | no | yes (direct) |
+| `cleanup` | atomic | housekeeping | yes | no | no | no | yes |
+| `securityFix` | atomic | fix | yes | no | no | no | yes |
 | `updatePnpm` | atomic | maintenance | yes | no | no | no | no |
-| `bumpDependencies` | composite | maintenance | yes | no | no | no | — (is the context) |
+| `bumpDependencies` | composite | maintenance | yes | no | no | no | no |
 
-> **Composites**: `test`, `test:static`, `test:doctor`, `bumpDependencies`. All other scripts are atomic.
+> ¹ CI does not call the `test` or `test:static` composites, but it runs all their constituent atomic scripts individually as separate workflow steps. The effect is equivalent; the difference is CI gets granular step-level reporting.
+>
+> bumpDeps column: scripts marked `yes` are invoked via `test:doctor` (the NCU validation gate), except `securityFix` which is called directly by `bumpDependencies`. `bumpDependencies` itself is the context, not a participant.
+
+[(back to menu)](#navigation)
+
+---
+
+## Composite Expansion
+
+Each composite script is an ordered `&&` chain of atomic scripts. If any step fails, the chain stops.
+
+| Composite | Expansion |
+|---|---|
+| `test:static` | `securityCheck` → `eslintCheck` → `prettierCheck` |
+| `test:doctor` | `cleanup` → `securityCheck` → `eslintCheck` → `prettierCheck` → `test:dynamic` → `build:app` |
+| `test` | `cleanup` → `test:static` → `test:dynamic` → `build:api-docs` → `build:app` |
+| `bumpDependencies` | `securityFix` → `pnpm dlx npm-check-updates@17` → `securityFix` |
+
+`test:doctor` is a deliberate subset of `test` — it omits `build:api-docs` to keep per-dependency NCU validation cycles fast.
+
+[(back to menu)](#navigation)
 
 ---
 
@@ -58,13 +90,13 @@ Scripts are organized into five stages. **No script in stage N may depend on a s
 
 `securityFix` is not assigned a stage — it is a maintenance action invoked only by `bumpDependencies` (pre/post upgrade), not part of the standard pipeline.
 
-A violation occurs when a stage-2 script is invoked before stage-1 completes, or when a stage-4 script is called as a precondition for a stage-3 script. The `&&` chains in composite scripts encode this order.
+[(back to menu)](#navigation)
 
 ---
 
 ## Execution Context Comparison
 
-Each column shows which scripts run in that context. Cross-check this matrix against `.lintstagedrc.json`, `.husky/pre-commit`, `.github/workflows/ci.yml`, and `.ncurc.json` to verify consistency.
+Cross-check this matrix against `.lintstagedrc.json`, `.husky/pre-commit`, `.github/workflows/ci.yml`, and `.ncurc.json` to verify consistency.
 
 | Script | local-dev | lint-staged | pre-commit | CI | bumpDeps |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -80,13 +112,9 @@ Each column shows which scripts run in that context. Cross-check this matrix aga
 | `build:api-docs` | optional | no | no | yes | no |
 | `build:app` | optional | no | yes (last) | yes | yes (via test:doctor) |
 
-**Pre-commit pipeline**: `lintStaged` (applies fixes to staged files via `prettierFix`/`eslintFix`) → `test:dynamic` → `build:app`.
+CI runs check scripts (read-only), not fix scripts. Fix scripts are pre-commit only. bumpDependencies uses `test:doctor` as its validation gate — NCU rolls back any dependency whose upgrade causes `test:doctor` to fail.
 
-**CI pipeline**: `securityCheck` → `eslintCheck` → `prettierCheck` → `test:dynamic` → `build:api-docs` → `build:app`.
-
-**bumpDependencies pipeline**: `securityFix` → NCU `--doctor` (calls `test:doctor` per dependency: `cleanup` → `securityCheck` → `eslintCheck` → `prettierCheck` → `test:dynamic` → `build:app`) → `securityFix`.
-
-Note: CI runs check scripts (read-only), not fix scripts. Fix scripts are pre-commit only. bumpDependencies uses `test:doctor` as its validation gate — NCU rolls back any dependency whose upgrade causes `test:doctor` to fail.
+[(back to menu)](#navigation)
 
 ---
 
@@ -141,6 +169,23 @@ flowchart TD
     P --> Q([Done])
 ```
 
+[(back to menu)](#navigation)
+
+---
+
+## Adding a New Script
+
+The echo principle propagates **command changes** automatically, but **adding a new script** requires manual updates across contexts. Checklist:
+
+1. Add the script to `package.json` (atomic scripts only — composites are `&&` chains of atomics)
+2. Add it to the relevant composite(s): `test:static`, `test:doctor`, `test`
+3. If it should run in CI: add a step to `.github/workflows/ci.yml` with the same script name
+4. If it should run in pre-commit: add it to `.husky/pre-commit` pipeline chain
+5. If it should run in lint-staged: add it to `.lintstagedrc.json` as `pnpm run <name> --`
+6. Update this document: taxonomy table row, composite expansion, context comparison matrix, pipeline diagrams
+
+[(back to menu)](#navigation)
+
 ---
 
 ## lint-staged Forwarding Note
@@ -156,6 +201,8 @@ pnpm run prettierFix -- '{apps,libs,scripts,src,test}/**/*.ts'
 pnpm run eslintFix -- '{apps,libs,scripts,src,test}/**/*.ts'
 ```
 
+[(back to menu)](#navigation)
+
 ---
 
 ## Scope Difference: lint-staged vs Check Scripts
@@ -165,3 +212,5 @@ pnpm run eslintFix -- '{apps,libs,scripts,src,test}/**/*.ts'
 This means lint-staged applies fixes to `.js`, `.json`, `.mjs`, and `.tsx` files during pre-commit, but CI's check scripts only verify `.ts` files. A formatting regression in a non-`.ts` file would be caught by pre-commit but NOT by CI.
 
 This is intentional: lint-staged fixes everything it touches before committing, while CI validates the primary source files. The broader lint-staged glob acts as a first-pass safety net.
+
+[(back to menu)](#navigation)

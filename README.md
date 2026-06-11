@@ -15,7 +15,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 - [Namespaced configuration workflow](#namespaced-configuration-workflow)
 - [Dependency management and security](#dependency-management-and-security)
 - [Next steps](#next-steps)
-- [Echo system](./ECHO-SYSTEM.md)
+- [Quality gates](./docs/quality-gates.md)
 
 ## Key features
 
@@ -96,7 +96,7 @@ Each config class in `src/config/` owns and validates its own subset of environm
 
 Husky runs `lint-staged` before every commit to keep formatting and linting green.
 
-See [ECHO-SYSTEM.md](./ECHO-SYSTEM.md) for the full script taxonomy, pipeline order contract, and execution context mapping.
+See [Quality gates](./docs/quality-gates.md) for the full script taxonomy, pipeline order contract, and execution context mapping.
 
 ## API documentation
 
