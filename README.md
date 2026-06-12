@@ -15,6 +15,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 - [Namespaced configuration workflow](#namespaced-configuration-workflow)
 - [Dependency management and security](#dependency-management-and-security)
 - [Next steps](#next-steps)
+- [Quality gates](./docs/quality-gates.md)
 
 ## Key features
 
@@ -24,7 +25,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 - DTOs rely on Zod (nestjs-zod) for request validation and response serialization.
 - Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
 - Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
-- Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that simulates CI.
+- Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that runs the full local pipeline.
 - `pnpm run bumpDependencies` upgrades dependencies but aborts if the test suite fails.
 
 ## Before you start
@@ -80,21 +81,22 @@ Each config class in `src/config/` owns and validates its own subset of environm
 
 [(back to menu)](#navigation)
 
-| Script                            | Purpose                                                                                                                                   |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm run start:dev`              | Start the server with watch mode.                                                                                                         |
-| `pnpm run start:prod`             | Run the compiled app from `dist/`.                                                                                                        |
-| `pnpm run test`                   | Local “mini CI” that mirrors `.github/workflows/ci.yml`: cleanup, linting, unit tests, e2e tests, API docs build, and application build.  |
-| `pnpm run test:static`            | Security audit + ESLint + Prettier checks.                                                                                                |
-| `pnpm run test:unit` / `test:e2e` | Run Jest unit or e2e suites.                                                                                                              |
-| `pnpm run watch:UT` / `watch:E2E` | Run Jest in watch mode (unit or e2e).                                                                                                     |
-| `pnpm run build:api-docs`         | Generate `api-docs/open-api.json`.                                                                                                        |
-| `pnpm run securityCheck`          | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                           |
-| `pnpm run securityFix`            | Run `pnpm update` to pull the latest semver-compatible versions of all dependencies, including transitive ones.                           |
-| `pnpm run bumpDependencies`       | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security). |
-| `pnpm run updatePnpm`             | Update the pnpm package manager itself via `pnpm self-update`.                                                                            |
+| Script                      | Purpose                                                                                                                                                           |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm run start:dev`        | Start the server with watch mode.                                                                                                                                 |
+| `pnpm run start:prod`       | Run the compiled app from `dist/`.                                                                                                                                |
+| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes `cleanup`, which CI does not run.                                |
+| `pnpm run test:static`      | Security audit + ESLint + Prettier checks.                                                                                                                        |
+| `pnpm run test:dynamic`     | Run the Jest suite (unit + e2e).                                                                                                                                  |
+| `pnpm run build:api-docs`   | Generate `api-docs/open-api.json`.                                                                                                                                |
+| `pnpm run securityCheck`    | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                                                   |
+| `pnpm run securityFix`      | Run `pnpm update` to pull the latest semver-compatible versions of all dependencies, including transitive ones.                                                   |
+| `pnpm run bumpDependencies` | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security).                         |
+| `pnpm run updatePnpm`       | Update the pnpm package manager itself via `corepack up`.                                                                                                    |
 
 Husky runs `lint-staged` before every commit to keep formatting and linting green.
+
+See [Quality gates](./docs/quality-gates.md) for the full script taxonomy, pipeline order contract, and execution context mapping.
 
 ## API documentation
 
@@ -120,8 +122,8 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
-- `pnpm run test:unit` and `pnpm run test:e2e` create coverage reports under `coverage/unit` and `coverage/e2e`. The `.json` files integrate with CI providers.
-- View the HTML reports by opening `coverage/unit/index.html` or `coverage/e2e/index.html` in your browser.
+- `pnpm run test:dynamic` runs all Jest suites and creates a coverage report under `coverage/`.
+- View the HTML report by opening `coverage/index.html` in your browser.
 
 ## Namespaced configuration workflow
 
@@ -236,7 +238,7 @@ flowchart TD
 
 ### How `test:doctor` validates each upgrade
 
-`test:doctor` is a deliberate subset of `test`: it omits e2e tests and the API docs build to keep each per-dependency validation cycle as fast as possible. `test` (the full CI mirror) still covers those steps; `test:doctor` trades breadth for speed so NCU can iterate over many dependencies without a multi-minute gate on each one.
+`test:doctor` is a deliberate subset of `test`: it omits the API docs build to keep each per-dependency validation cycle as fast as possible. `test` (the full local pipeline) still covers those steps; `test:doctor` trades breadth for speed so NCU can iterate over many dependencies without a multi-minute gate on each one.
 
 NCU runs `test:doctor` as its validation gate for every single dependency upgrade. If any step fails, that specific upgrade is reverted:
 
@@ -245,7 +247,7 @@ flowchart LR
     A[cleanup] --> B[securityCheck]
     B --> C[eslintCheck]
     C --> D[prettierCheck]
-    D --> E[test:unit]
+    D --> E[test:dynamic]
     E --> F[build:app]
 ```
 
@@ -254,7 +256,7 @@ flowchart LR
 | `securityCheck` | Rejects upgrades that introduce high/critical vulnerabilities via `pnpm audit --audit-level high`. |
 | `eslintCheck`   | Catches type errors, unsafe patterns, and breaking API changes surfaced by `typescript-eslint`.    |
 | `prettierCheck` | Ensures formatting consistency is preserved.                                                       |
-| `test:unit`     | Validates runtime behavior has not regressed.                                                      |
+| `test:dynamic`  | Validates runtime behavior has not regressed.                                                      |
 | `build:app`     | Confirms the production build compiles without errors.                                             |
 
 ### How NCU doctor mode decides per dependency

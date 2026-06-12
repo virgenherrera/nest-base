@@ -19,20 +19,10 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
-      - name: securityCheck
+      - name: test:static
         run: |
-          pnpm run securityCheck
-          echo "✅ **securityCheck** — no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
-
-      - name: eslintCheck
-        run: |
-          pnpm run eslintCheck
-          echo "✅ **eslintCheck** — no lint errors" >> $GITHUB_STEP_SUMMARY
-
-      - name: prettierCheck
-        run: |
-          pnpm run prettierCheck
-          echo "✅ **prettierCheck** — all files formatted" >> $GITHUB_STEP_SUMMARY
+          pnpm run test:static
+          echo "✅ **test:static** — security, lint, and format checks passed" >> $GITHUB_STEP_SUMMARY
 
       - name: test:dynamic
         timeout-minutes: 15
@@ -40,12 +30,7 @@ jobs:
           pnpm run test:dynamic
           echo "✅ **test:dynamic** — all tests passed" >> $GITHUB_STEP_SUMMARY
 
-      - name: build:api-docs
+      - name: build
         run: |
-          pnpm run build:api-docs
-          echo "✅ **build:api-docs** — OpenAPI artifact generated" >> $GITHUB_STEP_SUMMARY
-
-      - name: build:app
-        run: |
-          pnpm run build:app
-          echo "✅ **build:app** — compilation successful" >> $GITHUB_STEP_SUMMARY
+          pnpm run build
+          echo "✅ **build** — api-docs and app compilation successful" >> $GITHUB_STEP_SUMMARY
