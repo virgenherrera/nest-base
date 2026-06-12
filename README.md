@@ -52,47 +52,47 @@ Match your local runtime with the versions declared in the `engines` field insid
 
 Each config class in `src/config/` owns and validates its own subset of environment variables. Raw env vars are transformed into typed properties via Zod schemas (e.g., `SERVER_PORT` string becomes a numeric `port`). Missing or invalid values stop the boot process with a detailed error.
 
-#### App identity and runtime (`AppConfig` — `src/config/app.config.ts`)
+### App identity and runtime (`AppConfig` — `src/config/app.config.ts`)
 
-| Variable           | Description                                                                                  | Default                              |
-| ------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `APP_ENV`          | Free-form label to describe the deployment (e.g., `local`, `qa`, `prod`).                    | `local`                              |
-| `APP_LOG_LEVELS`   | Comma-separated log levels (`log,error,warn,debug,verbose,fatal` as per Nest’s `useLogger`). | `log,error,warn,debug,verbose,fatal` |
+| Variable         | Description                                                                                  | Default                              |
+| ---------------- | -------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `APP_ENV`        | Free-form label to describe the deployment (e.g., `local`, `qa`, `prod`).                    | `local`                              |
+| `APP_LOG_LEVELS` | Comma-separated log levels (`log,error,warn,debug,verbose,fatal` as per Nest’s `useLogger`). | `log,error,warn,debug,verbose,fatal` |
 
 `npm_package_name` and `npm_package_version` are injected automatically by the pnpm lifecycle — no `.env` entry needed.
 
-#### HTTP server (`ServerConfig` — `src/config/server.config.ts`)
+### HTTP server (`ServerConfig` — `src/config/server.config.ts`)
 
-| Variable                    | Description                        | Default |
-| --------------------------- | ---------------------------------- | ------- |
-| `SERVER_PORT`               | HTTP port exposed by Nest.         | `3000`  |
-| `SERVER_HOSTNAME`           | Host interface Nest listens on.    | `0.0.0.0` |
-| `SERVER_ENABLE_CORS`        | Enables CORS middleware.           | `true`  |
-| `SERVER_ENABLE_HELMET`      | Enables Helmet security headers.   | `true`  |
-| `SERVER_ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true` |
+| Variable                    | Description                          | Default   |
+| --------------------------- | ------------------------------------ | --------- |
+| `SERVER_PORT`               | HTTP port exposed by Nest.           | `3000`    |
+| `SERVER_HOSTNAME`           | Host interface Nest listens on.      | `0.0.0.0` |
+| `SERVER_ENABLE_CORS`        | Enables CORS middleware.             | `true`    |
+| `SERVER_ENABLE_HELMET`      | Enables Helmet security headers.     | `true`    |
+| `SERVER_ENABLE_COMPRESSION` | Enables gzip compression middleware. | `true`    |
 
-#### OpenAPI documentation (`SwaggerConfig` — `src/config/swagger.config.ts`)
+### OpenAPI documentation (`SwaggerConfig` — `src/config/swagger.config.ts`)
 
-| Variable          | Description                                  | Default |
-| ----------------- | -------------------------------------------- | ------- |
-| `SWAGGER_ENABLED` | Mounts Swagger UI/JSON/YAML when true.       | `false` |
+| Variable          | Description                            | Default |
+| ----------------- | -------------------------------------- | ------- |
+| `SWAGGER_ENABLED` | Mounts Swagger UI/JSON/YAML when true. | `false` |
 
 ## Useful scripts
 
 [(back to menu)](#navigation)
 
-| Script                      | Purpose                                                                                                                                                           |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm run start:dev`        | Start the server with watch mode.                                                                                                                                 |
-| `pnpm run start:prod`       | Run the compiled app from `dist/`.                                                                                                                                |
-| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes `cleanup`, which CI does not run.                                |
-| `pnpm run test:static`      | Security audit + ESLint + Prettier checks.                                                                                                                        |
-| `pnpm run test:dynamic`     | Run the Jest suite (unit + e2e).                                                                                                                                  |
-| `pnpm run build:api-docs`   | Generate `api-docs/open-api.json`.                                                                                                                                |
-| `pnpm run securityCheck`    | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                                                   |
-| `pnpm run securityFix`      | Run `pnpm update` to pull the latest semver-compatible versions of all dependencies, including transitive ones.                                                   |
-| `pnpm run bumpDependencies` | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security).                         |
-| `pnpm run updatePnpm`       | Update the pnpm package manager itself via `corepack up`.                                                                                                    |
+| Script                      | Purpose                                                                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm run start:dev`        | Start the server with watch mode.                                                                                                         |
+| `pnpm run start:prod`       | Run the compiled app from `dist/`.                                                                                                        |
+| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes `cleanup`, which CI does not run.        |
+| `pnpm run test:static`      | Security audit + ESLint + Prettier checks.                                                                                                |
+| `pnpm run test:dynamic`     | Run the Jest suite (unit + e2e).                                                                                                          |
+| `pnpm run build:api-docs`   | Generate `api-docs/open-api.json`.                                                                                                        |
+| `pnpm run securityCheck`    | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                           |
+| `pnpm run securityFix`      | Run `pnpm update` to pull the latest semver-compatible versions of all dependencies, including transitive ones.                           |
+| `pnpm run bumpDependencies` | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security). |
+| `pnpm run updatePnpm`       | Update the pnpm package manager itself via `corepack up`.                                                                                 |
 
 Husky runs `lint-staged` before every commit to keep formatting and linting green.
 
