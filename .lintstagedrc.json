@@ -1,3 +1,6 @@
 {
-  "*.{js,json,mjs,ts,tsx}": ["pnpm run prettierFix --", "pnpm run eslintFix --"]
+  "*.{js,json,md,mjs,ts,tsx}": [
+    "pnpm run prettierFix --",
+    "pnpm run eslintFix --"
+  ]
 }
