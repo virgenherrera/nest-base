@@ -26,7 +26,7 @@ export class JestConfig implements Config {
   reporters = ['default', 'summary', 'github-actions'];
   rootDir = '.';
   testEnvironment = 'node';
-  testRegex = '(src|test)/.*\\.(spec|e2e-spec)\\.ts$';
+  testRegex = '(src|test)/.*\\.(spec|test)\\.ts$';
   testTimeout = 3e3;
   transform = { '^.+\\.ts$': 'ts-jest' };
   verbose = true;

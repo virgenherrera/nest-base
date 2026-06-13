@@ -9,7 +9,8 @@
     "test",
     "artifacts",
     "scripts",
-    "**/*spec.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
     "./*.ts"
   ]
 }
