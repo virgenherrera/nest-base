@@ -7,7 +7,7 @@
   "exclude": [
     "node_modules",
     "test",
-    "dist",
+    "artifacts",
     "scripts",
     "**/*spec.ts",
     "./*.ts"

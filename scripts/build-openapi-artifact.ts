@@ -56,7 +56,7 @@ class OpenApiArtifactBuilder {
       `Preparing OpenAPI build for environment label "${appConfig.environmentLabel}"`,
     );
 
-    const openApiPath = join(resolve(cwd()), 'api-docs');
+    const openApiPath = join(resolve(cwd()), 'artifacts', 'api-docs');
 
     if (!existsSync(openApiPath)) {
       mkdirSync(openApiPath, { mode: 0o755, recursive: true });
