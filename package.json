@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node artifacts/dist/main",
     "test": "pnpm run cleanup && pnpm run test:static && pnpm run test:dynamic && pnpm run build",
     "build": "pnpm run build:api-docs && pnpm run build:app",
     "build:app": "nest build -p tsconfig.build.prod.json",
@@ -38,7 +38,7 @@
     "prettierFix": "prettier --write",
     "prepare": "husky",
     "lintStaged": "lint-staged",
-    "cleanup": "rimraf api-docs/ coverage/ dist/",
+    "cleanup": "rimraf artifacts/",
     "securityFix": "pnpm update",
     "updatePnpm": "corepack up",
     "bumpDependencies": "pnpm run securityFix && pnpm dlx npm-check-updates@17 && pnpm run securityFix"

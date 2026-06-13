@@ -15,7 +15,7 @@ export class JestConfig implements Config {
     '!<rootDir>/src/**/*.spec.ts',
     '!<rootDir>/src/**/(index|main).ts',
   ];
-  coverageDirectory = '<rootDir>/coverage';
+  coverageDirectory = '<rootDir>/artifacts/coverage';
   coverageReporters: Config['coverageReporters'] = ['html-spa'];
   coverageThreshold = {
     global: { branches: 80, functions: 80, lines: 80, statements: 80 },
@@ -26,7 +26,7 @@ export class JestConfig implements Config {
   reporters = ['default', 'summary', 'github-actions'];
   rootDir = '.';
   testEnvironment = 'node';
-  testRegex = '(src|test)/.*\\.(spec|e2e-spec)\\.ts$';
+  testRegex = '(src|test)/.*\\.(spec|test)\\.ts$';
   testTimeout = 3e3;
   transform = { '^.+\\.ts$': 'ts-jest' };
   verbose = true;

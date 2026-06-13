@@ -11,7 +11,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "noFallthroughCasesInSwitch": true,
-    "outDir": "./dist",
+    "outDir": "./artifacts/dist",
     "removeComments": true,
     "resolvePackageJsonExports": true,
     "skipLibCheck": true,

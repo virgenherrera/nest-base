@@ -7,9 +7,10 @@
   "exclude": [
     "node_modules",
     "test",
-    "dist",
+    "artifacts",
     "scripts",
-    "**/*spec.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
     "./*.ts"
   ]
 }

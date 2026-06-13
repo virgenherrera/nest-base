@@ -32,3 +32,7 @@ Brief description.
 - Subject line: imperative mood, lowercase, no period, max 72 characters
 - Body: brief description followed by bullet points listing each concrete change
 - No `Co-Authored-By` or AI attribution lines
+
+## Tooling Contract
+
+The `engines` field in `package.json` is the **only** source of truth for allowed runtimes and package managers. Any tool not declared there is forbidden. This applies to every agent, sub-agent, and orchestrator. No exceptions.

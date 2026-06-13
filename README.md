@@ -15,6 +15,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 - [Namespaced configuration workflow](#namespaced-configuration-workflow)
 - [Dependency management and security](#dependency-management-and-security)
 - [Next steps](#next-steps)
+- [Artifacts](#artifacts)
 - [Quality gates](./docs/quality-gates.md)
 
 ## Key features
@@ -24,7 +25,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 - Isolated config namespace classes (`src/config/`) validated with Zod (nestjs-zod) and injected via `@InjectConfig`. Ships with three namespaces (`AppConfig`, `ServerConfig`, `SwaggerConfig`) as a working example.
 - DTOs rely on Zod (nestjs-zod) for request validation and response serialization.
 - Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
-- Swagger UI in development plus a script that produces `api-docs/open-api.json` without booting the server.
+- Swagger UI in development plus a script that produces `artifacts/api-docs/open-api.json` without booting the server.
 - Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that runs the full local pipeline.
 - `pnpm run bumpDependencies` upgrades dependencies but aborts if the test suite fails.
 
@@ -84,11 +85,11 @@ Each config class in `src/config/` owns and validates its own subset of environm
 | Script                      | Purpose                                                                                                                                   |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm run start:dev`        | Start the server with watch mode.                                                                                                         |
-| `pnpm run start:prod`       | Run the compiled app from `dist/`.                                                                                                        |
+| `pnpm run start:prod`       | Run the compiled app from `artifacts/dist/`.                                                                                              |
 | `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes `cleanup`, which CI does not run.        |
 | `pnpm run test:static`      | Security audit + ESLint + Prettier checks.                                                                                                |
 | `pnpm run test:dynamic`     | Run the Jest suite (unit + e2e).                                                                                                          |
-| `pnpm run build:api-docs`   | Generate `api-docs/open-api.json`.                                                                                                        |
+| `pnpm run build:api-docs`   | Generate `artifacts/api-docs/open-api.json`.                                                                                              |
 | `pnpm run securityCheck`    | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                           |
 | `pnpm run securityFix`      | Run `pnpm update` to pull the latest semver-compatible versions of all dependencies, including transitive ones.                           |
 | `pnpm run bumpDependencies` | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security). |
@@ -105,7 +106,7 @@ See [Quality gates](./docs/quality-gates.md) for the full script taxonomy, pipel
 - When `SWAGGER_ENABLED=true`, Swagger UI is mounted at `http://localhost:3000/api`. JSON is served at `/api/json`, YAML at `/api/yaml`. Any other value (or absence) disables it. CORS/Helmet/Compression are enabled by default unless explicitly set to a falsey value.
 - `APP_LOG_LEVELS` accepts the same values as Nest’s `useLogger` (`log,error,warn,debug,verbose,fatal`), comma-separated. Default enables all of them.
 - DTO metadata comes from the same Zod schemas that power runtime validation, so the docs stay in sync with your request/response contracts. `cleanupOpenApiDoc` is applied to keep Swagger output aligned with Zod schemas.
-- To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `api-docs/open-api.json`.
+- To generate the specification offline, run `pnpm run build:api-docs`. The output lives at `artifacts/api-docs/open-api.json`.
 
 ## Health check
 
@@ -122,8 +123,8 @@ Use it as a baseline for your own operational diagnostics.
 
 [(back to menu)](#navigation)
 
-- `pnpm run test:dynamic` runs all Jest suites and creates a coverage report under `coverage/`.
-- View the HTML report by opening `coverage/index.html` in your browser.
+- `pnpm run test:dynamic` runs all Jest suites and creates a coverage report under `artifacts/coverage/`.
+- View the HTML report by opening `artifacts/coverage/index.html` in your browser.
 
 ## Namespaced configuration workflow
 
@@ -307,6 +308,26 @@ The project provides several layers for managing vulnerability risk:
 | Update the pnpm package manager itself             | `pnpm run updatePnpm`                                         |
 | A CVE appears with no available fix                | Add its ID to `pnpm.auditConfig.ignoreCves` in `package.json` |
 | A transitive dependency needs a forced version     | Add a bounded override to `pnpm.overrides` in `package.json`  |
+
+## Artifacts
+
+[(back to menu)](#navigation)
+
+All build products live under a single `artifacts/` directory, git-ignored and cleaned by `pnpm run cleanup`. This keeps the project root free of scattered output directories.
+
+| Subdirectory          | Producer                  | Contents                         |
+| --------------------- | ------------------------- | -------------------------------- |
+| `artifacts/dist/`     | `pnpm run build:app`      | Compiled NestJS application (JS) |
+| `artifacts/api-docs/` | `pnpm run build:api-docs` | `open-api.json` specification    |
+| `artifacts/coverage/` | `pnpm run test:dynamic`   | Jest coverage report (HTML SPA)  |
+
+Configuration sources:
+
+- **TypeScript** — `tsconfig.json` sets `outDir` to `./artifacts/dist`
+- **Jest** — `jest.config.ts` sets `coverageDirectory` to `<rootDir>/artifacts/coverage`
+- **OpenAPI** — `scripts/build-openapi-artifact.ts` writes to `artifacts/api-docs/`
+- **Cleanup** — `pnpm run cleanup` runs `rimraf artifacts/` (removes all products at once)
+- **Ignores** — `.gitignore` and `eslint.config.mjs` ignore `artifacts/` as a single entry
 
 ## Next steps
 
