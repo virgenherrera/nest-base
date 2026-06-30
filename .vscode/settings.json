@@ -16,6 +16,9 @@
     "overrideConfigFile": "eslint.config.mjs"
   },
   "eslint.validate": ["javascript", "json", "typescript", "mjs"],
+  "files.exclude": {
+    "**/.claude/worktrees": true
+  },
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
