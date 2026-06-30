@@ -1,0 +1,13 @@
+echo '
+INFO: This project has a pre-push hook that runs tests and build verification.
+If necessary, you can disable this with the "--no-verify" flag during the push.
+Example:
+    "git push --no-verify"
+'
+
+pnpm run test:dynamic && \
+pnpm run build || \
+{
+  echo "ERROR: Pre-push checks failed. Please address issues before pushing."
+  exit 1
+}
