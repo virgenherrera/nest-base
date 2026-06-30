@@ -33,12 +33,13 @@ This eliminates drift: if a script's command changes, every context inherits tha
 | `start:dev`        | atomic    | serve         |    yes    |     no      |     no     | no  |    no    |
 | `start:prod`       | atomic    | serve         |    yes    |     no      |     no     | no  |    no    |
 | `test`             | composite | pipeline      |    yes    |     no      |     no     |  ¹  |    no    |
-| `build`            | composite | build         |    yes    |     no      |    yes     | yes |   yes    |
-| `build:app`        | atomic    | build         |    yes    |     no      |    yes     | yes |   yes    |
-| `build:api-docs`   | atomic    | build         |    yes    |     no      |    yes     | yes |   yes    |
+| `build`            | composite | build         |    yes    |     no      |     no     | yes |   yes    |
+| `build:app`        | atomic    | build         |    yes    |     no      |     no     | yes |   yes    |
+| `build:api-docs`   | atomic    | build         |    yes    |     no      |     no     | yes |   yes    |
 | `test:doctor`      | composite | pipeline      |    yes    |     no      |     no     | no  |   yes    |
 | `test:static`      | composite | check         |    yes    |     no      |     no     | yes |    no    |
-| `test:dynamic`     | atomic    | test          |    yes    |     no      |    yes     | yes |   yes    |
+| `test:types`       | atomic    | check         |    yes    |     no      |     no     | yes |   yes    |
+| `test:dynamic`     | atomic    | test          |    yes    |     no      |     no     | yes |   yes    |
 | `securityCheck`    | atomic    | check         |    yes    |     no      |     no     | yes |   yes    |
 | `eslintCheck`      | atomic    | check         |    yes    |     no      |     no     | yes |   yes    |
 | `eslintFix`        | atomic    | fix           |    yes    |     yes     |     no     | no  |    no    |
@@ -51,9 +52,11 @@ This eliminates drift: if a script's command changes, every context inherits tha
 | `updatePnpm`       | atomic    | maintenance   |    yes    |     no      |     no     | no  |    no    |
 | `bumpDependencies` | composite | maintenance   |    yes    |     no      |     no     | no  |    no    |
 
-> ¹ CI does not call the `test` meta-composite — it calls `test:static`, `test:dynamic`, and `build` as individual workflow steps matching the pipeline stages.
+> ¹ CI does not call the `test` meta-composite — it calls `test:static`, `test:types`, `test:dynamic`, and `build` as individual workflow steps matching the pipeline stages.
 >
 > bumpDeps column: scripts marked `yes` are invoked via `test:doctor` (the NCU validation gate), except `securityFix` which is called directly by `bumpDependencies`. `bumpDependencies` itself is the context, not a participant.
+>
+> pre-push column: `lintStaged` is pre-commit only (~2 s). `test:dynamic` and `build` run on pre-push (~30–60 s).
 
 [(back to menu)](#navigation)
 
@@ -63,15 +66,15 @@ This eliminates drift: if a script's command changes, every context inherits tha
 
 Each composite script is an ordered `&&` chain of atomic scripts. If any step fails, the chain stops.
 
-| Composite          | Expansion                                                       |
-| ------------------ | --------------------------------------------------------------- |
-| `test:static`      | `securityCheck` → `eslintCheck` → `prettierCheck`               |
-| `build`            | `build:api-docs` → `build:app`                                  |
-| `test:doctor`      | `cleanup` → **`test:static`** → `test:dynamic` → **`build`**    |
-| `test`             | `cleanup` → **`test:static`** → `test:dynamic` → **`build`**    |
-| `bumpDependencies` | `securityFix` → `pnpm dlx npm-check-updates@17` → `securityFix` |
+| Composite          | Expansion                                                                   |
+| ------------------ | --------------------------------------------------------------------------- |
+| `test:static`      | `securityCheck` → `eslintCheck` → `prettierCheck`                           |
+| `build`            | `build:api-docs` → `build:app`                                              |
+| `test:doctor`      | `cleanup` → **`test:static`** → `test:types` → `test:dynamic` → **`build`** |
+| `test`             | `cleanup` → **`test:static`** → `test:types` → `test:dynamic` → **`build`** |
+| `bumpDependencies` | `securityFix` → `pnpm dlx npm-check-updates@22` → `securityFix`             |
 
-Every pipeline stage has a composite: `test:static` (stage 2), `test:dynamic` (stage 3, atomic), `build` (stage 4). Adding a new script to any composite propagates to `test`, `test:doctor`, pre-commit, and bumpDependencies automatically. `test:doctor` is currently identical to `test` — it exists as a named NCU validation profile that can diverge if needed.
+Every pipeline stage has a composite: `test:static` (stage 2), `test:types` (stage 2.5), `test:dynamic` (stage 3, atomic), `build` (stage 4). Adding a new script to any composite propagates to `test`, `test:doctor`, pre-push, and bumpDependencies automatically. `test:doctor` is currently identical to `test` — it exists as a named NCU validation profile that can diverge if needed.
 
 [(back to menu)](#navigation)
 
@@ -87,6 +90,7 @@ Scripts are organized into five stages. **No script in stage N may depend on a s
 | 1     | projectSetup   | node install → pnpm install                                   |
 | 1.5   | cleanup        | `cleanup` (composites that need a clean slate run this first) |
 | 2     | test:static    | `securityCheck` → `eslintCheck` → `prettierCheck`             |
+| 2.5   | test:types     | `test:types` (tsc --noEmit via tsconfig.build.json)           |
 | 3     | test:dynamic   | `test:dynamic` (jest — unit + e2e)                            |
 | 4     | build          | **`build`** composite: `build:api-docs` → `build:app`         |
 
@@ -98,23 +102,26 @@ Scripts are organized into five stages. **No script in stage N may depend on a s
 
 ## Execution Context Comparison
 
-Cross-check this matrix against `.lintstagedrc.json`, `.husky/pre-commit`, `.github/workflows/ci.yml`, and `.ncurc.json` to verify consistency.
+Cross-check this matrix against `.lintstagedrc.json`, `.husky/pre-commit`, `.husky/pre-push`, `.github/workflows/ci.yml`, and `.ncurc.json` to verify consistency.
 
-| Script           | local-dev | lint-staged |     pre-commit      | CI  |       bumpDeps        |
-| ---------------- | :-------: | :---------: | :-----------------: | :-: | :-------------------: |
-| `securityFix`    | optional  |     no      |         no          | no  |    yes (pre+post)     |
-| `lintStaged`     | optional  |     no      |     yes (first)     | no  |          no           |
-| `prettierFix`    | optional  |     yes     | no (via lintStaged) | no  |          no           |
-| `eslintFix`      | optional  |     yes     | no (via lintStaged) | no  |          no           |
-| `cleanup`        | optional  |     no      |         no          | no  | yes (via test:doctor) |
-| `securityCheck`  | optional  |     no      |         no          | yes | yes (via test:doctor) |
-| `eslintCheck`    | optional  |     no      |         no          | yes | yes (via test:doctor) |
-| `prettierCheck`  | optional  |     no      |         no          | yes | yes (via test:doctor) |
-| `test:dynamic`   | optional  |     no      |         yes         | yes | yes (via test:doctor) |
-| `build:api-docs` | optional  |     no      |   yes (via build)   | yes | yes (via test:doctor) |
-| `build:app`      | optional  |     no      |   yes (via build)   | yes | yes (via test:doctor) |
+| Script           | local-dev | lint-staged |     pre-commit      |    pre-push     | CI  |       bumpDeps        |
+| ---------------- | :-------: | :---------: | :-----------------: | :-------------: | :-: | :-------------------: |
+| `securityFix`    | optional  |     no      |         no          |       no        | no  |    yes (pre+post)     |
+| `lintStaged`     | optional  |     no      |    yes (only) ²     |       no        | no  |          no           |
+| `prettierFix`    | optional  |     yes     | no (via lintStaged) |       no        | no  |          no           |
+| `eslintFix`      | optional  |     yes     | no (via lintStaged) |       no        | no  |          no           |
+| `cleanup`        | optional  |     no      |         no          |       no        | no  | yes (via test:doctor) |
+| `securityCheck`  | optional  |     no      |         no          |       no        | yes | yes (via test:doctor) |
+| `eslintCheck`    | optional  |     no      |         no          |       no        | yes | yes (via test:doctor) |
+| `prettierCheck`  | optional  |     no      |         no          |       no        | yes | yes (via test:doctor) |
+| `test:types`     | optional  |     no      |         no          |       no        | yes | yes (via test:doctor) |
+| `test:dynamic`   | optional  |     no      |         no          |       yes       | yes | yes (via test:doctor) |
+| `build:api-docs` | optional  |     no      |         no          | yes (via build) | yes | yes (via test:doctor) |
+| `build:app`      | optional  |     no      |         no          | yes (via build) | yes | yes (via test:doctor) |
 
-CI runs check scripts (read-only), not fix scripts. Fix scripts are pre-commit only. bumpDependencies uses `test:doctor` as its validation gate (which calls `test:static` and `build` as composites) — NCU rolls back any dependency whose upgrade causes `test:doctor` to fail.
+> ² `lintStaged` is the **only** script that runs on pre-commit. It auto-fixes staged files (~2 s, fast). `test:dynamic` and `build` have moved to the pre-push hook (~30–60 s), keeping commits instant while still verifying before code reaches the remote.
+
+CI runs check scripts (read-only), not fix scripts. Fix scripts are pre-commit only. bumpDependencies uses `test:doctor` as its validation gate (which calls `test:static`, `test:types`, `test:dynamic`, and `build` as composites) — NCU rolls back any dependency whose upgrade causes `test:doctor` to fail.
 
 [(back to menu)](#navigation)
 
@@ -133,16 +140,23 @@ flowchart TD
     C --> D[.lintstagedrc.json]
     D --> E[pnpm run prettierFix -- staged-files]
     E --> F[pnpm run eslintFix -- staged-files]
-    F --> G{lintStaged done}
+    F --> G{All passed?}
+    G -- yes --> H([Commit proceeds])
+    G -- no --> I([Exit 1 — commit aborted])
+```
 
-    G --> H[pnpm run test:dynamic]
-    H --> I[pnpm run build]
-    I --> I1[pnpm run build:api-docs]
-    I1 --> I2[pnpm run build:app]
+### Pre-push
 
-    I2 --> J{All passed?}
-    J -- yes --> K([Commit proceeds])
-    J -- no --> L([Exit 1 — commit aborted])
+```mermaid
+flowchart TD
+    A([git push]) --> B[.husky/pre-push]
+    B --> C[pnpm run test:dynamic]
+    C --> D[pnpm run build]
+    D --> D1[pnpm run build:api-docs]
+    D1 --> D2[pnpm run build:app]
+    D2 --> E{All passed?}
+    E -- yes --> F([Push proceeds])
+    E -- no --> G([Exit 1 — push aborted])
 ```
 
 ### bumpDependencies
@@ -150,7 +164,7 @@ flowchart TD
 ```mermaid
 flowchart TD
     A([pnpm run bumpDependencies]) --> B[pnpm run securityFix]
-    B --> C["pnpm dlx npm-check-updates@17 (doctor mode via .ncurc.json)"]
+    B --> C["pnpm dlx npm-check-updates@22 (doctor mode via .ncurc.json)"]
 
     C --> D{For each dependency}
     D --> E[Upgrade dependency in package.json]
@@ -158,7 +172,8 @@ flowchart TD
 
     F --> G[pnpm run cleanup]
     G --> H[pnpm run test:static]
-    H --> K[pnpm run test:dynamic]
+    H --> I[pnpm run test:types]
+    I --> K[pnpm run test:dynamic]
     K --> L[pnpm run build]
 
     L --> M{test:doctor passed?}
@@ -184,13 +199,13 @@ Adding a new script to the echo system is a two-step process:
 
 That's it. All contexts inherit the change through the composite chain:
 
-| Composite      | Propagates to                                                                 |
-| -------------- | ----------------------------------------------------------------------------- |
-| `test:static`  | `test`, `test:doctor`, CI, `bumpDependencies` (via test:doctor)               |
-| `build`        | `test`, `test:doctor`, CI, `pre-commit`, `bumpDependencies` (via test:doctor) |
-| `test:dynamic` | jest discovers tests via config — no composite change needed                  |
+| Composite      | Propagates to                                                               |
+| -------------- | --------------------------------------------------------------------------- |
+| `test:static`  | `test`, `test:doctor`, CI, `bumpDependencies` (via test:doctor)             |
+| `build`        | `test`, `test:doctor`, CI, `pre-push`, `bumpDependencies` (via test:doctor) |
+| `test:dynamic` | jest discovers tests via config — no composite change needed                |
 
-CI now calls composites directly (`test:static`, `test:dynamic`, `build`), so new scripts propagate to CI automatically.
+CI now calls composites directly (`test:static`, `test:types`, `test:dynamic`, `build`), so new scripts propagate to CI automatically.
 
 [(back to menu)](#navigation)
 
@@ -218,5 +233,7 @@ pnpm run eslintFix -- '{apps,libs,scripts,src,test}/**/*.ts'
 `.lintstagedrc.json` targets `*.{js,json,md,mjs,ts,tsx}` — six file extensions. The check scripts (`eslintCheck`, `prettierCheck`) target `*.ts` files within specific directories, while `eslintCheck` also covers `*.{json,md}` at root and `docs/**/*.md`.
 
 This means lint-staged applies fixes to `.js`, `.json`, `.md`, `.mjs`, and `.tsx` files during pre-commit. CI verifies `.ts` files via `eslintCheck`/`prettierCheck` and `.md`/`.json` files via `eslintCheck`. The echo principle is maintained: everything lint-staged fixes, CI also verifies.
+
+The pre-commit hook is intentionally scoped to `lintStaged` only (auto-fix staged files, ~2 s). The pre-push hook runs `test:dynamic` and `build` (~30–60 s), ensuring tests and compilation are verified before code reaches the remote without slowing down local commits.
 
 [(back to menu)](#navigation)

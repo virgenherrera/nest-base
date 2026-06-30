@@ -9,7 +9,7 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: ['eslint.config.mjs', 'artifacts/**'],
+    ignores: ['eslint.config.mjs', 'artifacts/**', '.tmp*'],
   },
 
   // ── TypeScript ─────────────────────────────────────────────────────────────

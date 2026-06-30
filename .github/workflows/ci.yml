@@ -7,6 +7,10 @@ on:
       - main
       - develop
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ci:
     name: CI Pipeline
@@ -23,6 +27,11 @@ jobs:
         run: |
           pnpm run test:static
           echo "✅ **test:static** — security, lint, and format checks passed" >> $GITHUB_STEP_SUMMARY
+
+      - name: test:types
+        run: |
+          pnpm run test:types
+          echo "✅ **test:types** — TypeScript compilation check passed" >> $GITHUB_STEP_SUMMARY
 
       - name: test:dynamic
         timeout-minutes: 15

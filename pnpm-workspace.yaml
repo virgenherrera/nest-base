@@ -23,5 +23,11 @@ minimumReleaseAgeExclude:
 
 # Mirrors pnpm.auditConfig in package.json; ignoreCves lists CVEs with no available fix
 # that should not permanently block the security check step.
+# Force patched versions of transitive dependencies with known vulnerabilities.
+# Remove each override once the direct parent package ships a fix.
+overrides:
+  form-data@>=4.0.0 <4.0.6: 4.0.6    # GHSA-hmw2-7cc7-3qxx (CRLF injection)
+  multer@>=1.0.0 <2.2.0: 2.2.0        # GHSA-72gw-mp4g-v24j (DoS via nested fields)
+
 auditConfig:
   ignoreCves: []

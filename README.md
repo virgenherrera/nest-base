@@ -26,7 +26,7 @@ Starter kit for building NestJS 11 HTTP services with typed environment configur
 - DTOs rely on Zod (nestjs-zod) for request validation and response serialization.
 - Global `/api` prefix, header-based versioning (`X-API-Version`), and a reference health endpoint (`GET /api/health`).
 - Swagger UI in development plus a script that produces `artifacts/api-docs/open-api.json` without booting the server.
-- Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that runs the full local pipeline.
+- Team-friendly tooling: ESLint, Prettier, Husky + lint-staged, Jest for unit and e2e tests, and a one-shot `test` script that runs the full local pipeline. Two-tier git hooks: pre-commit auto-fixes staged files (~2 s), pre-push verifies tests and build (~30 s).
 - `pnpm run bumpDependencies` upgrades dependencies but aborts if the test suite fails.
 
 ## Before you start
@@ -86,8 +86,9 @@ Each config class in `src/config/` owns and validates its own subset of environm
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm run start:dev`        | Start the server with watch mode.                                                                                                         |
 | `pnpm run start:prod`       | Run the compiled app from `artifacts/dist/`.                                                                                              |
-| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:dynamic → build:api-docs → build:app. Includes `cleanup`, which CI does not run.        |
+| `pnpm run test`             | Full local pipeline: cleanup → test:static → test:types → test:dynamic → build. Includes `cleanup`, which CI does not run.                |
 | `pnpm run test:static`      | Security audit + ESLint + Prettier checks.                                                                                                |
+| `pnpm run test:types`       | Type-checks production code without emitting files.                                                                                       |
 | `pnpm run test:dynamic`     | Run the Jest suite (unit + e2e).                                                                                                          |
 | `pnpm run build:api-docs`   | Generate `artifacts/api-docs/open-api.json`.                                                                                              |
 | `pnpm run securityCheck`    | Run `pnpm audit --audit-level high`. Fails on high or critical vulnerabilities.                                                           |
@@ -95,7 +96,7 @@ Each config class in `src/config/` owns and validates its own subset of environm
 | `pnpm run bumpDependencies` | Full dependency upgrade pipeline with security validation. See [Dependency management and security](#dependency-management-and-security). |
 | `pnpm run updatePnpm`       | Update the pnpm package manager itself via `corepack up`.                                                                                 |
 
-Husky runs `lint-staged` before every commit to keep formatting and linting green.
+Husky runs `lint-staged` before every commit to keep formatting and linting green. Tests and build verification run on pre-push.
 
 See [Quality gates](./docs/quality-gates.md) for the full script taxonomy, pipeline order contract, and execution context mapping.
 
