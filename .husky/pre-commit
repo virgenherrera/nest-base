@@ -1,12 +1,14 @@
 echo '
-INFO: This project has a pre-commit hook that runs lintStaged (auto-fix staged files).
+INFO: This project has a pre-commit hook that runs lintStaged (auto-fix staged files)
+and test:static (security audit, lint, and format checks).
 Tests and build verification run on pre-push.
 If necessary, you can disable this with the "--no-verify" flag during the commit.
 Example:
     "git commit -m <message> --no-verify"
 '
 
-pnpm run lintStaged || \
+pnpm run lintStaged && \
+pnpm run test:static || \
 {
   echo "ERROR: Pre-commit checks failed. Please address issues before proceeding."
   exit 1
